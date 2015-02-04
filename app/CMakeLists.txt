@@ -1,3 +1,4 @@
+# version 2.8.12 is on unix.cse.tamu.edu
 cmake_minimum_required(VERSION 2.8.12)
 
 # Set Project_Name and Language
@@ -10,7 +11,7 @@ option(test "Build ${PROJECT_NAME}'s tests" OFF)
 
 # set some locations
 set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
-set(COMMON_INCLUDES "${SOURCE_DIR}/include")
+set(INCLUDES_DIR "${CMAKE_SOURCE_DIR}/include")
 
 # add directory for project source files
 add_subdirectory(${SOURCE_DIR})
@@ -20,10 +21,16 @@ set(CXXFLAGS "-Wall -Wextra -std=c++14")
 set(CXXFLAGS_RELEASE "${CXXFLAGS} -O3 -DNDEBUG")
 set(CXXFLAGS_DEBUG "${CXXFLAGS} -g -O0 -DDEBUG")
 
+# Create Executables
+add_library(${PROJECT_NAME}_lib ${PROJECT_NAME}.cc)
+add_executable(${PROJECT_NAME} main.cc)
+
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib)
+
 # Testing
 if (test)
   # add gtest
-  add_subdirectory(${COMMON_INCLUDES}/gtest)
+  add_subdirectory(${INCLUDES_DIR}/gtest)
 
   enable_testing()
 
@@ -38,8 +45,7 @@ if (test)
   target_link_libraries(runUnitTests gtest gtest_main)
 
   # Extra linking for the project.
-  # TODO: Fix Later
-  #target_link_libraries(runUnitTests project1_lib)
+  target_link_libraries(runUnitTests ${PROJECT_NAME}_lib)
 
   # This is so you can do 'make test' to see all your tests run, instead of
   # manually running the executable runUnitTests to see those specific tests.
