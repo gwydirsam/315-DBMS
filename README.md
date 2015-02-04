@@ -13,6 +13,6 @@
 * Nicolas Juarez
   * nickj_4@tamu.edu
 
-* Daniel Koon
+* Daniel "Kade" Koon
   * kadekoon@tamu.edu
 
