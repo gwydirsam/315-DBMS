@@ -9,13 +9,12 @@ class Parser {
   // Constructors
 
   // Default Constructor
-  Parser() {};
-  
+  Parser(){};
+
   // Destructors
 
-  //Default Destructor
-  ~Parser() {};
-  
+  // Default Destructor
+  ~Parser(){};
 
  private:
   // Data Structures

@@ -4,17 +4,19 @@
 #ifndef ENGINE_H_
 #define ENGINE_H_
 
+#include "parser.h"
+
 class Engine {
  public:
   // Constructors
+  Engine(Parser parser) : parser_(parser) {}
 
   // Default Constructor
-  Engine() {};
-  // Destructors
+  Engine() : parser_(){};
 
-  //Default Destructor
-  ~Engine() {};
-  
+  // Destructors
+  // Default Destructor
+  ~Engine(){};
 
   // Getters
   // Get Table
@@ -24,6 +26,7 @@ class Engine {
   // Set Tuple
 
   // Commands
+  // Show
   // Create Table
   // Insert Tuple into Table
   // Show Table
@@ -38,6 +41,7 @@ class Engine {
   // Project
 
  private:
+  Parser parser_;
   // Data Structures
 };
 
