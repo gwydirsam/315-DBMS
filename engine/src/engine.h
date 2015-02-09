@@ -33,11 +33,15 @@ class Engine {
   // Create Table
   // Returns 0 on success, non-zero on failure
   int createTable(String TableName,
-              std::vector<std::pair<SQLTYPE, String> > attributes);
+                  std::vector<std::pair<SQLTYPE, std::string> > attributes);
   // Insert Tuple into Table
   // Show Table
   // Drop Table
   // Delete Tuple in Table
+  // Exec DML
+  // Returns 0 on success, non-zero on failure
+  // DML string is a valid string based on the grammar
+  int execDML(std::string DML);
 
   // Queries
   // Select
