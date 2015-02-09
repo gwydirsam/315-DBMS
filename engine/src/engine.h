@@ -1,23 +1,44 @@
 // CSCE 315-503
-// dbms.h
+// engine.h
 
-#ifndef DBMS_H_
-#define DBMS_H_
+#ifndef ENGINE_H_
+#define ENGINE_H_
 
-class DBMS {
+class Engine {
  public:
   // Constructors
+
+  // Default Constructor
+  Engine() {};
   // Destructors
 
+  //Default Destructor
+  ~Engine() {};
+  
+
   // Getters
+  // Get Table
+  // Get Tuple
   // Setters
+  // Set Table
+  // Set Tuple
 
   // Commands
+  // Create Table
+  // Insert Tuple into Table
+  // Show Table
+  // Delete Table
+  // Delete Tuple in Table
 
   // Queries
+  // Select
+  // Union
+  // Difference
+  // Product
+  // Project
 
  private:
   // Data Structures
 };
 
-#endif  // DBMS_H_
+#endif  // ENGINE_H_
