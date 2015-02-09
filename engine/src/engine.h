@@ -29,7 +29,8 @@ class Engine {
   // Commands
   // Show
   // Create Table
-  createTable(String TableName,
+  // Returns 0 on success, non-zero on failure
+  int createTable(String TableName,
               std::vector<std::pair<SQLTYPE, String> > attributes);
   // Insert Tuple into Table
   // Show Table
