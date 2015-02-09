@@ -21,6 +21,7 @@ class Engine {
   // Getters
   // Get Table
   // Get Tuple
+
   // Setters
   // Set Table
   // Set Tuple
@@ -30,7 +31,7 @@ class Engine {
   // Create Table
   // Insert Tuple into Table
   // Show Table
-  // Delete Table
+  // Drop Table
   // Delete Tuple in Table
 
   // Queries
