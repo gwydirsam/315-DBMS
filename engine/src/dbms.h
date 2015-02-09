@@ -6,7 +6,18 @@
 
 class DBMS {
  public:
+  // Constructors
+  // Destructors
+
+  // Getters
+  // Setters
+
+  // Commands
+
+  // Queries
+
  private:
+  // Data Structures
 };
 
 #endif  // DBMS_H_
