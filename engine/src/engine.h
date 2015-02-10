@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "parser.h"
+#include "attribute.h"
 
 class Engine {
  public:
@@ -30,10 +31,11 @@ class Engine {
 
   // Commands
   // Show
+
   // Create Table
   // Returns 0 on success, non-zero on failure
-  int createTable(String TableName,
-                  std::vector<std::pair<SQLTYPE, std::string> > attributes);
+  int createTable(std::string TableName, std::vector<Attribute> attributes);
+
   // Insert Tuple into Table
   // Show Table
   // Drop Table
