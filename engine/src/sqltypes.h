@@ -8,8 +8,8 @@
 
 // Here we define all the sql data types
 // Everything is in namespace SQL, so VARCHAR can be referenced as
-// SQL::VARCHAR(n)
-namespace SQL {
+// sql::VARCHAR(n)
+namespace sql {
 
 // Fixed length n
 // example of use: CHARACTER<5> gives a fixed length 5 character string
@@ -73,6 +73,9 @@ struct TIMESTAMP {
 struct INTERVAL {
   INTEGER TIME_INTERVAL;
 };
+
+// Invalid Type
+typedef int INVALIDTYPE;
 }
 
 #endif  // SQLTYPES_H_
