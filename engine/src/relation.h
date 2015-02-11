@@ -15,11 +15,11 @@
 class Relation {
  public:
   // Constructors
-  Relation(std::string title, std::tuple attributes)
-      : title_(title), attributes_(attributes){};
+  Relation(std::string title, std::vector<Attribute> attributes, std::vector<Attribute> primarykey)
+      : title_(title), attributes_(attributes), primarykey_(primarykey){};
 
   // Default Constructor
-  Relation() : title_("INVALID"), attributes_(), tuples_(){};
+  Relation() : title_("INVALID"), attributes_(), tuples_(), primarykey_(){};
 
   // Destructors
   // Default Destructor
@@ -31,9 +31,11 @@ class Relation {
 
  private:
   // Data Structures
+  // File Descriptor
   std::string title_;
-  std::tuple attributes_;
-  std::vector<std::tuple> tuples_;
+  std::vector<Attribute> attributes_;
+  std::vector<Attribute> primarykey_;
+  std::vector<SQLTypes> tuples_;
 };
 
 #endif  // RELATION_H_
