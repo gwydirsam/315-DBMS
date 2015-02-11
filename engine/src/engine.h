@@ -6,17 +6,18 @@
 
 #include <vector>
 #include <utility>
+#include <functional>
 
-#include "parser.h"
 #include "attribute.h"
 
 class Engine {
  public:
   // Constructors
-  Engine(Parser parser) : parser_(parser) {}
+  // Later
+  //Engine(Parser parser) : parser_(parser) {}
 
   // Default Constructor
-  Engine() : parser_(){};
+  Engine(){};
 
   // Destructors
   // Default Destructor
@@ -24,25 +25,32 @@ class Engine {
 
   // Getters
   // Get Table
+  std::vector<std::tuple> table(std::string TableName);
   // Get Tuple
+  std::tuple table(std::string TableName, int id);
 
   // Setters
   // Set Table
   // Set Tuple
 
   // Commands
+  // Open
+  int openTable(std::string TableName);
+  
   // Show
+  // Show Table
+  int showTable(std::string TableName);
 
   // Create Table
   // Returns 0 on success, non-zero on failure
-  int createTable(std::string TableName, std::vector<Attribute> attributes);
+  int createTable(std::string TableName, std::vector<Attribute> attributes, std::vector<Attribute> primarykey);
+
+  // Update Table
 
   // Insert Tuple into Table
   int insertTuple(std::string TableName, std::tuple);
-  // Show Table
-  int showTable(std::sring TableName);
   // Drop Table
-  int dropTable(std::sring TableName);
+  int dropTable(std::string TableName);
   // Delete Tuple in Table
   int dropTuple(std::string TableName, std::tuple);
   // Exec DML
@@ -56,16 +64,38 @@ class Engine {
   // Delete File Descriptor and Write table to filename TableName.db
   // Returns 0 on success, non-zero on failure
   int closeTable(std::string TableName);
+  // Exit
+  int exitDatabase();
 
   // Queries
+
   // Select
-  // Union
-  // Difference
-  // Product
+  // Select in TableName where Function takes a tuple and returns a bool,
+  // return vector of tuples where function is true
+  std::vector<std::tuple> select(std::string TableName, std::function<bool(std::Tuple)> function);
+
   // Project
+  // return vector of tuples from tablename with only Attributes attributes
+  std::vector<std::tuple> project(std::string TableName, std::vector<Attribute> attributes);
+
+  // Rename
+  // Return 0 on success, non-zero on failure
+  // Rename attribute attribute to newname in TableName
+  int project(std::string TableName, Attribute attribute, std::string newname);
+
+  // Set Union
+  // if Union-Compatible
+  std::vector<std::tuple> setunion(std::string TableName1, std::string TableName2);
+
+  // Set Difference
+  // if Union-Compatible
+  std::vector<std::tuple> setdifference(std::string TableName1, std::string TableName2);
+
+  // Set Cross Product
+  std::vector<std::tuple> setcrossproduct(std::string TableName1, std::string TableName2);
 
  private:
-  Parser parser_;
+  //  Parser parser_;
   // Data Structures
 };
 
