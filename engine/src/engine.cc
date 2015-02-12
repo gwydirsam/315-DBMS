@@ -1,9 +1,9 @@
 #include "engine.h"
 #include "relation.h"
 
-int engine::createTable(std::string TableName, std::vector<Attributes> attributes, std::vector<Attributes> primarykey) {
+int engine::createTable(std::string TableName, std::vector<Attributes> attributes, std::vector<Attributes> primarykeys) {
 	
-	Relation table(TableName, attributes, primarykey);
+	Relation table(TableName, attributes, primarykeys);
 	openTable(table);
 }
 

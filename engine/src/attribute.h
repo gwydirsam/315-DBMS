@@ -20,8 +20,8 @@ class Attribute {
   ~Attribute(){};
 
   // Getters
-  std::string type() { return attribute_.first; }
-  std::string title() { return (attribute_.second; }
+  std::string get_type() { return attribute_.first; }
+  std::string get_title() { return attribute_.second; }
 
   // Setters
   void set_type(std::string type) { attribute_.first = type; }

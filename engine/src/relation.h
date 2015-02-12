@@ -15,26 +15,35 @@
 class Relation {
  public:
   // Constructors
-  Relation(std::string title, std::vector<Attribute> attributes, std::vector<Attribute> primarykey)
-      : title_(title), attributes_(attributes), primarykey_(primarykey){};
+  Relation(std::string title, std::vector<Attribute> attributes, std::vector<Attribute> primarykeys)
+      : title_(title), attributes_(attributes), primarykeys_(primarykeys){};
 
   // Default Constructor
-  Relation() : title_("INVALID"), attributes_(), tuples_(), primarykey_(){};
+  Relation() : title_("INVALID"), attributes_(), tuples_(), primarykeys_(){};
 
   // Destructors
   // Default Destructor
   ~Relation(){};
 
   // Getters
-
+  std::string get_title() {return title_;}
+  std::vector<Attribute> get_attributes() {return attributes_;}
+  std::vector<Attribute> get_primarykeys() {return primarykeys_;}
   // Setters
+  void set_title(std::string title) {title_ = title;}
+  //not sure if these are right...
+  //you know for deep copy
+  void set_attributes(std::vector<Attribute> attributes) {attributes_(attributes);}
+  void set_primarykeys(std::vector<Attribute> primarykeys) {primarykeys_(primarykeys);}
 
  private:
   // Data Structures
   // File Descriptor
   std::string title_;
   std::vector<Attribute> attributes_;
-  std::vector<Attribute> primarykey_;
+  std::vector<Attribute> primarykeys_;
+  //not sure where to add this to
+  //this was added during lab.
   std::vector<SQLTypes> tuples_;
 };
 

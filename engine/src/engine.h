@@ -43,7 +43,7 @@ class Engine {
 
   // Create Table
   // Returns 0 on success, non-zero on failure
-  int createTable(std::string TableName, std::vector<Attribute> attributes, std::vector<Attribute> primarykey);
+  int createTable(std::string TableName, std::vector<Attribute> attributes, std::vector<Attribute> primarykeys);
 
   // Update Table
 
