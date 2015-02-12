@@ -54,6 +54,44 @@ struct DATE {
   INTEGER YEAR;
   INTEGER MONTH;
   INTEGER DAY;
+  bool operator<(const DATE& rhs) const {
+      if(this->YEAR == rhs.YEAR) {
+			if(this->MONTH == rhs.MONTH) {
+				return this->DAY < rhs.DAY;
+			}
+			else
+				return this->MONTH < rhs.MONTH;
+	  }
+	  else 
+		return this->YEAR < rhs.YEAR; 
+  }
+  
+  bool operator>(const DATE& rhs) const {
+	return rhs < this;
+  }
+  
+  bool operator==(const DATE& rhs) const {
+		if(this->YEAR == rhs.YEAR) {
+			if(this->MONTH == rhs.MONTH) {
+				if(this->DAY == rhs.DAY)
+					return true;
+				else
+					return false;
+			}
+			else
+				return false;
+		}
+		
+	return false;
+	}
+	
+	bool operator=<(const DATE& rhs) const {
+		return (this == rhs || this < rhs);
+	}
+	
+	bool operator>=(const DATE& rhs) const {
+		return (this == rhs || this > rhs);
+	}
 };
 
 // Time
@@ -61,12 +99,67 @@ struct TIME {
   INTEGER HOUR;
   INTEGER MINUTE;
   INTEGER SECOND;
+  bool operator<(const TIME& rhs) const {
+      if(this->HOUR == rhs.HOUR) {
+			if(this->MINUTE == rhs.MINUTE) {
+				return this->SECOND < rhs.SECOND;
+			}
+			else
+				return this->MINUTE < rhs.MINUTE;
+	  }
+	  else 
+		return this->HOUR < rhs.HOUR; 
+  }
+  
+  bool operator>(const TIME& rhs) const {
+	return rhs < this;
+  }
+  
+  bool operator==(const TIME& rhs) const {
+		if(this->HOUR == rhs.HOUR) {
+			if(this->MINUTE == rhs.MINUTE) {
+				if(this->SECOND == rhs.SECOND)
+					return true;
+				else
+					return false;
+			}
+			else
+				return false;
+		}
+		
+	return false;
+	}
+	
+	bool operator=<(const TIME& rhs) const {
+		return (this == rhs || this < rhs);
+	}
+	
+	bool operator>=(const TIME& rhs) const {
+		return (this == rhs || this > rhs);
+	}
 };
 
 // Timestamp
 struct TIMESTAMP {
-  DATE DATE;
-  TIME TIME;
+  DATE date;
+  TIME time;
+  bool operator<(const TIMESTAMP& rhs) const {
+	if(this->date < rhs.date)
+		return true;
+	return this->time < rhs.time;
+  }
+  bool operator>(const TIMESTAMP& rhs) const {
+	return rhs < this;
+  }
+  bool operator==(const TIMESTAMP& rhs) const {
+	return (this->date == rhs.date) && (this->time == rhs.time);
+  }
+  bool operator=<(const TIMESTAMP& rhs) const {
+	return (this == rhs || this < rhs);
+  }
+  bool operator>=(const TIMESTAMP& rhs) const {
+	return (this == rhs || this > rhs);
+  }
 };
 
 // Interval
