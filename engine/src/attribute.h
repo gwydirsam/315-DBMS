@@ -20,11 +20,12 @@ class Attribute {
   ~Attribute(){};
 
   // Getters
-  std::string type() { return std::get<0>(attribute_); }
-  std::string title() { return std::get<1>(attribute_); }
+  std::string type() { return attribute_.first; }
+  std::string title() { return (attribute_.second; }
 
   // Setters
-
+  void set_type(std::string type) { attribute_.first = type; }
+  void set_title(std::string title) { attribute_.second = title; }
  private:
   // Data Structures
   std::pair<std::string, std::string> attribute_;

@@ -81,7 +81,7 @@ class Engine {
   // Rename
   // Return 0 on success, non-zero on failure
   // Rename attribute attribute to newname in TableName
-  int project(std::string TableName, Attribute attribute, std::string newname);
+  int rename(std::string TableName, Attribute attribute, std::string newname);
 
   // Set Union
   // if Union-Compatible
