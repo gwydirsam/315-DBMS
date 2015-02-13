@@ -12,18 +12,18 @@
 // Everything is in namespace SQL, so VARCHAR can be referenced as
 // sql::VARCHAR(n)
 namespace sql {
-
-// Fixed length n
-// example of use: CHARACTER<5> gives a fixed length 5 character string
-template <typename N>
-using CHARACTER = std::array<char, N>;
-
-// Variable Length. Max length n.
-template <typename N>
-using VARCHAR = std::array<char, N>;
-
-template <typename N>
-using CHARACTER_VARYING = std::array<char, N>;
+  // TODO: FIX THESE
+//// Fixed length n
+//// example of use: CHARACTER<5> gives a fixed length 5 character string
+//template <typename N>
+//using CHARACTER = std::array<char, N>;
+//
+//// Variable Length. Max length n.
+//template <typename N>
+//using VARCHAR = std::array<char, N>;
+//
+//template <typename N>
+//using CHARACTER_VARYING = std::array<char, N>;
 
 // Boolean
 typedef bool BOOLEAN;
@@ -46,10 +46,12 @@ typedef float FLOAT;
 typedef double REAL;
 
 // Array
-typedef std::array ARRAY;
+  //TODO array needs <size>
+//typedef std::array ARRAY;
 
 // MultiSet
-typedef std::multiset MULTISET;
+  //doesn't work
+//typedef std::multiset MULTISET;
 
 // Date
 struct DATE {
@@ -66,7 +68,7 @@ struct DATE {
       return this->YEAR < rhs.YEAR;
   }
 
-  bool operator>(const DATE& rhs) const { return rhs < this; }
+  bool operator>(const DATE& rhs) const { return rhs < *this; }
 
   bool operator==(const DATE& rhs) const {
     if (this->YEAR == rhs.YEAR) {
@@ -82,9 +84,9 @@ struct DATE {
     return false;
   }
 
-  bool operator=<(const DATE& rhs) const { return (this == rhs || this < rhs); }
+  bool operator<=(const DATE& rhs) const { return (*this == rhs || *this < rhs); }
 
-  bool operator>=(const DATE& rhs) const { return (this == rhs || this > rhs); }
+  bool operator>=(const DATE& rhs) const { return (*this == rhs || *this > rhs); }
 };
 
 // Time
@@ -102,7 +104,7 @@ struct TIME {
       return this->HOUR < rhs.HOUR;
   }
 
-  bool operator>(const TIME& rhs) const { return rhs < this; }
+  bool operator>(const TIME& rhs) const { return rhs < *this; }
 
   bool operator==(const TIME& rhs) const {
     if (this->HOUR == rhs.HOUR) {
@@ -118,9 +120,9 @@ struct TIME {
     return false;
   }
 
-  bool operator=<(const TIME& rhs) const { return (this == rhs || this < rhs); }
+  bool operator<=(const TIME& rhs) const { return (*this == rhs || *this < rhs); }
 
-  bool operator>=(const TIME& rhs) const { return (this == rhs || this > rhs); }
+  bool operator>=(const TIME& rhs) const { return (*this == rhs || *this > rhs); }
 };
 
 // Timestamp
@@ -131,15 +133,15 @@ struct TIMESTAMP {
     if (this->date < rhs.date) return true;
     return this->time < rhs.time;
   }
-  bool operator>(const TIMESTAMP& rhs) const { return rhs < this; }
+  bool operator>(const TIMESTAMP& rhs) const { return rhs < *this; }
   bool operator==(const TIMESTAMP& rhs) const {
     return (this->date == rhs.date) && (this->time == rhs.time);
   }
-  bool operator=<(const TIMESTAMP& rhs) const {
-    return (this == rhs || this < rhs);
+  bool operator<=(const TIMESTAMP& rhs) const {
+    return (*this == rhs || *this < rhs);
   }
   bool operator>=(const TIMESTAMP& rhs) const {
-    return (this == rhs || this > rhs);
+    return (*this == rhs || *this > rhs);
   }
 };
 
@@ -164,7 +166,7 @@ class SQLType {
 };
 
 // Define a tuple
-typedef std::vector<std::vector<SQLType> > tuple;
+typedef std::vector<SQLType> Tuple;
 
 
 #endif  // SQLTYPES_H_
