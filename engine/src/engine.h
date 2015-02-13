@@ -33,7 +33,7 @@ class Engine {
   // Get All Tables
   std::vector<Relation> open_tables() { return open_tables_; }
   // Get Tuple
-  Tuple get_table(std::string TableName, int id);
+  Tuple get_tuple(std::string TableName, int id);
 
   // Setters
   // Set Table
@@ -49,8 +49,7 @@ class Engine {
 
   // Create Table
   // Returns 0 on success, non-zero on failure
-  int createTable(std::string TableName, std::vector<Attribute> attributes,
-                  std::vector<Attribute> primarykeys);
+  Relation createNewTable(std::string TableName, std::vector<Column<std::string> > attributes);
 
   // Update Table
 
@@ -67,7 +66,7 @@ class Engine {
 
   // Write table to filename TableName.db
   // Returns 0 on success, non-zero on failure
-  int writeTable(std::string TableName);
+  int writeTable(Relation relation);
   // Delete File Descriptor and Write table to filename TableName.db
   // Returns 0 on success, non-zero on failure
   int closeTable(std::string TableName);
@@ -75,6 +74,13 @@ class Engine {
   int exitDatabase();
 
   // Queries
+
+  // Rename
+  // Return 0 on success, non-zero on failure
+  int rename_table(std::string TableName, std::string newname);
+  // Rename Attribute attribute to newname in TableName
+  int rename_attribute(std::string TableName, Attribute attribute,
+                       std::string newname);
 
   // Select
   // Select in TableName where Function takes a tuple and returns a bool,
@@ -87,12 +93,6 @@ class Engine {
   std::vector<Tuple> project(std::string TableName,
                              std::vector<Attribute> attributes);
 
-  // Rename
-  // Return 0 on success, non-zero on failure
-  int rename_table(std::string TableName, std::string newname);
-  // Rename Attribute attribute to newname in TableName
-  int rename_attribute(std::string TableName, Attribute attribute,
-                       std::string newname);
 
   // Set Union
   // if Union-Compatible

@@ -166,7 +166,7 @@ class SQLType {
 };
 
 // Define a tuple
-typedef std::vector<SQLType> Tuple;
+typedef std::vector<std::string> Tuple;
 
 
 #endif  // SQLTYPES_H_

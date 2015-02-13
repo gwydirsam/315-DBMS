@@ -1,4 +1,9 @@
 #include "engine.h"
+
+#include <iostream>
+#include <fstream>
+
+#include "column.h"
 #include "relation.h"
 
 /* **********************************************************
@@ -42,54 +47,78 @@
    **********************************************************
 */
 
-int find_table(std::string TableName) {
+int Engine::find_table(std::string TableName) {
   int i = 0;
-  while (i < tables_.size()) {
-    if (TableName.compare(tables_.at(i).get_title())) return i;
+  while (i < open_tables_.size()) {
+    if (TableName.compare(open_tables_.at(i).title())) return i;
     i++;
   }
   return -1;
 }
 
-Relation get_table(std::string TableName) {
+Relation Engine::get_table(std::string TableName) {
   int i = find_table(TableName);
   if (i != -1)
-    return tables_.at(i);
+    return open_tables_.at(i);
   else {
     // Don't know how we want to handle not finding table
   }
 }
 
-int createTable(std::string TableName,
-                        std::vector<Attribute> attributes,
-                        std::vector<Attribute> primarykeys) {
-  Relation table(TableName, attributes, primarykeys);
-  openTable(table);
-  // TODO This should return success of constructor
-  if (find_table(TableName) != -1) return 0;
-  return -1;
+int Engine::openTable(std::string TableName) {
+  std::string line;
+  std::ifstream dbfile;
+  dbfile.open(TableName.append(".db"));
+  // Read into relation
+  dbfile >> line;
+  //
+  Relation table("DUMMY", {{"INVALID", "INVALID"}}, {{"INVALID", "INVALID"}});
+  open_tables_.push_back(table);
+  return (open_tables_.size() - 1);
 }
 
-int rename_table(std::string TableName, std::string newname) {
+void Engine::writeTable(Relation relation) {
+  std::ofstream dbfile;
+  dbfile.open(relation.title().append(".db"));
+  // Writeattributes into relation
+
+  // Columns seprated by commas
+  // Line:
+  // 0: relation.title()
+  // 1: relation.attributes()
+  // 2-infinity: relation.tuples() 
+  //
+  // write this
+}
+
+
+Relation Engine::createNewTable(std::string TableName,
+                                std::vector<Column> primarykeys) {
+  Relation table(TableName, attributes, primarykeys);
+  writeTable(table);
+  openTable(TableName);
+  return table;
+}
+
+int Engine::rename_table(std::string TableName, std::string newname) {
   int i = find_table(TableName);
   if (i != -1) {
-    tables_.at(i).set_title(newname);
+    open_tables_.at(i).title(newname);
     return 0;
   }
 
   return i;
 }
 
-int rename_attribute(std::string TableName, Attribute attribute,
+int Engine::rename_attribute(std::string TableName, Attribute attribute,
                              std::string newname) {
   int i = find_table(TableName);
   if (i != -1) {
-    int num_att = tables_.at(i).get_attributes().size();
+    int num_att = open_tables_.at(i).attributes().size();
     int w = 0;
     while (w < num_att) {
-      if (attribute.get_title().compare(
-              tables_.at(i).get_attribute(w).get_title())) {
-        tables_.at(i).get_attribute(w).set_title(newname);
+      if (attribute.title().compare(open_tables_.at(i).attribute(w).title())) {
+        open_tables_.at(i).attribute(w).title(newname);
         return 0;
       }
       w++;

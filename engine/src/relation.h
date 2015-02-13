@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 
-#include "attribute.h"
+#include "column.h"
 #include "sqltypes.h"
 
 // A Relation is our representation of a table
@@ -15,11 +15,11 @@
 class Relation {
  public:
   // Constructors
-  Relation(std::string title, std::vector<Attribute> attributes, std::vector<Attribute> primarykeys)
-      : title_(title), attributes_(attributes), primarykeys_(primarykeys){};
+  Relation(std::string title, std::vector<Column<std::string> > columns)
+      : title_(title), columns_(columns){};
 
   // Default Constructor
-  Relation() : title_("INVALID"), attributes_(), tuples_(), primarykeys_(){};
+  Relation() : title_("INVALID"), columns_(),{};
 
   // Destructors
   // Default Destructor
@@ -27,25 +27,29 @@ class Relation {
 
   // Getters
   std::string title() {return title_;}
-  std::vector<Attribute> attributes() {return attributes_;}
-  std::vector<Attribute> primarykeys() {return primarykeys_;}
-  Attribute attribute(int i) {return attributes_.at(i);}
-  Attribute primarykey(int i) {return primarykeys_.at(i);}
+  // TODO: redefine
+  //  std::vector<Attribute> attributes() {return attributes_;}
+  //  std::vector<Attribute> primarykeys() {return primarykeys_;}
+  //  Attribute attribute(int i) {return attributes_.at(i);}
+  //  Attribute primarykey(int i) {return primarykeys_.at(i);}
+
+  std::vector<std::string> get_row(int i);
 
   // Setters
   void title(std::string title) {title_ = title;}
   //not sure if these are right...
   //you know for deep copy
+
   void attributes(std::vector<Attribute> attributes) {attributes_ = attributes;}
-  void primarykeys(std::vector<Attribute> primarykeys) {primarykeys_ = primarykeys;}
+
+  // Need to redefine for columns
+  //void primarykeys(std::vector<Attribute> primarykeys) {primarykeys_ = primarykeys;}
 
  private:
   // Data Structures
   // File Descriptor
   std::string title_;
-  std::vector<Attribute> attributes_;
-  std::vector<Attribute> primarykeys_;
-  std::vector<Tuple> tuples_;
+  std::vector<Column<std::string> > columns_;
 };
 
 #endif  // RELATION_H_
