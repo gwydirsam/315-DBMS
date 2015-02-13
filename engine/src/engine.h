@@ -5,17 +5,15 @@
 #define ENGINE_H_
 
 #include <vector>
-#include <utility>
 #include <functional>
 
 #include "attribute.h"
+#include "sqltypes.h"
+#include "relation.h"
 
 class Engine {
  public:
   // Constructors
-  // Later
-  //Engine(Parser parser) : parser_(parser) {}
-
   // Default Constructor
   Engine(){};
 
@@ -23,16 +21,19 @@ class Engine {
   // Default Destructor
   ~Engine(){};
 
-  // Finds Table
-  //Right now returns the index of where the table is. Returns -1 if failed to find.
+  // Find Table
+  // Right now returns the index of where the table is. Returns -1 if failed to
+  // find.
+  // TODO: Should this look in only open_tables? or should it search the db files?
   int find_table(std::string TableName);
+
   // Getters
   // Get Table
   Relation get_table(std::string TableName);
   // Get All Tables
-  std::vector<Relation> get_all_tables();
+  std::vector<Relation> open_tables() { return open_tables_; }
   // Get Tuple
-  std::tuple table(std::string TableName, int id);
+  Tuple get_table(std::string TableName, int id);
 
   // Setters
   // Set Table
@@ -41,23 +42,24 @@ class Engine {
   // Commands
   // Open
   int openTable(std::string TableName);
-  
+
   // Show
   // Show Table
   int showTable(std::string TableName);
 
   // Create Table
   // Returns 0 on success, non-zero on failure
-  int createTable(std::string TableName, std::vector<Attribute> attributes, std::vector<Attribute> primarykeys);
+  int createTable(std::string TableName, std::vector<Attribute> attributes,
+                  std::vector<Attribute> primarykeys);
 
   // Update Table
 
   // Insert Tuple into Table
-  int insertTuple(std::string TableName, std::tuple);
+  int insertTuple(std::string TableName, Tuple tuple);
   // Drop Table
   int dropTable(std::string TableName);
   // Delete Tuple in Table
-  int dropTuple(std::string TableName, std::tuple);
+  int dropTuple(std::string TableName, Tuple tuple);
   // Exec DML
   // Returns 0 on success, non-zero on failure
   // DML string is a valid string based on the grammar
@@ -77,32 +79,35 @@ class Engine {
   // Select
   // Select in TableName where Function takes a tuple and returns a bool,
   // return vector of tuples where function is true
-  std::vector<std::tuple> select(std::string TableName, std::function<bool(std::Tuple)> function);
+  std::vector<Tuple> select(std::string TableName,
+                            std::function<bool(Tuple)> function);
 
   // Project
   // return vector of tuples from tablename with only Attributes attributes
-  std::vector<std::tuple> project(std::string TableName, std::vector<Attribute> attributes);
+  std::vector<Tuple> project(std::string TableName,
+                             std::vector<Attribute> attributes);
 
   // Rename
   // Return 0 on success, non-zero on failure
   int rename_table(std::string TableName, std::string newname);
   // Rename Attribute attribute to newname in TableName
-  int rename_attribute(std::string TableName, Attribute attribute, std::string newname);
+  int rename_attribute(std::string TableName, Attribute attribute,
+                       std::string newname);
 
   // Set Union
   // if Union-Compatible
-  std::vector<std::tuple> setunion(std::string TableName1, std::string TableName2);
+  Relation setunion(std::string TableName1, std::string TableName2);
 
   // Set Difference
   // if Union-Compatible
-  std::vector<std::tuple> setdifference(std::string TableName1, std::string TableName2);
+  Relation setdifference(std::string TableName1, std::string TableName2);
 
   // Set Cross Product
-  std::vector<std::tuple> setcrossproduct(std::string TableName1, std::string TableName2);
+  Relation setcrossproduct(std::string TableName1, std::string TableName2);
 
  private:
-  //  Parser parser_;
   // Data Structures
+  std::vector<Relation> open_tables_;
 };
 
 #endif  // ENGINE_H_
