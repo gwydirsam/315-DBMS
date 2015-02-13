@@ -5,6 +5,7 @@
 #define SQLTYPES_H_
 
 #include <array>
+#include <string>
 
 // Here we define all the sql data types
 // Everything is in namespace SQL, so VARCHAR can be referenced as
@@ -55,43 +56,34 @@ struct DATE {
   INTEGER MONTH;
   INTEGER DAY;
   bool operator<(const DATE& rhs) const {
-      if(this->YEAR == rhs.YEAR) {
-			if(this->MONTH == rhs.MONTH) {
-				return this->DAY < rhs.DAY;
-			}
-			else
-				return this->MONTH < rhs.MONTH;
-	  }
-	  else 
-		return this->YEAR < rhs.YEAR; 
+    if (this->YEAR == rhs.YEAR) {
+      if (this->MONTH == rhs.MONTH) {
+        return this->DAY < rhs.DAY;
+      } else
+        return this->MONTH < rhs.MONTH;
+    } else
+      return this->YEAR < rhs.YEAR;
   }
-  
-  bool operator>(const DATE& rhs) const {
-	return rhs < this;
-  }
-  
+
+  bool operator>(const DATE& rhs) const { return rhs < this; }
+
   bool operator==(const DATE& rhs) const {
-		if(this->YEAR == rhs.YEAR) {
-			if(this->MONTH == rhs.MONTH) {
-				if(this->DAY == rhs.DAY)
-					return true;
-				else
-					return false;
-			}
-			else
-				return false;
-		}
-		
-	return false;
-	}
-	
-	bool operator=<(const DATE& rhs) const {
-		return (this == rhs || this < rhs);
-	}
-	
-	bool operator>=(const DATE& rhs) const {
-		return (this == rhs || this > rhs);
-	}
+    if (this->YEAR == rhs.YEAR) {
+      if (this->MONTH == rhs.MONTH) {
+        if (this->DAY == rhs.DAY)
+          return true;
+        else
+          return false;
+      } else
+        return false;
+    }
+
+    return false;
+  }
+
+  bool operator=<(const DATE& rhs) const { return (this == rhs || this < rhs); }
+
+  bool operator>=(const DATE& rhs) const { return (this == rhs || this > rhs); }
 };
 
 // Time
@@ -100,43 +92,34 @@ struct TIME {
   INTEGER MINUTE;
   INTEGER SECOND;
   bool operator<(const TIME& rhs) const {
-      if(this->HOUR == rhs.HOUR) {
-			if(this->MINUTE == rhs.MINUTE) {
-				return this->SECOND < rhs.SECOND;
-			}
-			else
-				return this->MINUTE < rhs.MINUTE;
-	  }
-	  else 
-		return this->HOUR < rhs.HOUR; 
+    if (this->HOUR == rhs.HOUR) {
+      if (this->MINUTE == rhs.MINUTE) {
+        return this->SECOND < rhs.SECOND;
+      } else
+        return this->MINUTE < rhs.MINUTE;
+    } else
+      return this->HOUR < rhs.HOUR;
   }
-  
-  bool operator>(const TIME& rhs) const {
-	return rhs < this;
-  }
-  
+
+  bool operator>(const TIME& rhs) const { return rhs < this; }
+
   bool operator==(const TIME& rhs) const {
-		if(this->HOUR == rhs.HOUR) {
-			if(this->MINUTE == rhs.MINUTE) {
-				if(this->SECOND == rhs.SECOND)
-					return true;
-				else
-					return false;
-			}
-			else
-				return false;
-		}
-		
-	return false;
-	}
-	
-	bool operator=<(const TIME& rhs) const {
-		return (this == rhs || this < rhs);
-	}
-	
-	bool operator>=(const TIME& rhs) const {
-		return (this == rhs || this > rhs);
-	}
+    if (this->HOUR == rhs.HOUR) {
+      if (this->MINUTE == rhs.MINUTE) {
+        if (this->SECOND == rhs.SECOND)
+          return true;
+        else
+          return false;
+      } else
+        return false;
+    }
+
+    return false;
+  }
+
+  bool operator=<(const TIME& rhs) const { return (this == rhs || this < rhs); }
+
+  bool operator>=(const TIME& rhs) const { return (this == rhs || this > rhs); }
 };
 
 // Timestamp
@@ -144,21 +127,18 @@ struct TIMESTAMP {
   DATE date;
   TIME time;
   bool operator<(const TIMESTAMP& rhs) const {
-	if(this->date < rhs.date)
-		return true;
-	return this->time < rhs.time;
+    if (this->date < rhs.date) return true;
+    return this->time < rhs.time;
   }
-  bool operator>(const TIMESTAMP& rhs) const {
-	return rhs < this;
-  }
+  bool operator>(const TIMESTAMP& rhs) const { return rhs < this; }
   bool operator==(const TIMESTAMP& rhs) const {
-	return (this->date == rhs.date) && (this->time == rhs.time);
+    return (this->date == rhs.date) && (this->time == rhs.time);
   }
   bool operator=<(const TIMESTAMP& rhs) const {
-	return (this == rhs || this < rhs);
+    return (this == rhs || this < rhs);
   }
   bool operator>=(const TIMESTAMP& rhs) const {
-	return (this == rhs || this > rhs);
+    return (this == rhs || this > rhs);
   }
 };
 
@@ -169,6 +149,17 @@ struct INTERVAL {
 
 // Invalid Type
 typedef int INVALIDTYPE;
-}
+}  // end namespace SQL
+
+class SQLType {
+ public:
+  SQLType(std::string type, std::string value) : type_(type), value_(value){};
+  // Default Constructor creates an invalid type
+  SQLType() : type_("INVALIDTYPE"), value_("INVALID"){};
+
+ private:
+  std::string type_;
+  std::string value_;
+};
 
 #endif  // SQLTYPES_H_
