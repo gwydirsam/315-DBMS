@@ -1,6 +1,42 @@
 #include "engine.h"
 #include "relation.h"
 
+/* **********************************************************
+   **********************************************************
+   ******************** What's not done *********************
+  
+   //could do if i knew what format we were going to read in / write out
+   int writeTable(std::string TableName);
+   int closeTable(std::string TableName);
+   int showTable(std::string TableName);
+   
+   **********************************************************
+   **********************************************************
+   ********************* IDK what to do *********************
+   
+   // Setters
+   // Set Table
+   // Set Tuple
+   //anything dealing with tuples is throwing me cause IDK what they are being used for at the moment.
+   
+   std::tuple table(std::string TableName, int id);
+   int insertTuple(std::string TableName, std::tuple);
+   int dropTable(std::string TableName);
+   int dropTuple(std::string TableName, std::tuple);
+   int execDML(std::string DML);
+   int exitDatabase();
+   std::vector<std::tuple> select(std::string TableName, std::function<bool(std::Tuple)> function);
+   std::vector<std::tuple> project(std::string TableName, std::vector<Attribute> attributes);
+   std::vector<std::tuple> setunion(std::string TableName1, std::string TableName2);
+   std::vector<std::tuple> setdifference(std::string TableName1, std::string TableName2);
+   std::vector<std::tuple> setcrossproduct(std::string TableName1, std::string TableName2);
+   
+   **********************************************************
+   **********************************************************
+   **********************************************************
+*/
+
+
 int engine::find_table(std::string TableName) {
 	int i = 0;
 	while(i < tables_.size()) {
