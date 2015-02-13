@@ -23,9 +23,14 @@ class Engine {
   // Default Destructor
   ~Engine(){};
 
+  // Finds Table
+  //Right now returns the index of where the table is. Returns -1 if failed to find.
+  int find_table(std::string TableName);
   // Getters
   // Get Table
-  std::vector<std::tuple> table(std::string TableName);
+  Relation get_table(std::string TableName);
+  // Get All Tables
+  std::vector<Relation> get_all_tables();
   // Get Tuple
   std::tuple table(std::string TableName, int id);
 
@@ -80,8 +85,9 @@ class Engine {
 
   // Rename
   // Return 0 on success, non-zero on failure
-  // Rename attribute attribute to newname in TableName
-  int rename(std::string TableName, Attribute attribute, std::string newname);
+  int rename_table(std::string TableName, std::string newname);
+  // Rename Attribute attribute to newname in TableName
+  int rename_attribute(std::string TableName, Attribute attribute, std::string newname);
 
   // Set Union
   // if Union-Compatible

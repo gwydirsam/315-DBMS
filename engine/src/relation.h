@@ -29,6 +29,8 @@ class Relation {
   std::string get_title() {return title_;}
   std::vector<Attribute> get_attributes() {return attributes_;}
   std::vector<Attribute> get_primarykeys() {return primarykeys_;}
+  Attribute get_attribute(int i) {return attributes_.at(i);}
+  Attribute get_primarykey(int i) {return primarykeys_.at(i);}
   // Setters
   void set_title(std::string title) {title_ = title;}
   //not sure if these are right...
