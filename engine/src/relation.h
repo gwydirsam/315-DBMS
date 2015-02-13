@@ -5,10 +5,10 @@
 #define RELATION_H_
 
 #include <vector>
-#include <utlity>
 #include <string>
 
 #include "attribute.h"
+#include "sqltypes.h"
 
 // A Relation is our representation of a table
 // A relation has a title and contains tuples with each column having a type
@@ -26,17 +26,18 @@ class Relation {
   ~Relation(){};
 
   // Getters
-  std::string get_title() {return title_;}
-  std::vector<Attribute> get_attributes() {return attributes_;}
-  std::vector<Attribute> get_primarykeys() {return primarykeys_;}
-  Attribute get_attribute(int i) {return attributes_.at(i);}
-  Attribute get_primarykey(int i) {return primarykeys_.at(i);}
+  std::string title() {return title_;}
+  std::vector<Attribute> attributes() {return attributes_;}
+  std::vector<Attribute> primarykeys() {return primarykeys_;}
+  Attribute attribute(int i) {return attributes_.at(i);}
+  Attribute primarykey(int i) {return primarykeys_.at(i);}
+
   // Setters
-  void set_title(std::string title) {title_ = title;}
+  void title(std::string title) {title_ = title;}
   //not sure if these are right...
   //you know for deep copy
-  void set_attributes(std::vector<Attribute> attributes) {attributes_(attributes);}
-  void set_primarykeys(std::vector<Attribute> primarykeys) {primarykeys_(primarykeys);}
+  void attributes(std::vector<Attribute> attributes) {attributes_ = attributes;}
+  void primarykeys(std::vector<Attribute> primarykeys) {primarykeys_ = primarykeys;}
 
  private:
   // Data Structures
@@ -44,9 +45,7 @@ class Relation {
   std::string title_;
   std::vector<Attribute> attributes_;
   std::vector<Attribute> primarykeys_;
-  //not sure where to add this to
-  //this was added during lab.
-  std::vector<SQLTypes> tuples_;
+  std::vector<Tuple> tuples_;
 };
 
 #endif  // RELATION_H_
