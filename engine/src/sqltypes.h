@@ -4,6 +4,7 @@
 #ifndef SQLTYPES_H_
 #define SQLTYPES_H_
 
+#include <vector>
 #include <array>
 #include <string>
 
@@ -161,5 +162,9 @@ class SQLType {
   std::string type_;
   std::string value_;
 };
+
+// Define a tuple
+typedef std::vector<std::vector<SQLType> > tuple;
+
 
 #endif  // SQLTYPES_H_
