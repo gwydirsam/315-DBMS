@@ -49,10 +49,10 @@ class Engine {
   // Show
   // Show Table
   int showTable(std::string TableName);
+  int showTable(Relation Table)
 
   // Create Table
-  // Returns 0 on success, non-zero on failure
-  Relation createNewTable(std::string TableName, std::vector<Column<std::string> > attributes);
+  Relation createNewTable(std::string TableName, std::vector< Column<std::string> > columns);
 
   // Update Table
 

@@ -13,7 +13,6 @@
    //could do if i knew what format we were going to read in / write out
    int writeTable(std::string TableName);
    int closeTable(std::string TableName);
-   int showTable(std::string TableName);
 
    **********************************************************
    **********************************************************
@@ -110,30 +109,44 @@ int Engine::openTable(std::string TableName) {
   return (open_tables_.size() - 1);
 }
 
-void Engine::writeTable(Relation relation) {
-  std::ofstream dbfile;
-  dbfile.open(relation.title().append(".db"));
-  // Writeattributes into relation
-
-  // Columns seprated by commas
-  // Line:
-  // 0: relation.title()
-  // 1: relation.attributes()
-  // 2-infinity: relation.tuples() 
-  //
-  // write this
+int Engine::showTable(std::string TableName) {
+  int i = find_table(TableName);
+  if(i != -1) {
+    int num_com = open_tables_.at(i).columns().size();
+	int num_entries = open_tables_.at(i).columns().at(0).entries().size();
+    cout << "Contents of Table " << TableName << "\n";
+	//Prints out columns
+	for(int c = 0; c < num_com; c++) {
+	  cout << "" << open_tables_.at(i).columns().at(c) << "\t";
+	}
+	cout << "\n";
+	//Iterates through rows
+	for(int r = 0; r < num_entries; r++) {
+	  //Iterates through columns to print row r.
+	  for(int c = 0; c < num_com; c++) {
+	    cout << open_tables_.at(i).columns().at(c).entries().at(r) << "\t";
+	  }
+	  cout << "\n";
+	}
+	//Success
+	return 0;
+  }
+  //Couldn't find table
+  return -1;
 }
 
+int Engine::showTable(Relation Table) {
+  return showTable(Table.title());
+}
 
-Relation Engine::createNewTable(std::string TableName,
-                                std::vector<Column> primarykeys) {
-  Relation table(TableName, attributes, primarykeys);
+Relation Engine::createNewTable(std::string TableName, std::vector< Column<std::string> > columns) {
+  Relation table(TableName, columns);
   writeTable(table);
   openTable(TableName);
   return table;
 }
 
-int  Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) {
+int Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) {
   int i = find_table(TableName);
   if(i != -1) {
 	if(open_tables_.at(i).columns().size() < tuple.size()) {
@@ -211,6 +224,22 @@ int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
   return -1;
 }
 
+void Engine::writeTable(Relation relation) {
+  std::ofstream dbfile;
+  dbfile.open(relation.title().append(".db"));
+  // Writeattributes into relation
+
+  // Columns separated by commas
+  // End of Line denoted by "~*"
+  // Line:
+  // 0: relation.title()
+  // 1: relation.attributes()
+  // 2-infinity: relation.tuples() 
+  //
+  // write this
+}
+
+// Does this need to delete old table file and make a new one???
 int Engine::rename_table(std::string TableName, std::string newname) {
   int i = find_table(TableName);
   if (i != -1) {
