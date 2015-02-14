@@ -22,7 +22,7 @@ class Relation {
   //Relation(Relation& Table)
   //: title_(Table.title()), columns_(Table.columns()){};
   // Default Constructor
-  Relation() : title_("INVALID"), columns_(), {};
+  Relation() : title_("INVALID"), columns_(){};
 
   // Destructors
   // Default Destructor
