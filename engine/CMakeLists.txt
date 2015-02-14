@@ -6,7 +6,10 @@ set(PROJECT_NAME "dbengine")
 project(${PROJECT_NAME} CXX)
 
 # set compilation variables
-set(CXXFLAGS "-std=c++1y -stdlib=libc++ -Wall -Wextra")
+# only for clang
+#set(CXXFLAGS "-std=c++1y -stdlib=libc++ -Wall -Wextra")
+# for g++
+set(CXXFLAGS "-std=c++1y -Wall -Wextra")
 set(CXXFLAGS_RELEASE "${CXXFLAGS} -O3 -DNDEBUG")
 set(CXXFLAGS_DEBUG "${CXXFLAGS} -g -O0 -DDEBUG")
 
