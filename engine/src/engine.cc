@@ -12,7 +12,6 @@
    **********************************************************
    ******************** What's not done *********************
 
-   //could do if i knew what format we were going to read in / write out
    int writeTable(std::string TableName);
    int closeTable(std::string TableName);
 
@@ -53,7 +52,18 @@ std::vector<Relation>::iterator Engine::find_table(std::string TableName) {
 }
 
 int Engine::find_table_index(std::string TableName) {
-  return std::distance(std::begin(open_tables_), find_table(TableName));
+  int i = std::distance(std::begin(open_tables_), find_table(TableName));
+  if(i == open_tables_.size())
+  {
+	if(TableName == open_tables_.at(i-1).title()) {
+	  // The one found was last one.
+	  return i-1;
+	}
+	//Couldn't find table
+	return -1;
+  }
+  // Found the table at index i-1
+  return i - 1; 
 }
 
 Relation Engine::get_table(std::string TableName) {
@@ -137,12 +147,15 @@ int Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) {
   return -1;
 }
 
-// Fix for iterators
 int Engine::dropTable(std::string TableName) {
-  auto i = find_table(TableName);
+  int i = find_table_index(TableName);
+  if(i != -1) {
   open_tables_.erase(i);
   // Success
   return 0;
+  }
+  // Couldn't find Table
+  return -1;
 }
 int Engine::dropTable(Relation Table) { return dropTable(Table.title()); }
 
@@ -211,5 +224,6 @@ int Engine::rename_column(std::string TableName, std::string ColumnName,
                           std::string newname) {
   open_tables_.at(find_table_index(TableName))
       .rename_column(ColumnName, newname);
+  //Succuss
   return 0;
 }
