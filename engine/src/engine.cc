@@ -104,7 +104,7 @@ int Engine::openTable(std::string TableName) {
   // Read into relation
   dbfile >> line;
   //
-  Relation table("DUMMY", {{"INVALID", "INVALID"}}, {{"INVALID", "INVALID"}});
+  Relation table;
   open_tables_.push_back(table);
   return (open_tables_.size() - 1);
 }
