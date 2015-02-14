@@ -18,7 +18,9 @@ class Relation {
   Relation(std::string title) : title_(title), columns_(){};
   Relation(std::string title, std::vector<Column<std::string> > columns)
       : title_(title), columns_(columns){};
-  Relation(Relation Table) : title_(Table.title()), columns_(Table.columns()){};
+  // Shouldn't need to define our own copy constructor
+  //Relation(Relation& Table)
+  //: title_(Table.title()), columns_(Table.columns()){};
   // Default Constructor
   Relation() : title_("INVALID"), columns_(), {};
 

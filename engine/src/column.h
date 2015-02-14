@@ -20,11 +20,12 @@ class Column {
         type_(type),
         entries_(entries),
         primary_key_(primary_key){};
-  Column(Column& column)
-      : title_(column.title()),
-        type_(column.type()),
-        entries_(column.entries()),
-        primary_key_(column.primary_key()){};
+  // Shouldn't need to define our own copy constructor
+  //Column(Column& column)
+  //    : title_(column.title()),
+  //      type_(column.type()),
+  //      entries_(column.entries()),
+  //      primary_key_(column.primary_key()){};
   // Default Constructor
   Column() : title_("INVALID"), type_(), primary_key_(false), entries_(){};
 
