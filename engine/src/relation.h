@@ -15,9 +15,12 @@
 class Relation {
  public:
   // Constructors
+  Relation(std::string title)
+      : title_(title), columns_(){};
   Relation(std::string title, std::vector<Column<std::string> > columns)
       : title_(title), columns_(columns){};
-
+  Relation(Relation Table)
+      : title_(Table.title()), columns_(Table.columns()){};
   // Default Constructor
   Relation() : title_("INVALID"), columns_(),{};
 
@@ -40,8 +43,7 @@ class Relation {
   void title(std::string title) {title_ = title;}
   //not sure if these are right...
   //you know for deep copy
-
-  void attributes(std::vector<Attribute> attributes) {attributes_ = attributes;}
+  void columns(std::vector< Column<std::string> > columns) {columns_ = columns;}
 
   // Need to redefine for columns
   //void primarykeys(std::vector<Attribute> primarykeys) {primarykeys_ = primarykeys;}
@@ -50,7 +52,7 @@ class Relation {
   // Data Structures
   // File Descriptor
   std::string title_;
-  std::vector<Column<std::string> > columns_;
+  std::vector< Column<std::string> > columns_;
 };
 
 #endif  // RELATION_H_

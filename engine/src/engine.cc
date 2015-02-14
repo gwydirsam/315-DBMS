@@ -20,7 +20,6 @@
    ********************* IDK what to do *********************
 
    // Setters
-   // Set Table
    // Set Tuple
    //anything dealing with tuples is throwing me cause IDK what they are being
    used for at the moment.
@@ -83,8 +82,6 @@ int Engine::find_column(Relation Table, std::string ColumnName) {
 	}
 	//Couldn't find Column
 	return -2;
-  
-
 }
 
 Relation Engine::get_table(std::string TableName) {
@@ -94,6 +91,11 @@ Relation Engine::get_table(std::string TableName) {
   else {
     // Don't know how we want to handle not finding table
   }
+}
+
+void Engine::Table(std::string TableName, Relation Table) {
+  int i = find_table(TableName);
+  open_tables_.at(i) = Relation(Table);
 }
 
 int Engine::openTable(std::string TableName) {

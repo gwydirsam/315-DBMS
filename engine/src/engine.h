@@ -21,12 +21,14 @@ class Engine {
   // Default Destructor
   ~Engine(){};
 
+  // Finders
   // Find Table
-  // Right now returns the index of where the table is. Returns -1 if failed to
-  // find.
-  // TODO: Should this look in only open_tables? or should it search the db files?
+  // Returns the index of where the table is. Returns -1 if failed to find.
   int find_table(std::string TableName);
-
+  // Find Column
+  int find_column(std::string TableName, std::string ColumnName);
+  int find_column(Relation Table, std::string ColumnName);
+  
   // Getters
   // Get Table
   Relation get_table(std::string TableName);
@@ -37,6 +39,7 @@ class Engine {
 
   // Setters
   // Set Table
+  void Table(std::string TableName, Relation Table);
   // Set Tuple
 
   // Commands
