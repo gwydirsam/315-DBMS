@@ -117,7 +117,7 @@ int Engine::showTable(std::string TableName) {
     std::cout << "Contents of Table " << TableName << "\n";
     // Prints out columns
     for (int c = 0; c < num_com; c++) {
-      std::cout << "" << open_tables_.at(i).columns().at(c) << "\t";
+      std::cout << open_tables_.at(i).columns().at(c) << "\t";
     }
     std::cout << "\n";
     // Iterates through rows
@@ -158,14 +158,14 @@ int Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) {
       return -4;
     } else {
       for (int c = 0; c < tuple.size(); c++) {
-        open_tables_.at(i).columns().at(c).entries().push_back(tuples.at(c));
+        open_tables_.at(i).columns().at(c).entries().push_back(tuple.at(c));
       }
       // Success
       return 0;
     }
   }
   // Couldn't find Table
-  return -1
+  return -1;
 }
 
 int Engine::dropTable(std::string TableName) {

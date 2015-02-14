@@ -22,7 +22,7 @@ class Column {
         entries_(entries),
         primary_key_(primary_key){};
   // Shouldn't need to define our own copy constructor
-  //Column(Column& column)
+  // Column(Column& column)
   //    : title_(column.title()),
   //      type_(column.type()),
   //      entries_(column.entries()),
@@ -37,7 +37,7 @@ class Column {
   // Getters
   std::string title() { return title_; }
   T type() { return type_; }
-  std::vector<T>& entries() { return entries_; }
+  std::vector<T> entries() { return entries_; }
   bool primary_key() { return primary_key; }
   int size() { return entries_.size(); }
 
