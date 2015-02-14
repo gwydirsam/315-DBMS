@@ -51,7 +51,6 @@ class Column {
   const bool& primary_key() const { return primary_key; }
   const int& size() const { return entries_.size(); }
 
-
   // Setters
   void type(T type) { type_ = type; }
   void title(std::string title) { title_ = title; }
@@ -60,7 +59,9 @@ class Column {
 
   // Functions
   // rows start at 0
-  typename std::vector<T>::iterator erase(int row) { return entries_.erase(std::begin(entries_) + row); }
+  typename std::vector<T>::iterator erase(int row) {
+    return entries_.erase(std::begin(entries_) + row);
+  }
   void clear() { entries_.clear(); }
 
   // Member Operators
@@ -76,7 +77,7 @@ class Column {
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const Column<T>& column) {
-  for (const T &entry : column.entries()) {
+  for (const T& entry : column.entries()) {
     os << entry << std::endl;
   }
   return os;
