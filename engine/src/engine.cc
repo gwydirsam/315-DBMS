@@ -27,7 +27,6 @@
 
    std::tuple table(std::string TableName, int id);
    int dropTable(std::string TableName);
-   int dropTuple(std::string TableName, std::tuple);
    int execDML(std::string DML);
    int exitDatabase();
    std::vector<std::tuple> select(std::string TableName,
@@ -52,7 +51,41 @@ int Engine::find_table(std::string TableName) {
     if (TableName.compare(open_tables_.at(i).title())) return i;
     i++;
   }
+  //Couldn't find Table
   return -1;
+}
+
+int Engine::find_column(std::string TableName, std::string ColumnName) {
+  int i = find_table(TableName);
+  if(i != -1) {
+    int num_com = open_tables_.at(i).columns().size();
+	int c = 0;
+	while (c < num_com) {
+	  if (ColumnName.compare(open_tables_.at(i).columns().at(c).title())) {
+	    return c;
+	  }
+      c++; 
+	}
+	//Couldn't find Column
+	return -2;
+  }
+	//Couldn't find Table
+	return -1;
+}
+
+int Engine::find_column(Relation Table, std::string ColumnName) {
+    int num_com = Table.columns().size();
+	int c = 0;
+	while (c < num_com) {
+	  if (ColumnName.compare(Table.columns().at(c).title())) {
+	    return c;
+	  }
+      c++; 
+	}
+	//Couldn't find Column
+	return -2;
+  
+
 }
 
 Relation Engine::get_table(std::string TableName) {
@@ -99,7 +132,7 @@ Relation Engine::createNewTable(std::string TableName,
   return table;
 }
 
-int insertTuple(std::string TableName, std::vector<std::string> tuple) {
+int  Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) {
   int i = find_table(TableName);
   if(i != -1) {
 	if(open_tables_.at(i).columns().size() < tuple.size()) {
@@ -116,37 +149,76 @@ int insertTuple(std::string TableName, std::vector<std::string> tuple) {
 		for(int c = 0; c < tuple.size(); c++) {
 			open_tables_.at(i).columns().at(c).entries().push_back( tuples.at(c) );
 		}
-		
+		//Success
 		return 0;
 	}
   }
+  //Couldn't find Table
   return -1
+}
+
+int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
+  int i = find_table(TableName);
+  bool equal = false;
+  if(i != -1) {
+    int num_entries = open_tables_.at(i).columns().at(0).entries().size();
+	int num_com = open_tables_.at(i).columns().size();
+	int r = 0;
+	//iterates through rows
+	while (r < num_entries) {
+	  int c = 0;
+	  //iterates through columns
+	  while(c < num_com) {
+	    if (tuple.at(c).compare(open_tables_.at(i).columns().at(c).entries().at(r))) {
+	      c++;
+		  equal = true;
+	    }
+	    else {
+		  c = num_com;
+		  equal = false;
+	    }
+	  }
+	  if(equal) {
+	    int d = 0;
+		while(d < open_tables_.at(i).columns().size()) {
+		  open_tables_.at(i).columns().at(d).entries().erase(r);
+		}
+		//Success
+		return 0;
+	  }
+      c++; 
+	}
+	//Couldn't find the row to delete
+	return -10;
+  } 
+  //Couldn't find Table
+  return -1;
 }
 
 int Engine::rename_table(std::string TableName, std::string newname) {
   int i = find_table(TableName);
   if (i != -1) {
     open_tables_.at(i).title(newname);
-    return 0;
+    //Success
+	return 0;
   }
-
-  return i;
+  //Couldn't find Table
+  return -1;
 }
 
-int Engine::rename_attribute(std::string TableName, Attribute attribute,
-                             std::string newname) {
+int Engine::rename_column(std::string TableName, Column<std::string> Column,
+														std::string newname) {
   int i = find_table(TableName);
-  if (i != -1) {
-    int num_att = open_tables_.at(i).attributes().size();
-    int w = 0;
-    while (w < num_att) {
-      if (attribute.title().compare(open_tables_.at(i).attribute(w).title())) {
-        open_tables_.at(i).attribute(w).title(newname);
-        return 0;
-      }
-      w++;
-    }
+  if(i != -1) {
+  
+    int c = find_column( open_tables_.at(i), Column.title() );
+	if(c != -2) {
+      open_tables_.at(i).columns().at(c).title(newname);
+	  //Success
+	  return 0;
+	}
+	return -2;
   }
-
+  
   return -1;
 }

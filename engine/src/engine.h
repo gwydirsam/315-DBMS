@@ -57,8 +57,9 @@ class Engine {
   int insertTuple(std::string TableName, std::vector<std::string> tuple);
   // Drop Table
   int dropTable(std::string TableName);
+  int dropTable(Relation Table);
   // Delete Tuple in Table
-  int dropTuple(std::string TableName, Tuple tuple);
+  int dropTuple(std::string TableName, std::vector<std::string> tuple);
   // Exec DML
   // Returns 0 on success, non-zero on failure
   // DML string is a valid string based on the grammar
