@@ -114,19 +114,19 @@ int Engine::showTable(std::string TableName) {
   if (i != -1) {
     int num_com = open_tables_.at(i).columns().size();
     int num_entries = open_tables_.at(i).columns().at(0).entries().size();
-    cout << "Contents of Table " << TableName << "\n";
+    std::cout << "Contents of Table " << TableName << "\n";
     // Prints out columns
     for (int c = 0; c < num_com; c++) {
-      cout << "" << open_tables_.at(i).columns().at(c) << "\t";
+      std::cout << "" << open_tables_.at(i).columns().at(c) << "\t";
     }
-    cout << "\n";
+    std::cout << "\n";
     // Iterates through rows
     for (int r = 0; r < num_entries; r++) {
       // Iterates through columns to print row r.
       for (int c = 0; c < num_com; c++) {
-        cout << open_tables_.at(i).columns().at(c).entries().at(r) << "\t";
+        std::cout << open_tables_.at(i).columns().at(c).entries().at(r) << "\t";
       }
-      cout << "\n";
+      std::cout << "\n";
     }
     // Success
     return 0;
