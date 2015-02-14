@@ -26,7 +26,6 @@
    used for at the moment.
 
    std::tuple table(std::string TableName, int id);
-   int dropTable(std::string TableName);
    int execDML(std::string DML);
    int exitDatabase();
    std::vector<std::tuple> select(std::string TableName,
@@ -136,13 +135,13 @@ int  Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) 
   int i = find_table(TableName);
   if(i != -1) {
 	if(open_tables_.at(i).columns().size() < tuple.size()) {
-		//Error -2 tuple row is larger than number of columns
-		return -2;
+		//Error -3 tuple row is larger than number of columns
+		return -3;
 	}
 	else if(open_tables_.at(i).columns().size() > tuple.size()) {
-		//Error -3 tuple row is smaller than number of columns
+		//Error -4 tuple row is smaller than number of columns
 		//This may be changed later where it adds the default value to the columns with no value.
-		return -3;
+		return -4;
 	}
 	else {
 		
@@ -155,6 +154,20 @@ int  Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) 
   }
   //Couldn't find Table
   return -1
+}
+
+int Engine::dropTable(std::string TableName) {
+    int i = find_table(TableName);
+	if(i != -1) {
+	  open_tables_.erase(i);
+	  //Success
+	  return 0;
+	}
+	//Couldn't find Table
+	return -1;
+}
+int Engine::dropTable(Relation Table) {
+  return dropTable(Table.title());
 }
 
 int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
@@ -180,6 +193,7 @@ int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
 	  }
 	  if(equal) {
 	    int d = 0;
+		//iterates through columns to delete entries in row r
 		while(d < open_tables_.at(i).columns().size()) {
 		  open_tables_.at(i).columns().at(d).entries().erase(r);
 		}
@@ -217,8 +231,9 @@ int Engine::rename_column(std::string TableName, Column<std::string> Column,
 	  //Success
 	  return 0;
 	}
+	//Couldn't find Column
 	return -2;
   }
-  
+  //Couldn't find Table
   return -1;
 }
