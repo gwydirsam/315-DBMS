@@ -27,6 +27,7 @@ class Relation {
 
   // Getters
   std::string title() {return title_;}
+  std::vector< Column<std::string> > columns() {return columns_;}
   // TODO: redefine
   //  std::vector<Attribute> attributes() {return attributes_;}
   //  std::vector<Attribute> primarykeys() {return primarykeys_;}

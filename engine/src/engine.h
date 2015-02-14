@@ -54,7 +54,7 @@ class Engine {
   // Update Table
 
   // Insert Tuple into Table
-  int insertTuple(std::string TableName, Tuple tuple);
+  int insertTuple(std::string TableName, std::vector<std::string> tuple);
   // Drop Table
   int dropTable(std::string TableName);
   // Delete Tuple in Table

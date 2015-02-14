@@ -26,7 +26,6 @@
    used for at the moment.
 
    std::tuple table(std::string TableName, int id);
-   int insertTuple(std::string TableName, std::tuple);
    int dropTable(std::string TableName);
    int dropTuple(std::string TableName, std::tuple);
    int execDML(std::string DML);
@@ -98,6 +97,30 @@ Relation Engine::createNewTable(std::string TableName,
   writeTable(table);
   openTable(TableName);
   return table;
+}
+
+int insertTuple(std::string TableName, std::vector<std::string> tuple) {
+  int i = find_table(TableName);
+  if(i != -1) {
+	if(open_tables_.at(i).columns().size() < tuple.size()) {
+		//Error -2 tuple row is larger than number of columns
+		return -2;
+	}
+	else if(open_tables_.at(i).columns().size() > tuple.size()) {
+		//Error -3 tuple row is smaller than number of columns
+		//This may be changed later where it adds the default value to the columns with no value.
+		return -3;
+	}
+	else {
+		
+		for(int c = 0; c < tuple.size(); c++) {
+			open_tables_.at(i).columns().at(c).entries().push_back( tuples.at(c) );
+		}
+		
+		return 0;
+	}
+  }
+  return -1
 }
 
 int Engine::rename_table(std::string TableName, std::string newname) {
