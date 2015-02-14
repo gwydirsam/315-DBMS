@@ -4,6 +4,7 @@
 #ifndef COLUMN_H_
 #define COLUMN_H_
 
+#include <iostream>
 #include <vector>
 #include <string>
 
@@ -45,6 +46,9 @@ class Column {
   void entries(std::vector<T> entries) { entries_ = entries; }
   void primary_key(bool primary_key) { primary_key_ = primary_key; }
 
+  // Operators
+  friend std::ostream &operator<<(std::ostream &os, const Column<T> &column);
+
  private:
   // Data Structures
   std::string title_;
@@ -53,5 +57,13 @@ class Column {
   bool primary_key_;
   std::vector<T> entries_;
 };
+
+template <typename T>
+std::ostream &operator<<(std::ostream &os, const Column<T> &column) {
+  for (const T &entry : column.size()) {
+    os << entry << std::endl;
+  }
+  return os;
+}
 
 #endif  // COLUMN_H_
