@@ -64,7 +64,7 @@ void Engine::Table(std::string TableName, Relation Table) {
   open_tables_.at(find_table_index(TableName)) = Table;
 }
 
-int Engine::num_open_tables() { return (open_tables_.size() - 1); }
+int Engine::num_open_tables() { return open_tables_.size(); }
 
 int Engine::openTable(std::string TableName) {
   std::string line;
