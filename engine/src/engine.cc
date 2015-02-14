@@ -78,14 +78,91 @@ int Engine::num_open_tables() { return open_tables_.size(); }
 
 int Engine::openTable(std::string TableName) {
   std::string line;
+  std::string title_;
+  std::vector<Column<std::string> > columns_;
   std::ifstream dbfile;
+  bool end_of_line = false;
+  bool end_of_file = false;
   dbfile.open(TableName.append(".db"));
-  // Read into relation
-  dbfile >> line;
-  //
-  Relation table;
-  open_tables_.push_back(table);
-  return (num_open_tables());
+  // Reads table's title
+  dbfile >> title_;
+  // Reads in Columns
+  while(dbfile >> line != "~$EOF" && !end_of_line) {
+    // Detects end of ColumnName
+	if(line == ",") {
+	  //do nothing
+	}
+	// Detects EOL
+	else if(line == "~$EOL") {
+	  end_of_line = true;
+	}
+	// Detects if primary key
+	else if(line == "~^") {
+	  dbfile >> line;
+	  Column<std::string> column(line, "string", true);
+	  columns_.push_back(column);
+	}
+	// Normal Column
+	else {
+	  Column<std::string> column(line, "string", false);
+	  columns_.push_back(column);
+	}
+  }
+  // Detects EOF
+  if(line == "~$EOF") {
+    end_of_file = true;
+  }
+  
+  // Reads in entries TIL EOF
+  while(!end_of_file) {
+    end_of_line = false;
+	int c = 0;
+	while(!end_of_line) {
+	  dbfile >> line;
+	
+	  // Detects EOF
+	  if(line == "~$EOF") {
+        end_of_file = true;
+	    end_of_line = true;
+      }
+	  // Detects EOL
+	  else if(line == "~$EOL") {
+	    end_of_line = true;
+      }
+	  // Detects end of entry
+	  else if(line == ",") {
+	    //do nothing
+	  }
+	  else {
+	    columns_.at(c).entries().push_back(line);
+	  }
+	  c++;
+    }
+  }
+  
+  if(end_of_file && columns_.size() == 0) {
+    Relation table(title_);
+    open_tables_.push_back(table);
+    return (num_open_tables());
+  }
+  else {
+    Relation table(title_, columns_);
+    open_tables_.push_back(table);
+    return (num_open_tables());
+  }
+  
+  // Lines:
+  // 0: relation.title()
+  // Columns separated by commas
+  // End of Line (EOL) denoted by "~$EOL" this is used only on column and entries row
+  // if a column is a primary key denoted with "~^ ColumnName"
+  // 1: relation.columns()
+  // 2-infinity: columns.entries()
+  // EOF denoted with "~$EOF"
+  // write this
+  
+  // Something is very wrong here.
+  return -100;
 }
 
 int Engine::showTable(std::string TableName) {
@@ -204,7 +281,7 @@ void Engine::writeTable(Relation relation) {
   // Writeattributes into relation
 
   // Columns separated by commas
-  // End of Line denoted by "~*"
+  // End of Line denoted by "~$EOL"
   // Line:
   // 0: relation.title()
   // 1: relation.attributes()
