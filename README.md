@@ -16,3 +16,12 @@
 * Daniel "Kade" Koon
   * kadekoon@tamu.edu
 
+# Building
+## Engine
+```bash
+cd engine
+./configure.sh
+cd build
+make
+# binaries will be in engine/build/src/
+```
