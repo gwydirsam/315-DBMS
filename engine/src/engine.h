@@ -24,7 +24,7 @@ class Engine {
   // Finders
   // Find Table
   // Returns the index of where the table is. Returns -1 if failed to find.
-  //int find_table(std::string TableName);
+  // int find_table(std::string TableName);
   // Returns an iterator
   std::vector<Relation>::iterator find_table(std::string TableName);
   int find_table_index(std::string TableName);

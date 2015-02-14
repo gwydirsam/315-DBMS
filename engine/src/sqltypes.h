@@ -12,18 +12,18 @@
 // Everything is in namespace SQL, so VARCHAR can be referenced as
 // sql::VARCHAR(n)
 namespace sql {
-  // TODO: FIX THESE
+// TODO: FIX THESE
 //// Fixed length n
 //// example of use: CHARACTER<5> gives a fixed length 5 character string
-//template <typename N>
-//using CHARACTER = std::array<char, N>;
+// template <typename N>
+// using CHARACTER = std::array<char, N>;
 //
 //// Variable Length. Max length n.
-//template <typename N>
-//using VARCHAR = std::array<char, N>;
+// template <typename N>
+// using VARCHAR = std::array<char, N>;
 //
-//template <typename N>
-//using CHARACTER_VARYING = std::array<char, N>;
+// template <typename N>
+// using CHARACTER_VARYING = std::array<char, N>;
 
 // Boolean
 typedef bool BOOLEAN;
@@ -46,12 +46,12 @@ typedef float FLOAT;
 typedef double REAL;
 
 // Array
-  //TODO array needs <size>
-//typedef std::array ARRAY;
+// TODO array needs <size>
+// typedef std::array ARRAY;
 
 // MultiSet
-  //doesn't work
-//typedef std::multiset MULTISET;
+// doesn't work
+// typedef std::multiset MULTISET;
 
 // Date
 struct DATE {
@@ -84,9 +84,13 @@ struct DATE {
     return false;
   }
 
-  bool operator<=(const DATE& rhs) const { return (*this == rhs || *this < rhs); }
+  bool operator<=(const DATE& rhs) const {
+    return (*this == rhs || *this < rhs);
+  }
 
-  bool operator>=(const DATE& rhs) const { return (*this == rhs || *this > rhs); }
+  bool operator>=(const DATE& rhs) const {
+    return (*this == rhs || *this > rhs);
+  }
 };
 
 // Time
@@ -120,9 +124,13 @@ struct TIME {
     return false;
   }
 
-  bool operator<=(const TIME& rhs) const { return (*this == rhs || *this < rhs); }
+  bool operator<=(const TIME& rhs) const {
+    return (*this == rhs || *this < rhs);
+  }
 
-  bool operator>=(const TIME& rhs) const { return (*this == rhs || *this > rhs); }
+  bool operator>=(const TIME& rhs) const {
+    return (*this == rhs || *this > rhs);
+  }
 };
 
 // Timestamp
@@ -167,6 +175,5 @@ class SQLType {
 
 // Define a tuple
 typedef std::vector<std::string> Tuple;
-
 
 #endif  // SQLTYPES_H_
