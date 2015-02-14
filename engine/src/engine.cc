@@ -52,7 +52,7 @@ std::vector<Relation>::iterator Engine::find_table(std::string TableName) {
 }
 
 int Engine::find_table_index(std::string TableName) {
-  int i = std::distance(std::begin(open_tables_), find_table(TableName));
+  unsigned int i = std::distance(std::begin(open_tables_), find_table(TableName));
   if(i == open_tables_.size())
   {
 	if(TableName == open_tables_.at(i-1).title()) {
@@ -136,7 +136,7 @@ int Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) {
       // columns with no value.
       return -4;
     } else {
-      for (int c = 0; c < tuple.size(); c++) {
+      for (unsigned int c = 0; c < tuple.size(); c++) {
         open_tables_.at(i).columns().at(c).entries().push_back(tuple.at(c));
       }
       // Success
@@ -148,9 +148,10 @@ int Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) {
 }
 
 int Engine::dropTable(std::string TableName) {
+  //Right now this is the only way i know how to handle if the Table isn't found.
   int i = find_table_index(TableName);
   if(i != -1) {
-  open_tables_.erase(i);
+  open_tables_.erase(find_table(TableName) -1 );
   // Success
   return 0;
   }
@@ -182,7 +183,7 @@ int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
       }
     }
     if (equal) {
-      int d = 0;
+      unsigned int d = 0;
       // iterates through columns to delete entries in row r
       while (d < open_tables_.at(i).columns().size()) {
         open_tables_.at(i).columns().at(d).erase(r);
