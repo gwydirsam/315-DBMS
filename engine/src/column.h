@@ -26,7 +26,7 @@ class Column {
         entries_(column.entries()),
         primary_key_(column.primary_key()){};
   // Default Constructor
-  Column() : title_("INVALID"), type_(), entries_(){};
+  Column() : title_("INVALID"), type_(), primary_key_(false), entries_(){};
 
   // Destructors
   // Default Destructor
