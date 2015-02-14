@@ -20,7 +20,7 @@ class Column {
         type_(type),
         entries_(entries),
         primary_key_(primary_key){};
-  Column(Column column)
+  Column(Column& column)
       : title_(column.title()),
         type_(column.type()),
         entries_(column.entries()),
