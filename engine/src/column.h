@@ -7,6 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <iterator>
 
 template <typename T>
 class Column {
@@ -41,14 +42,26 @@ class Column {
   bool primary_key() { return primary_key; }
   int size() { return entries_.size(); }
 
+  // Const Getters
+  const std::string& title() const { return title_; }
+  const T& type() const { return type_; }
+  const std::vector<T>& entries() const { return entries_; }
+  const bool& primary_key() const { return primary_key; }
+  const int& size() const { return entries_.size(); }
+
+
   // Setters
   void type(T type) { type_ = type; }
   void title(std::string title) { title_ = title; }
   void entries(std::vector<T> entries) { entries_ = entries; }
   void primary_key(bool primary_key) { primary_key_ = primary_key; }
 
-  // Operators
-  friend std::ostream &operator<<(std::ostream &os, const Column<T> &column);
+  // Functions
+  // rows start at 0
+  typename std::vector<T>::iterator erase(int row) { return entries_.erase(std::begin(entries_) + row); }
+  void clear() { entries_.clear(); }
+
+  // Member Operators
 
  private:
   // Data Structures
@@ -60,8 +73,8 @@ class Column {
 };
 
 template <typename T>
-std::ostream &operator<<(std::ostream &os, const Column<T> &column) {
-  for (const T &entry : column.size()) {
+std::ostream& operator<<(std::ostream& os, const Column<T>& column) {
+  for (const T &entry : column.entries()) {
     os << entry << std::endl;
   }
   return os;

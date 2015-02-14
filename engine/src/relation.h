@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <string>
+#include <algorithm>
 
 #include "column.h"
 #include "sqltypes.h"
@@ -19,7 +20,7 @@ class Relation {
   Relation(std::string title, std::vector<Column<std::string> > columns)
       : title_(title), columns_(columns){};
   // Shouldn't need to define our own copy constructor
-  //Relation(Relation& Table)
+  // Relation(Relation& Table)
   //: title_(Table.title()), columns_(Table.columns()){};
   // Default Constructor
   Relation() : title_("INVALID"), columns_(){};
@@ -36,8 +37,21 @@ class Relation {
   //  std::vector<Attribute> primarykeys() {return primarykeys_;}
   //  Attribute attribute(int i) {return attributes_.at(i);}
   //  Attribute primarykey(int i) {return primarykeys_.at(i);}
+  Column<std::string> get_column(int i) { return columns_.at(i); }
 
   std::vector<std::string> get_row(int i);
+
+  std::vector<Column<std::string> >::iterator find_column(
+      std::string column_name);
+
+  int find_column_index(std::string column_name) {
+    return std::distance(std::begin(columns_), find_column(column_name));
+  }
+
+  // Return the number of entries in the first column. This should be equal to
+  // all columns' number of entries
+  int num_rows() { return columns_[0].size(); }
+  int num_cols() { return columns_.size(); }
 
   // Setters
   void title(std::string title) { title_ = title; }
@@ -45,6 +59,15 @@ class Relation {
   // you know for deep copy
   void columns(std::vector<Column<std::string> > columns) {
     columns_ = columns;
+  }
+
+  // rename column i to newName
+  void rename_column(int i, std::string newName) {
+    columns_.at(i).title(newName);
+  }
+
+  void rename_column(std::string oldName, std::string newName) {
+    columns_.at(find_column_index(oldName)).title(newName);
   }
 
   // Need to redefine for columns

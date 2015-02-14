@@ -24,10 +24,10 @@ class Engine {
   // Finders
   // Find Table
   // Returns the index of where the table is. Returns -1 if failed to find.
-  int find_table(std::string TableName);
-  // Find Column
-  int find_column(std::string TableName, std::string ColumnName);
-  int find_column(Relation Table, std::string ColumnName);
+  //int find_table(std::string TableName);
+  // Returns an iterator
+  std::vector<Relation>::iterator find_table(std::string TableName);
+  int find_table_index(std::string TableName);
 
   // Getters
   // Get Table
@@ -36,6 +36,7 @@ class Engine {
   std::vector<Relation> open_tables() { return open_tables_; }
   // Get Tuple
   Tuple get_tuple(std::string TableName, int id);
+  int num_open_tables();
 
   // Setters
   // Set Table
@@ -83,7 +84,7 @@ class Engine {
   // Rename
   // Return 0 on success, non-zero on failure
   int rename_table(std::string TableName, std::string newname);
-  int rename_column(std::string TableName, Column<std::string> Column,
+  int rename_column(std::string TableName, std::string Column,
                     std::string newname);
 
   // Select

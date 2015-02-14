@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <algorithm>
+#include <iterator>
 
 #include "column.h"
 #include "relation.h"
@@ -42,60 +44,27 @@
    **********************************************************
 */
 
-int Engine::find_table(std::string TableName) {
-  int i = 0;
-  while (i < open_tables_.size()) {
-    if (TableName.compare(open_tables_.at(i).title())) return i;
-    i++;
-  }
-  // Couldn't find Table
-  return -1;
+// Returns std::end if NOTHING found
+// Probably should throw an exception
+std::vector<Relation>::iterator Engine::find_table(std::string TableName) {
+  return std::find_if(std::begin(open_tables_), std::end(open_tables_),
+                      [TableName](Relation relation)
+                          -> bool { return relation.title() == TableName; });
 }
 
-int Engine::find_column(std::string TableName, std::string ColumnName) {
-  int i = find_table(TableName);
-  if (i != -1) {
-    int num_com = open_tables_.at(i).columns().size();
-    int c = 0;
-    while (c < num_com) {
-      if (ColumnName.compare(open_tables_.at(i).columns().at(c).title())) {
-        return c;
-      }
-      c++;
-    }
-    // Couldn't find Column
-    return -2;
-  }
-  // Couldn't find Table
-  return -1;
-}
-
-int Engine::find_column(Relation Table, std::string ColumnName) {
-  int num_com = Table.columns().size();
-  int c = 0;
-  while (c < num_com) {
-    if (ColumnName.compare(Table.columns().at(c).title())) {
-      return c;
-    }
-    c++;
-  }
-  // Couldn't find Column
-  return -2;
+int Engine::find_table_index(std::string TableName) {
+  return std::distance(std::begin(open_tables_), find_table(TableName));
 }
 
 Relation Engine::get_table(std::string TableName) {
-  int i = find_table(TableName);
-  if (i != -1)
-    return open_tables_.at(i);
-  else {
-    // Don't know how we want to handle not finding table
-  }
+  return open_tables_.at(find_table_index(TableName));
 }
 
 void Engine::Table(std::string TableName, Relation Table) {
-  int i = find_table(TableName);
-  open_tables_.at(i) = Relation(Table);
+  open_tables_.at(find_table_index(TableName)) = Table;
 }
+
+int Engine::num_open_tables() { return (open_tables_.size() - 1); }
 
 int Engine::openTable(std::string TableName) {
   std::string line;
@@ -106,11 +75,11 @@ int Engine::openTable(std::string TableName) {
   //
   Relation table;
   open_tables_.push_back(table);
-  return (open_tables_.size() - 1);
+  return (num_open_tables());
 }
 
 int Engine::showTable(std::string TableName) {
-  int i = find_table(TableName);
+  int i = find_table_index(TableName);
   if (i != -1) {
     int num_com = open_tables_.at(i).columns().size();
     int num_entries = open_tables_.at(i).columns().at(0).entries().size();
@@ -146,7 +115,7 @@ Relation Engine::createNewTable(std::string TableName,
 }
 
 int Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) {
-  int i = find_table(TableName);
+  int i = find_table_index(TableName);
   if (i != -1) {
     if (open_tables_.at(i).columns().size() < tuple.size()) {
       // Error -3 tuple row is larger than number of columns
@@ -168,55 +137,50 @@ int Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) {
   return -1;
 }
 
+// Fix for iterators
 int Engine::dropTable(std::string TableName) {
-  int i = find_table(TableName);
-  if (i != -1) {
-    open_tables_.erase(i);
-    // Success
-    return 0;
-  }
-  // Couldn't find Table
-  return -1;
+  auto i = find_table(TableName);
+  open_tables_.erase(i);
+  // Success
+  return 0;
 }
 int Engine::dropTable(Relation Table) { return dropTable(Table.title()); }
 
+// TODO: Needs rewriting with OOP...this is too complex for what it is
 int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
-  int i = find_table(TableName);
+  int i = find_table_index(TableName);
   bool equal = false;
-  if (i != -1) {
-    int num_entries = open_tables_.at(i).columns().at(0).entries().size();
-    int num_com = open_tables_.at(i).columns().size();
-    int r = 0;
-    // iterates through rows
-    while (r < num_entries) {
-      int c = 0;
-      // iterates through columns
-      while (c < num_com) {
-        if (tuple.at(c)
-                .compare(open_tables_.at(i).columns().at(c).entries().at(r))) {
-          c++;
-          equal = true;
-        } else {
-          c = num_com;
-          equal = false;
-        }
+
+  int num_entries = open_tables_.at(i).num_rows();
+  int num_com = open_tables_.at(i).num_cols();
+  int r = 0;
+  // iterates through rows
+  while (r < num_entries) {
+    int c = 0;
+    // iterates through columns
+    while (c < num_com) {
+      if (tuple.at(c)
+              .compare(open_tables_.at(i).columns().at(c).entries().at(r))) {
+        c++;
+        equal = true;
+      } else {
+        c = num_com;
+        equal = false;
       }
-      if (equal) {
-        int d = 0;
-        // iterates through columns to delete entries in row r
-        while (d < open_tables_.at(i).columns().size()) {
-          open_tables_.at(i).columns().at(d).entries().erase(r);
-        }
-        // Success
-        return 0;
-      }
-      c++;
     }
-    // Couldn't find the row to delete
-    return -10;
+    if (equal) {
+      int d = 0;
+      // iterates through columns to delete entries in row r
+      while (d < open_tables_.at(i).columns().size()) {
+        open_tables_.at(i).columns().at(d).erase(r);
+      }
+      // Success
+      return 0;
+    }
+    c++;
   }
-  // Couldn't find Table
-  return -1;
+  // Couldn't find the row to delete
+  return -10;
 }
 
 void Engine::writeTable(Relation relation) {
@@ -234,31 +198,18 @@ void Engine::writeTable(Relation relation) {
   // write this
 }
 
-// Does this need to delete old table file and make a new one???
+// TODO: Does this need to delete old table file and make a new one??
+// TODO: We can rename from C++ I believe
 int Engine::rename_table(std::string TableName, std::string newname) {
-  int i = find_table(TableName);
-  if (i != -1) {
-    open_tables_.at(i).title(newname);
-    // Success
-    return 0;
-  }
-  // Couldn't find Table
-  return -1;
+  int i = find_table_index(TableName);
+  open_tables_.at(i).title(newname);
+  // Success
+  return 0;
 }
 
-int Engine::rename_column(std::string TableName, Column<std::string> Column,
+int Engine::rename_column(std::string TableName, std::string ColumnName,
                           std::string newname) {
-  int i = find_table(TableName);
-  if (i != -1) {
-    int c = find_column(open_tables_.at(i), Column.title());
-    if (c != -2) {
-      open_tables_.at(i).columns().at(c).title(newname);
-      // Success
-      return 0;
-    }
-    // Couldn't find Column
-    return -2;
-  }
-  // Couldn't find Table
-  return -1;
+  open_tables_.at(find_table_index(TableName))
+      .rename_column(ColumnName, newname);
+  return 0;
 }
