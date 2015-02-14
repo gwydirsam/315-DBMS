@@ -1,4 +1,6 @@
 set(SRCS
+  engine.cc
+  relation.cc
 	)
 
 set(MAIN_SRC main.cc)
@@ -14,9 +16,7 @@ set(UNITTEST_BINARY "${PROJECT_NAME}unittest")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${gtest_INCLUDE_DIR})
 
 add_library(${DEBUG_OBJECT_LIBRARY} OBJECT ${SRCS})
-add_executable(${DEBUG_BINARY}
-	${MAIN_SRC}
-	$<TARGET_OBJECTS:${DEBUG_OBJECT_LIBRARY}>)
+add_executable(${DEBUG_BINARY} ${MAIN_SRC} $<TARGET_OBJECTS:${DEBUG_OBJECT_LIBRARY}>)
 add_executable(${RELEASE_BINARY} ${MAIN_SRC} ${SRCS})
 
 set_property(SOURCE ${SRCS} PROPERTY COMPILE_FLAGS "${CXXFLAGS_DEBUG}")
