@@ -83,9 +83,8 @@ class Engine {
   // Rename
   // Return 0 on success, non-zero on failure
   int rename_table(std::string TableName, std::string newname);
-  // Rename Attribute attribute to newname in TableName
-  int rename_attribute(std::string TableName, Attribute attribute,
-                       std::string newname);
+  int rename_column(std::string TableName, Column<std::string> Column,
+                    std::string newname);
 
   // Select
   // Select in TableName where Function takes a tuple and returns a bool,
