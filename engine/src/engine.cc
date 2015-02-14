@@ -45,7 +45,7 @@
 
 // Returns std::end if NOTHING found
 // Probably should throw an exception
-std::vector<Relation>::iterator Engine::find_table(std::string TableName)
+std::vector<Relation>::iterator Engine::find_table(std::string TableName) {
   return std::find_if(std::begin(open_tables_), std::end(open_tables_),
                       [TableName](Relation relation)
                           -> bool { return relation.title() == TableName; });
