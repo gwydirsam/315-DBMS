@@ -39,6 +39,7 @@ class Column {
   T type() { return type_; }
   std::vector<T>& entries() { return entries_; }
   bool primary_key() { return primary_key; }
+  int size() { return entries_.size(); }
 
   // Setters
   void type(T type) { type_ = type; }
