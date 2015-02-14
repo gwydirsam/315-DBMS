@@ -71,7 +71,7 @@ class Engine {
 
   // Write table to filename TableName.db
   // Returns 0 on success, non-zero on failure
-  int writeTable(Relation relation);
+  void writeTable(Relation relation);
   // Delete File Descriptor and Write table to filename TableName.db
   // Returns 0 on success, non-zero on failure
   int closeTable(std::string TableName);
