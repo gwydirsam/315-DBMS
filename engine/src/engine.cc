@@ -48,39 +48,39 @@ int Engine::find_table(std::string TableName) {
     if (TableName.compare(open_tables_.at(i).title())) return i;
     i++;
   }
-  //Couldn't find Table
+  // Couldn't find Table
   return -1;
 }
 
 int Engine::find_column(std::string TableName, std::string ColumnName) {
   int i = find_table(TableName);
-  if(i != -1) {
+  if (i != -1) {
     int num_com = open_tables_.at(i).columns().size();
-	int c = 0;
-	while (c < num_com) {
-	  if (ColumnName.compare(open_tables_.at(i).columns().at(c).title())) {
-	    return c;
-	  }
-      c++; 
-	}
-	//Couldn't find Column
-	return -2;
+    int c = 0;
+    while (c < num_com) {
+      if (ColumnName.compare(open_tables_.at(i).columns().at(c).title())) {
+        return c;
+      }
+      c++;
+    }
+    // Couldn't find Column
+    return -2;
   }
-	//Couldn't find Table
-	return -1;
+  // Couldn't find Table
+  return -1;
 }
 
 int Engine::find_column(Relation Table, std::string ColumnName) {
-    int num_com = Table.columns().size();
-	int c = 0;
-	while (c < num_com) {
-	  if (ColumnName.compare(Table.columns().at(c).title())) {
-	    return c;
-	  }
-      c++; 
-	}
-	//Couldn't find Column
-	return -2;
+  int num_com = Table.columns().size();
+  int c = 0;
+  while (c < num_com) {
+    if (ColumnName.compare(Table.columns().at(c).title())) {
+      return c;
+    }
+    c++;
+  }
+  // Couldn't find Column
+  return -2;
 }
 
 Relation Engine::get_table(std::string TableName) {
@@ -111,35 +111,34 @@ int Engine::openTable(std::string TableName) {
 
 int Engine::showTable(std::string TableName) {
   int i = find_table(TableName);
-  if(i != -1) {
+  if (i != -1) {
     int num_com = open_tables_.at(i).columns().size();
-	int num_entries = open_tables_.at(i).columns().at(0).entries().size();
+    int num_entries = open_tables_.at(i).columns().at(0).entries().size();
     cout << "Contents of Table " << TableName << "\n";
-	//Prints out columns
-	for(int c = 0; c < num_com; c++) {
-	  cout << "" << open_tables_.at(i).columns().at(c) << "\t";
-	}
-	cout << "\n";
-	//Iterates through rows
-	for(int r = 0; r < num_entries; r++) {
-	  //Iterates through columns to print row r.
-	  for(int c = 0; c < num_com; c++) {
-	    cout << open_tables_.at(i).columns().at(c).entries().at(r) << "\t";
-	  }
-	  cout << "\n";
-	}
-	//Success
-	return 0;
+    // Prints out columns
+    for (int c = 0; c < num_com; c++) {
+      cout << "" << open_tables_.at(i).columns().at(c) << "\t";
+    }
+    cout << "\n";
+    // Iterates through rows
+    for (int r = 0; r < num_entries; r++) {
+      // Iterates through columns to print row r.
+      for (int c = 0; c < num_com; c++) {
+        cout << open_tables_.at(i).columns().at(c).entries().at(r) << "\t";
+      }
+      cout << "\n";
+    }
+    // Success
+    return 0;
   }
-  //Couldn't find table
+  // Couldn't find table
   return -1;
 }
 
-int Engine::showTable(Relation Table) {
-  return showTable(Table.title());
-}
+int Engine::showTable(Relation Table) { return showTable(Table.title()); }
 
-Relation Engine::createNewTable(std::string TableName, std::vector< Column<std::string> > columns) {
+Relation Engine::createNewTable(std::string TableName,
+                                std::vector<Column<std::string> > columns) {
   Relation table(TableName, columns);
   writeTable(table);
   openTable(TableName);
@@ -148,79 +147,75 @@ Relation Engine::createNewTable(std::string TableName, std::vector< Column<std::
 
 int Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) {
   int i = find_table(TableName);
-  if(i != -1) {
-	if(open_tables_.at(i).columns().size() < tuple.size()) {
-		//Error -3 tuple row is larger than number of columns
-		return -3;
-	}
-	else if(open_tables_.at(i).columns().size() > tuple.size()) {
-		//Error -4 tuple row is smaller than number of columns
-		//This may be changed later where it adds the default value to the columns with no value.
-		return -4;
-	}
-	else {
-		
-		for(int c = 0; c < tuple.size(); c++) {
-			open_tables_.at(i).columns().at(c).entries().push_back( tuples.at(c) );
-		}
-		//Success
-		return 0;
-	}
+  if (i != -1) {
+    if (open_tables_.at(i).columns().size() < tuple.size()) {
+      // Error -3 tuple row is larger than number of columns
+      return -3;
+    } else if (open_tables_.at(i).columns().size() > tuple.size()) {
+      // Error -4 tuple row is smaller than number of columns
+      // This may be changed later where it adds the default value to the
+      // columns with no value.
+      return -4;
+    } else {
+      for (int c = 0; c < tuple.size(); c++) {
+        open_tables_.at(i).columns().at(c).entries().push_back(tuples.at(c));
+      }
+      // Success
+      return 0;
+    }
   }
-  //Couldn't find Table
+  // Couldn't find Table
   return -1
 }
 
 int Engine::dropTable(std::string TableName) {
-    int i = find_table(TableName);
-	if(i != -1) {
-	  open_tables_.erase(i);
-	  //Success
-	  return 0;
-	}
-	//Couldn't find Table
-	return -1;
+  int i = find_table(TableName);
+  if (i != -1) {
+    open_tables_.erase(i);
+    // Success
+    return 0;
+  }
+  // Couldn't find Table
+  return -1;
 }
-int Engine::dropTable(Relation Table) {
-  return dropTable(Table.title());
-}
+int Engine::dropTable(Relation Table) { return dropTable(Table.title()); }
 
 int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
   int i = find_table(TableName);
   bool equal = false;
-  if(i != -1) {
+  if (i != -1) {
     int num_entries = open_tables_.at(i).columns().at(0).entries().size();
-	int num_com = open_tables_.at(i).columns().size();
-	int r = 0;
-	//iterates through rows
-	while (r < num_entries) {
-	  int c = 0;
-	  //iterates through columns
-	  while(c < num_com) {
-	    if (tuple.at(c).compare(open_tables_.at(i).columns().at(c).entries().at(r))) {
-	      c++;
-		  equal = true;
-	    }
-	    else {
-		  c = num_com;
-		  equal = false;
-	    }
-	  }
-	  if(equal) {
-	    int d = 0;
-		//iterates through columns to delete entries in row r
-		while(d < open_tables_.at(i).columns().size()) {
-		  open_tables_.at(i).columns().at(d).entries().erase(r);
-		}
-		//Success
-		return 0;
-	  }
-      c++; 
-	}
-	//Couldn't find the row to delete
-	return -10;
-  } 
-  //Couldn't find Table
+    int num_com = open_tables_.at(i).columns().size();
+    int r = 0;
+    // iterates through rows
+    while (r < num_entries) {
+      int c = 0;
+      // iterates through columns
+      while (c < num_com) {
+        if (tuple.at(c)
+                .compare(open_tables_.at(i).columns().at(c).entries().at(r))) {
+          c++;
+          equal = true;
+        } else {
+          c = num_com;
+          equal = false;
+        }
+      }
+      if (equal) {
+        int d = 0;
+        // iterates through columns to delete entries in row r
+        while (d < open_tables_.at(i).columns().size()) {
+          open_tables_.at(i).columns().at(d).entries().erase(r);
+        }
+        // Success
+        return 0;
+      }
+      c++;
+    }
+    // Couldn't find the row to delete
+    return -10;
+  }
+  // Couldn't find Table
   return -1;
 }
 
@@ -234,7 +229,7 @@ void Engine::writeTable(Relation relation) {
   // Line:
   // 0: relation.title()
   // 1: relation.attributes()
-  // 2-infinity: relation.tuples() 
+  // 2-infinity: relation.tuples()
   //
   // write this
 }
@@ -244,27 +239,26 @@ int Engine::rename_table(std::string TableName, std::string newname) {
   int i = find_table(TableName);
   if (i != -1) {
     open_tables_.at(i).title(newname);
-    //Success
-	return 0;
+    // Success
+    return 0;
   }
-  //Couldn't find Table
+  // Couldn't find Table
   return -1;
 }
 
 int Engine::rename_column(std::string TableName, Column<std::string> Column,
-														std::string newname) {
+                          std::string newname) {
   int i = find_table(TableName);
-  if(i != -1) {
-  
-    int c = find_column( open_tables_.at(i), Column.title() );
-	if(c != -2) {
+  if (i != -1) {
+    int c = find_column(open_tables_.at(i), Column.title());
+    if (c != -2) {
       open_tables_.at(i).columns().at(c).title(newname);
-	  //Success
-	  return 0;
-	}
-	//Couldn't find Column
-	return -2;
+      // Success
+      return 0;
+    }
+    // Couldn't find Column
+    return -2;
   }
-  //Couldn't find Table
+  // Couldn't find Table
   return -1;
 }

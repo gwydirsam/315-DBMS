@@ -11,10 +11,20 @@ template <typename T>
 class Column {
  public:
   // Constructors
-  Column(std::string title, T type) : title_(title), type_(type), entries_(), primary_key_(false){};
-  Column(std::string title, T type, std::vector<T> entries) : title_(title), type_(type),, entries_(entries), primary_key_(false){};
-  Column(std::string title, T type, std::vector<T> entries, bool primary_key) : title_(title), type_(type),, entries_(entries), primary_key_(primary_key){};
-  Column(Column column) : title_(column.title()), type_(column.type()), entries_(column.entries()), primary_key_(column.primary_key()){};
+  Column(std::string title, T type)
+      : title_(title), type_(type), entries_(), primary_key_(false){};
+  Column(std::string title, T type, std::vector<T> entries)
+      : title_(title), type_(type), , entries_(entries), primary_key_(false){};
+  Column(std::string title, T type, std::vector<T> entries, bool primary_key)
+      : title_(title),
+        type_(type),
+        entries_(entries),
+        primary_key_(primary_key){};
+  Column(Column column)
+      : title_(column.title()),
+        type_(column.type()),
+        entries_(column.entries()),
+        primary_key_(column.primary_key()){};
   // Default Constructor
   Column() : title_("INVALID"), type_(), entries_(){};
 

@@ -28,7 +28,7 @@ class Engine {
   // Find Column
   int find_column(std::string TableName, std::string ColumnName);
   int find_column(Relation Table, std::string ColumnName);
-  
+
   // Getters
   // Get Table
   Relation get_table(std::string TableName);
@@ -51,8 +51,9 @@ class Engine {
   int showTable(std::string TableName);
   int showTable(Relation Table)
 
-  // Create Table
-  Relation createNewTable(std::string TableName, std::vector< Column<std::string> > columns);
+      // Create Table
+      Relation createNewTable(std::string TableName,
+                              std::vector<Column<std::string> > columns);
 
   // Update Table
 
@@ -96,7 +97,6 @@ class Engine {
   // return vector of tuples from tablename with only Attributes attributes
   std::vector<Tuple> project(std::string TableName,
                              std::vector<Attribute> attributes);
-
 
   // Set Union
   // if Union-Compatible

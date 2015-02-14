@@ -15,22 +15,20 @@
 class Relation {
  public:
   // Constructors
-  Relation(std::string title)
-      : title_(title), columns_(){};
+  Relation(std::string title) : title_(title), columns_(){};
   Relation(std::string title, std::vector<Column<std::string> > columns)
       : title_(title), columns_(columns){};
-  Relation(Relation Table)
-      : title_(Table.title()), columns_(Table.columns()){};
+  Relation(Relation Table) : title_(Table.title()), columns_(Table.columns()){};
   // Default Constructor
-  Relation() : title_("INVALID"), columns_(),{};
+  Relation() : title_("INVALID"), columns_(), {};
 
   // Destructors
   // Default Destructor
   ~Relation(){};
 
   // Getters
-  std::string title() {return title_;}
-  std::vector< Column<std::string> > columns() {return columns_;}
+  std::string title() { return title_; }
+  std::vector<Column<std::string> > columns() { return columns_; }
   // TODO: redefine
   //  std::vector<Attribute> attributes() {return attributes_;}
   //  std::vector<Attribute> primarykeys() {return primarykeys_;}
@@ -40,19 +38,22 @@ class Relation {
   std::vector<std::string> get_row(int i);
 
   // Setters
-  void title(std::string title) {title_ = title;}
-  //not sure if these are right...
-  //you know for deep copy
-  void columns(std::vector< Column<std::string> > columns) {columns_ = columns;}
+  void title(std::string title) { title_ = title; }
+  // not sure if these are right...
+  // you know for deep copy
+  void columns(std::vector<Column<std::string> > columns) {
+    columns_ = columns;
+  }
 
   // Need to redefine for columns
-  //void primarykeys(std::vector<Attribute> primarykeys) {primarykeys_ = primarykeys;}
+  // void primarykeys(std::vector<Attribute> primarykeys) {primarykeys_ =
+  // primarykeys;}
 
  private:
   // Data Structures
   // File Descriptor
   std::string title_;
-  std::vector< Column<std::string> > columns_;
+  std::vector<Column<std::string> > columns_;
 };
 
 #endif  // RELATION_H_
