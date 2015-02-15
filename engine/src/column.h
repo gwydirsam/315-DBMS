@@ -69,6 +69,12 @@ class Column {
   void clear() { entries_.clear(); }
 
   // Member Operators
+  // [] directly accesses entries
+  T& operator[](int i) { return entries_[i]; }
+  const T& operator[](int i) const {
+    // from: http://en.cppreference.com/w/cpp/language/operators
+    return entries_[i];
+  }
 
  private:
   // Data Structures
