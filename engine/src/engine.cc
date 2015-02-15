@@ -144,7 +144,7 @@ int Engine::openTable(std::string TableName) {
       else if (line == ",") {
         // do nothing
       } else {
-        columns_.at(c).entries().push_back(line);
+        columns_.at(c).insert_entry(line);
       }
       c++;
     }

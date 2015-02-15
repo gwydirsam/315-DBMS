@@ -11,7 +11,7 @@ project(${PROJECT_NAME} CXX)
 # for g++
 set(CXXFLAGS "-std=c++1y -Wall -Wextra")
 set(CXXFLAGS_RELEASE "${CXXFLAGS} -O3 -DNDEBUG")
-set(CXXFLAGS_DEBUG "${CXXFLAGS} -g -O0 -DDEBUG")
+set(CXXFLAGS_DEBUG "${CXXFLAGS} -ggdb -O0 -DDEBUG")
 
 # Unit testing with Google Test
 # to run tests use 'cmake -Dtest=ON'
