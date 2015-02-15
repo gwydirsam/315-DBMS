@@ -13,6 +13,8 @@ int main(int argc, char *argv[]) {
   std::vector<Column<std::string> > columns;
   columns.push_back(Column<std::string>("ID"));
   db.createNewTable("Test", columns);
+  std::cout << "Number of Open Tables: " << db.num_open_tables() << std::endl;
+  std::cout << "Test Table Index: " << db.find_table_index("Test") << std::endl;
 
   return 0;
 }
