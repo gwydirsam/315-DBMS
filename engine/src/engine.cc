@@ -76,9 +76,10 @@ int Engine::find_table_index(std::string TableName) {
   }
 }
 
-int Engine::find_tuple_index(std::string TableName, std::vector<std::string> tuple) {
+int Engine::find_tuple_index(std::string TableName,
+                             std::vector<std::string> tuple) {
   int i = find_table_index(TableName);
-  if(i != -1) {
+  if (i != -1) {
     std::vector<Column<std::string>> columns = open_tables_.at(i).columns();
     bool equal = false;
     int num_entries = columns.at(0).size();
@@ -97,9 +98,9 @@ int Engine::find_tuple_index(std::string TableName, std::vector<std::string> tup
           equal = false;
         }
       }
-	  if(equal) {
-	    return r;
-	  }
+      if (equal) {
+        return r;
+      }
     }
     // Could't find Tuple
     return -7;
@@ -121,7 +122,7 @@ int Engine::num_open_tables() { return open_tables_.size(); }
 int Engine::openTable(std::string TableName) {
   std::string line;
   std::string title_;
-  std::vector<Column<std::string> > columns_;
+  std::vector<Column<std::string>> columns_;
   std::ifstream dbfile;
   bool end_of_line = false;
   bool end_of_file = false;
@@ -176,11 +177,11 @@ int Engine::openTable(std::string TableName) {
         // do nothing
       } else {
         columns_.at(c).insert_entry(line);
+        c++;
       }
-      c++;
     }
   }
-  // Adds table to vector of open tables 
+  // Adds table to vector of open tables
   if (end_of_file && columns_.size() == 0) {
     Relation table(title_);
     open_tables_.push_back(table);
@@ -238,7 +239,7 @@ int Engine::showTable(std::string TableName) {
 int Engine::showTable(Relation Table) { return showTable(Table.title()); }
 
 Relation Engine::createNewTable(std::string TableName,
-                                std::vector<Column<std::string> > columns) {
+                                std::vector<Column<std::string>> columns) {
   Relation table(TableName, columns);
   writeTable(table);
   openTable(TableName);
@@ -286,20 +287,20 @@ int Engine::dropTable(Relation Table) { return dropTable(Table.title()); }
 int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
   int r = find_tuple_index(TableName, tuple);
   int i = find_table_index(TableName);
-  if(r != -7 && r != -1 && i != -1) {
-      unsigned int d = 0;
-      // iterates through columns to delete entries in row r
-      while (d < open_tables_.at(i).columns().size()) {
-        open_tables_.at(i).columns().at(d).entries().erase(open_tables_.at(i)
-		.columns().at(d).entries().begin() + r - 1);
-		d++;
-      }
-      // Success
-      return 0;
+  if (r != -7 && r != -1 && i != -1) {
+    unsigned int d = 0;
+    // iterates through columns to delete entries in row r
+    while (d < open_tables_.at(i).columns().size()) {
+      open_tables_.at(i).columns().at(d).entries().erase(
+          open_tables_.at(i).columns().at(d).entries().begin() + r - 1);
+      d++;
     }
+    // Success
+    return 0;
+  }
   // Couldn't find the tuple or table
   return r;
-  }
+}
 
 void Engine::writeTable(Relation relation) {
   std::ofstream dbfile(relation.title().append(".db"), std::ios::out);
@@ -346,10 +347,9 @@ int Engine::closeTable(std::string TableName) {
   int i = find_table_index(TableName);
   writeTable(open_tables_.at(i));
   int d = dropTable(TableName);
-  
+
   return d;
 }
-
 
 // TODO: Does this need to delete old table file and make a new one??
 // TODO: We can rename from C++ I believe
