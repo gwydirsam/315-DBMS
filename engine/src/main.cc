@@ -6,6 +6,14 @@
 #include "engine.h"
 #include "column.h"
 
+void draw_line() {
+  // Draw 80 line characters
+  for(int i = 0; i < 80; ++i) {
+    std::cout << "─";
+  }
+  std::cout << std::endl;
+}
+
 int main(int argc, char *argv[]) {
   std::cout << "This is the Database Engine" << std::endl;
   Engine db;
