@@ -172,28 +172,31 @@ int Engine::openTable(std::string TableName) {
 
 int Engine::showTable(std::string TableName) {
   int i = find_table_index(TableName);
-  if (i != -1) {
-    int num_com = open_tables_.at(i).columns().size();
-    int num_entries = open_tables_.at(i).columns().at(0).entries().size();
-    std::cout << "Contents of Table " << TableName << "\n";
-    // Prints out columns
-    for (int c = 0; c < num_com; c++) {
-      std::cout << open_tables_.at(i).columns().at(c) << "\t";
+  if (i == -1) {
+    // Return Failure
+    return -1;
+  } else {
+    int num_com = open_tables_.at(i).num_cols();
+    int num_entries = open_tables_.at(i).num_rows();
+
+    std::cout << "Contents of Table: " << TableName
+              << " ("<< num_com << " x " << num_entries << ")"<< std::endl;
+
+    // Prints out column titles
+    for (int c = 0; c < num_com; ++c) {
+      std::cout << open_tables_.at(i).columns().at(c).title() << "\t";
     }
-    std::cout << "\n";
+    std::cout << std::endl;
+
     // Iterates through rows
-    for (int r = 0; r < num_entries; r++) {
+    for (int r = 0; r < num_entries; ++r) {
       // Iterates through columns to print row r.
-      for (int c = 0; c < num_com; c++) {
-        std::cout << open_tables_.at(i).columns().at(c).entries().at(r) << "\t";
-      }
-      std::cout << "\n";
+      open_tables_.at(i).print_row(r);
     }
+
     // Success
     return 0;
   }
-  // Couldn't find table
-  return -1;
 }
 
 int Engine::showTable(Relation Table) { return showTable(Table.title()); }
