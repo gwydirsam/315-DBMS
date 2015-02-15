@@ -15,8 +15,8 @@ void draw_line() {
 }
 
 int main(int argc, char *argv[]) {
-  std::cout << "This is the Database Engine" << std::endl;
   draw_line();
+  std::cout << "Database Engine" << std::endl;
   draw_line();
   Engine db;
   // Column<std::string> column("ID");
