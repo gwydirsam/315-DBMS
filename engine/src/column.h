@@ -41,14 +41,14 @@ class Column {
   std::string title() { return title_; }
   T type() { return type_; }
   std::vector<T> entries() { return entries_; }
-  bool primary_key() { return primary_key; }
+  bool primary_key() { return primary_key_; }
   int size() { return entries_.size(); }
 
   // Const Getters
   const std::string& title() const { return title_; }
   const T& type() const { return type_; }
   const std::vector<T>& entries() const { return entries_; }
-  const bool& primary_key() const { return primary_key; }
+  const bool& primary_key() const { return primary_key_; }
   const int& size() const { return entries_.size(); }
 
   // Setters
