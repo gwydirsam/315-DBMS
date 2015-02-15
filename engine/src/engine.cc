@@ -293,33 +293,35 @@ void Engine::writeTable(Relation relation) {
   // Lines:
   // 0: relation.title()
   // Columns separated by commas
-  // End of Line (EOL) denoted by "~$EOL" this is used only on column and entries row
+  // End of Line (EOL) denoted by "~$EOL" this is used only on column and
+  // entries row
   // if a column is a primary key denoted with "~^ ColumnName"
   // 1: relation.columns()
   // 2-infinity: columns.entries()
   // EOF denoted with "~$EOF"
   // write this
-  
-  //Writes TableName to file.
+
+  // Writes TableName to file.
   dbfile << relation.title() << "\n";
-  
+
   // Writing columns to file
-  if(relation.columns().size() != 0) {
-    for(unsigned int c = 0; c < relation.columns().size(); c++) {
-      if(relation.columns().at(c).primary_key()) {
-	    dbfile << "~^ ";
-	  }
-	  dbfile << relation.columns().at(c).title() << " , ";
+  if (relation.columns().size() != 0) {
+    for (unsigned int c = 0; c < relation.columns().size(); c++) {
+      if (relation.columns().at(c).primary_key()) {
+        dbfile << "~^ ";
+      }
+      dbfile << relation.columns().at(c).title() << " , ";
     }
     dbfile << "~$EOL \n";
   }
   // Writing entries to file.
-  if(relation.columns().at(0).entries().size() != 0) {
-    for(unsigned int r = 0; r < relation.columns().at(0).entries().size(); r++) {
-      for(unsigned int c = 0; c < relation.columns().size(); c++) {
-	    dbfile << relation.columns().at(c).entries().at(r);
-	    dbfile << " , ";
-	  }
+  if (relation.columns().at(0).entries().size() != 0) {
+    for (unsigned int r = 0; r < relation.columns().at(0).entries().size();
+         r++) {
+      for (unsigned int c = 0; c < relation.columns().size(); c++) {
+        dbfile << relation.columns().at(c).entries().at(r);
+        dbfile << " , ";
+      }
       dbfile << "~$EOL \n";
     }
   }
