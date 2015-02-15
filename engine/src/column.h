@@ -14,18 +14,18 @@ class Column {
  public:
   // Constructors
   Column(std::string title)
-      : title_(title), type_(), entries_(), primary_key_(false){};
+      : title_(title), type_(), primary_key_(false), entries_(){};
   Column(std::string title, T type)
-      : title_(title), type_(type), entries_(), primary_key_(false){};
+      : title_(title), type_(type), primary_key_(false), entries_(){};
   Column(std::string title, T type, std::vector<T> entries)
-      : title_(title), type_(type), entries_(entries), primary_key_(false){};
+      : title_(title), type_(type), primary_key_(false), entries_(entries){};
   Column(std::string title, T type, bool primary_key)
       : title_(title), type_(type), primary_key_(primary_key){};
   Column(std::string title, T type, std::vector<T> entries, bool primary_key)
       : title_(title),
         type_(type),
-        entries_(entries),
-        primary_key_(primary_key){};
+        primary_key_(primary_key),
+        entries_(entries){};
   // Shouldn't need to define our own copy constructor
   // Column(Column& column)
   //    : title_(column.title()),
