@@ -289,8 +289,7 @@ int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
 }
 
 void Engine::writeTable(Relation relation) {
-  std::ofstream dbfile;
-  dbfile.open(relation.title().append(".db"));
+  std::ofstream dbfile(relation.title().append(".db"), std::ios::out);
   // Lines:
   // 0: relation.title()
   // Columns separated by commas
