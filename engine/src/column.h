@@ -59,6 +59,8 @@ class Column {
   void entries(std::vector<T> entries) { entries_ = entries; }
   void primary_key(bool primary_key) { primary_key_ = primary_key; }
 
+  void insert_entry(T entry) { entries_.push_back(entry); }
+
   // Functions
   // rows start at 0
   typename std::vector<T>::iterator erase(int row) {
