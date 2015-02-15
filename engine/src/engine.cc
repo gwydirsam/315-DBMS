@@ -184,8 +184,8 @@ int Engine::showTable(std::string TableName) {
     int num_com = open_tables_.at(i).num_cols();
     int num_entries = open_tables_.at(i).num_rows();
 
-    std::cout << "Contents of Table: " << TableName
-              << " ("<< num_com << " x " << num_entries << ")"<< std::endl;
+    std::cout << "Contents of Table: " << TableName << " (" << num_com << " x "
+              << num_entries << ")" << std::endl;
 
     // Prints out column titles
     for (int c = 0; c < num_com; ++c) {

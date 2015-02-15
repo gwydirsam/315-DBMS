@@ -8,7 +8,7 @@
 
 void draw_line() {
   // Draw 80 line characters
-  for(int i = 0; i < 80; ++i) {
+  for (int i = 0; i < 80; ++i) {
     std::cout << "─";
   }
   std::cout << std::endl;
