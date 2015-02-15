@@ -13,6 +13,8 @@ template <typename T>
 class Column {
  public:
   // Constructors
+  Column(std::string title)
+      : title_(title), type_(), entries_(), primary_key_(false){};
   Column(std::string title, T type)
       : title_(title), type_(type), entries_(), primary_key_(false){};
   Column(std::string title, T type, std::vector<T> entries)
