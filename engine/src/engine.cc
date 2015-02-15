@@ -342,6 +342,15 @@ void Engine::writeTable(Relation relation) {
   dbfile.close();
 }
 
+int Engine::closeTable(std::string TableName) {
+  int i = find_table_index(TableName);
+  writeTable(open_tables_.at(i));
+  int d = dropTable(TableName);
+  
+  return d;
+}
+
+
 // TODO: Does this need to delete old table file and make a new one??
 // TODO: We can rename from C++ I believe
 int Engine::rename_table(std::string TableName, std::string newname) {
