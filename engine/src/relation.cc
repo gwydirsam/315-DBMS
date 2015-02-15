@@ -25,6 +25,7 @@ std::vector<Column<std::string> >::iterator Relation::find_column(
                           -> bool { return column.title() == column_name; });
 }
 
+//TODO: FINISH
 std::ostream& operator<<(std::ostream& os, const Relation& relation) {
   os << relation.title() << std::endl;
 

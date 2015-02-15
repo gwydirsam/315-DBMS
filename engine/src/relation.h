@@ -56,7 +56,13 @@ class Relation {
 
   // Return the number of entries in the first column. This should be equal to
   // all columns' number of entries
-  int num_rows() { return columns_[0].size(); }
+  int num_rows() {
+    if (columns_.size() == 0) {
+      return 0;
+    } else {
+      return columns_.at(0).size();
+    }
+  }
   int num_cols() { return columns_.size(); }
 
   // Setters

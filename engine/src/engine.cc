@@ -123,17 +123,20 @@ int Engine::openTable(std::string TableName) {
   std::string line;
   std::string title_;
   std::vector<Column<std::string>> columns_;
-  std::ifstream dbfile;
   bool end_of_line = false;
   bool end_of_file = false;
-  dbfile.open(TableName.append(".db"));
+  std::ifstream dbfile(TableName.append(".db"), std::ios::in);
   // Reads table's title
   dbfile >> title_;
-  // Reads in Columns
-  while (dbfile >> line != "~$EOF" && !end_of_line) {
+  // Reads in Column Names
+  while (!end_of_line) {
+    dbfile >> line;
     // Detects end of ColumnName
     if (line == ",") {
       // do nothing
+    } else if (line == "~$EOF") {
+      end_of_file = true;
+      end_of_line = true;
     }
     // Detects EOL
     else if (line == "~$EOL") {
@@ -182,15 +185,9 @@ int Engine::openTable(std::string TableName) {
     }
   }
   // Adds table to vector of open tables
-  if (end_of_file && columns_.size() == 0) {
-    Relation table(title_);
-    open_tables_.push_back(table);
-    return (num_open_tables());
-  } else {
-    Relation table(title_, columns_);
-    open_tables_.push_back(table);
-    return (num_open_tables());
-  }
+  Relation table(title_, columns_);
+  open_tables_.push_back(table);
+  return (num_open_tables());
 
   // Lines:
   // 0: relation.title()
@@ -202,9 +199,6 @@ int Engine::openTable(std::string TableName) {
   // 2-infinity: columns.entries()
   // EOF denoted with "~$EOF"
   // write this
-
-  // Something is very wrong here.
-  return -100;
 }
 
 int Engine::showTable(std::string TableName) {
@@ -215,6 +209,13 @@ int Engine::showTable(std::string TableName) {
   } else {
     int num_com = open_tables_.at(i).num_cols();
     int num_entries = open_tables_.at(i).num_rows();
+#ifdef VERBOSE
+    std::cout << std::endl;
+    std::cout << "Relation Title: " << TableName << std::endl;
+    std::cout << "Number of Columns: " << num_com << std::endl;
+    std::cout << "Number of Rows: " << num_entries << std::endl;
+    std::cout << std::endl;
+#endif
 
     std::cout << "Contents of Table: " << TableName << " (" << num_com << " x "
               << num_entries << ")" << std::endl;
@@ -229,6 +230,7 @@ int Engine::showTable(std::string TableName) {
     for (int r = 0; r < num_entries; ++r) {
       // Iterates through columns to print row r.
       open_tables_.at(i).print_row(r);
+      if (r != (num_entries - 1)) std::cout << std::endl;
     }
 
     // Success

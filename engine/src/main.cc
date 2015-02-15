@@ -28,6 +28,7 @@ int main(int argc, char *argv[]) {
   first_col.insert_entry("bug");
   first_col.insert_entry("foo");
   first_col.insert_entry("bar");
+
   Column<std::string> second_col("Money");
   second_col.insert_entry("$10");
   second_col.insert_entry("$100");
