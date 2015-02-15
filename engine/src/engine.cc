@@ -51,18 +51,7 @@ std::vector<Relation>::iterator Engine::find_table(std::string TableName) {
 }
 
 int Engine::find_table_index(std::string TableName) {
-  unsigned int i =
-      std::distance(std::begin(open_tables_), find_table(TableName));
-  if (i == open_tables_.size()) {
-    if (TableName == open_tables_.at(i - 1).title()) {
-      // The one found was last one.
-      return i - 1;
-    }
-    // Couldn't find table
-    return -1;
-  }
-  // Found the table at index i-1
-  return i - 1;
+  return std::distance(std::begin(open_tables_), find_table(TableName));
 }
 
 Relation Engine::get_table(std::string TableName) {
