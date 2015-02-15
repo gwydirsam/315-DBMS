@@ -17,6 +17,7 @@ int main(int argc, char *argv[]) {
   std::cout << "Test Table Index: " << db.find_table_index("Test") << std::endl;
   std::cout << "Unknown Table Index(Should be -1): "
             << db.find_table_index("Unknown") << std::endl;
+  std::cout << "Show Table Test: " << std::endl << db.showTable("Test");
 
   return 0;
 }
