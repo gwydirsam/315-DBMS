@@ -28,6 +28,7 @@ class Engine {
   // Returns an iterator
   std::vector<Relation>::iterator find_table(std::string TableName);
   int find_table_index(std::string TableName);
+  int find_tuple_index(std::string TableName, std::vector<std::string> tuple);
 
   // Getters
   // List Tables

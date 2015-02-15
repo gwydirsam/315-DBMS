@@ -12,7 +12,6 @@
    **********************************************************
    ******************** What's not done *********************
 
-   int writeTable(std::string TableName);
    int closeTable(std::string TableName);
 
    **********************************************************
@@ -75,6 +74,38 @@ int Engine::find_table_index(std::string TableName) {
   } else {
     return std::distance(std::begin(open_tables_), find_table(TableName));
   }
+}
+
+int Engine::find_tuple_index(std::string TableName, std::vector<std::string> tuple) {
+  int i = find_table_index(TableName);
+  if(i != -1) {
+    std::vector<Column<std::string>> columns = open_tables_.at(i).columns();
+    bool equal = false;
+    int num_entries = columns.at(0).size();
+    int num_com = columns.size();
+    int r = 0;
+    // iterates through rows
+    while (r < num_entries) {
+      int c = 0;
+      // iterates through columns
+      while (c < num_com) {
+        if (tuple.at(c).compare(columns.at(c).entries().at(r))) {
+          c++;
+          equal = true;
+        } else {
+          c = num_com;
+          equal = false;
+        }
+      }
+	  if(equal) {
+	    return r;
+	  }
+    }
+    // Could't find Tuple
+    return -7;
+  }
+  // Could'nt find Table
+  return -1;
 }
 
 Relation Engine::get_table(std::string TableName) {
@@ -149,7 +180,7 @@ int Engine::openTable(std::string TableName) {
       c++;
     }
   }
-
+  // Adds table to vector of open tables 
   if (end_of_file && columns_.size() == 0) {
     Relation table(title_);
     open_tables_.push_back(table);
@@ -253,40 +284,22 @@ int Engine::dropTable(Relation Table) { return dropTable(Table.title()); }
 
 // TODO: Needs rewriting with OOP...this is too complex for what it is
 int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
+  int r = find_tuple_index(TableName, tuple);
   int i = find_table_index(TableName);
-  bool equal = false;
-
-  int num_entries = open_tables_.at(i).num_rows();
-  int num_com = open_tables_.at(i).num_cols();
-  int r = 0;
-  // iterates through rows
-  while (r < num_entries) {
-    int c = 0;
-    // iterates through columns
-    while (c < num_com) {
-      if (tuple.at(c)
-              .compare(open_tables_.at(i).columns().at(c).entries().at(r))) {
-        c++;
-        equal = true;
-      } else {
-        c = num_com;
-        equal = false;
-      }
-    }
-    if (equal) {
+  if(r != -7 && r != -1 && i != -1) {
       unsigned int d = 0;
       // iterates through columns to delete entries in row r
       while (d < open_tables_.at(i).columns().size()) {
-        open_tables_.at(i).columns().at(d).erase(r);
+        open_tables_.at(i).columns().at(d).entries().erase(open_tables_.at(i)
+		.columns().at(d).entries().begin() + r - 1);
+		d++;
       }
       // Success
       return 0;
     }
-    c++;
+  // Couldn't find the tuple or table
+  return r;
   }
-  // Couldn't find the row to delete
-  return -10;
-}
 
 void Engine::writeTable(Relation relation) {
   std::ofstream dbfile(relation.title().append(".db"), std::ios::out);
@@ -342,6 +355,6 @@ int Engine::rename_column(std::string TableName, std::string ColumnName,
                           std::string newname) {
   open_tables_.at(find_table_index(TableName))
       .rename_column(ColumnName, newname);
-  // Succuss
+  // Success
   return 0;
 }
