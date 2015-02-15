@@ -9,7 +9,10 @@ echo "Running cmake"
 #if OS X
 if [ "$UNAME" = "Darwin" ]
 then
-    CC="/usr/local/opt/llvm/bin/clang" CXX="/usr/local/opt/llvm/bin/clang++" cmake ..
+    #clang
+    #CC="/usr/local/opt/llvm/bin/clang" CXX="/usr/local/opt/llvm/bin/clang++" cmake ..
+    #g++
+    CC="/usr/local/bin/gcc-4.9 -fdiagnostics-color=auto" CXX="/usr/local/bin/g++-4.9 -fdiagnostics-color=auto" cmake ..
 # if Solaris
 elif [ "$UNAME" = "SunOS" ]
 then
