@@ -69,7 +69,12 @@ std::vector<Relation>::iterator Engine::find_table(std::string TableName) {
 }
 
 int Engine::find_table_index(std::string TableName) {
-  return std::distance(find_table(TableName), std::begin(open_tables_));
+  if (find_table(TableName) == std::end(open_tables_)) {
+    // Return failure
+    return -1;
+  } else {
+    return std::distance(std::begin(open_tables_), find_table(TableName));
+  }
 }
 
 Relation Engine::get_table(std::string TableName) {
