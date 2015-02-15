@@ -43,6 +43,24 @@
    **********************************************************
 */
 
+std::vector<std::string> Engine::list_open_tables() {
+  std::vector<std::string> tables_list;
+
+  for (const Relation& relation : open_tables_) {
+    tables_list.push_back(relation.title());
+  }
+
+  return tables_list;
+}
+
+void Engine::print_list_open_tables() {
+  std::cout << "{ ";
+  for (const std::string& tablename : list_open_tables()) {
+    std::cout << tablename << " ";
+  }
+  std::cout << "}";
+}
+
 // Returns std::end if NOTHING found
 std::vector<Relation>::iterator Engine::find_table(std::string TableName) {
   return std::find_if(std::begin(open_tables_), std::end(open_tables_),

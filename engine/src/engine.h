@@ -30,6 +30,9 @@ class Engine {
   int find_table_index(std::string TableName);
 
   // Getters
+  // List Tables
+  std::vector<std::string> list_open_tables();
+  void print_list_open_tables();
   // Get Table
   Relation get_table(std::string TableName);
   // Get All Tables
