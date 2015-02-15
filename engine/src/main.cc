@@ -16,6 +16,8 @@ void draw_line() {
 
 int main(int argc, char *argv[]) {
   std::cout << "This is the Database Engine" << std::endl;
+  draw_line();
+  draw_line();
   Engine db;
   // Column<std::string> column("ID");
   std::vector<Column<std::string> > columns;
@@ -23,9 +25,12 @@ int main(int argc, char *argv[]) {
   db.createNewTable("Test", columns);
   std::cout << "Number of Open Tables: " << db.num_open_tables() << std::endl;
   std::cout << "Test Table Index: " << db.find_table_index("Test") << std::endl;
+  draw_line();
   std::cout << "Unknown Table Index(Should be -1): "
             << db.find_table_index("Unknown") << std::endl;
   std::cout << "Show Table Test: " << std::endl << db.showTable("Test");
+  draw_line();
+  draw_line();
 
   return 0;
 }
