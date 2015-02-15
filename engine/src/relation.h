@@ -44,6 +44,8 @@ class Relation {
   Column<std::string> get_column(int i) { return columns_.at(i); }
 
   std::vector<std::string> get_row(int i);
+  void print_row(int i);
+  void print_row(int i, char delimiter);
 
   std::vector<Column<std::string> >::iterator find_column(
       std::string column_name);
