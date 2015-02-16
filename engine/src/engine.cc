@@ -401,6 +401,30 @@ Relation Engine::setcrossproduct(std::string TableName1,
                                  std::string TableName2) {}
 
 Relation Engine::select(std::vector<std::string> ColumnNames,
+                        std::string TableName) {
+  Relation table = find_relation(TableName);
+  Relation selectTable;
+  if (ColumnNames.size() == 0) {
+    // table is whole table from TableName
+    selectTable = table;
+  } else {
+    std::vector<int> column_indexes;
+    // Select ColumnNames from TableName
+    for (const std::string& column_name : ColumnNames) {
+      // Get indexes of columns requested
+      column_indexes.push_back(table.find_column_index(column_name));
+    }
+    // Build new relation from column_indexes
+    std::vector<Column<std::string>> selectcolumns;
+    for (int i = 0; i < column_indexes.size(); ++i) {
+      selectcolumns.push_back(table.get_column(column_indexes[i]));
+    }
+    selectTable = Relation(TableName, selectcolumns);
+  }
+  return selectTable;
+}
+
+Relation Engine::select(std::vector<std::string> ColumnNames,
                         std::string TableName, std::string WhereColumn,
                         std::string WhereEqual) {
   Relation table = find_relation(TableName);
@@ -416,7 +440,7 @@ Relation Engine::select(std::vector<std::string> ColumnNames,
       column_indexes.push_back(table.find_column_index(column_name));
     }
     // Build new relation from column_indexes
-    std::vector<Column<std::string> > selectcolumns;
+    std::vector<Column<std::string>> selectcolumns;
     for (int i = 0; i < column_indexes.size(); ++i) {
       selectcolumns.push_back(table.get_column(column_indexes[i]));
     }

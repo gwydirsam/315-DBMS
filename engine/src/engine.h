@@ -118,6 +118,8 @@ class Engine {
   // If ColumnNames is empty, interpret as *, or all
   // where is passed as a lambda function returning a bool and taking a column
   // name and a value
+  Relation select(std::vector<std::string> ColumnNames, std::string TableName);
+
   Relation select(std::vector<std::string> ColumnNames, std::string TableName,
                   std::string WhereColumn, std::string WhereEqual);
 
