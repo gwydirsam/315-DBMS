@@ -26,6 +26,8 @@ const std::string BOLDWHITE = "\033[1m\033[37m";   /* Bold White */
 
 std::string color(std::string color, std::string text);
 
+const std::string currentDateTime();
 void errlog(std::string message);
+void endlog();
 
 #endif  // UTILITY_H_
