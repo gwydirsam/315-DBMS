@@ -108,6 +108,11 @@ class Relation {
     columns_.at(find_column_index(oldName)).title(newName);
   }
 
+  //  void apped_column(std::string ColumnName, Column<std::string> column) {
+  //    columns_[find_column_index(ColumnName)];
+  //    for()
+  //  }
+
   // Need to redefine for columns
   // void primarykeys(std::vector<Attribute> primarykeys) {primarykeys_ =
   // primarykeys;}

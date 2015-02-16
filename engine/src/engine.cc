@@ -387,6 +387,18 @@ Relation Engine::setunion(std::string TableName1, std::string TableName2) {
   if (!unioncompatible(TableName1, TableName2)) {
     // Return invalid relation
     return Relation();
+  } else {
+    Relation table1 = find_relation(TableName1);
+    Relation table2 = find_relation(TableName2);
+    std::vector<Column<std::string> > unioncolumns;
+    for(Column<std::string> column : table1.columns()) {
+      unioncolumns.push_back(column);
+    }
+    // not done
+    //for(Column<std::string> column : table2.columns()) {
+    //  unioncolumns.push_back(column);
+    //}
+    return Relation("UnionTable", unioncolumns);
   }
 }
 
@@ -394,6 +406,9 @@ Relation Engine::setdifference(std::string TableName1, std::string TableName2) {
   if (!unioncompatible(TableName1, TableName2)) {
     // Return invalid relation
     return Relation();
+  } else {
+    find_relation(TableName1);
+    find_relation(TableName2);
   }
 }
 
@@ -447,7 +462,8 @@ Relation Engine::select(std::vector<std::string> ColumnNames,
     selectTable = Relation(TableName, selectcolumns);
   }
   // Now process where clause
-  for (int i = 0; i < selectTable.num_rows(); ++i) {
+  int select_rows = selectTable.num_rows();
+  for (int i = 0; i < select_rows; ++i) {
     std::vector<std::string> current_row = selectTable.get_row(i);
     // if where clause fails, drop row
     if (current_row[selectTable.find_column_index(WhereColumn)] != WhereEqual) {

@@ -109,26 +109,23 @@ int main(int argc, char *argv[]) {
   draw_line();
 
   std::cout << "Test0 Union Test1" << std::endl;
+  std::cout << db.setunion("Test0", "Test1") << std::endl;
   draw_line();
 
-  std::cout << "Test0 Union Test2" << std::endl;
-  draw_line();
+  //std::cout << "Test0 Union Test2" << std::endl;
+  //draw_line();
 
-  std::cout << "Test1 Union Test0" << std::endl;
-  draw_line();
+  //std::cout << "Test1 Union Test0" << std::endl;
+  //draw_line();
 
-  std::cout << "Test1 Union Test2" << std::endl;
-  draw_line();
+  //std::cout << "Test1 Union Test2" << std::endl;
+  //draw_line();
 
-  std::cout << "Test2 Union Test0" << std::endl;
-  draw_line();
+  //std::cout << "Test2 Union Test0" << std::endl;
+  //draw_line();
 
-  std::cout << "Test2 Union Test1" << std::endl;
-  draw_line();
-
-  std::cout << "Killing Database" << std::endl;
-  //db.exitDatabase();
-  draw_line();
+  //std::cout << "Test2 Union Test1" << std::endl;
+  //draw_line();
 
   return 0;
 }
