@@ -61,8 +61,8 @@ int Engine::find_tuple_index(std::string TableName,
   if (i != -1) {
     std::vector<Column<std::string>> columns = open_tables_.at(i).columns();
     bool equal = false;
-    int num_entries = columns.at(0).size();
-    int num_com = columns.size();
+    int num_entries = (int)columns.at(0).size();
+    int num_com = (int)columns.size();
     int r = 0;
     // iterates through rows
     while (r < num_entries) {
@@ -96,7 +96,7 @@ void Engine::Table(std::string TableName, Relation Table) {
   open_tables_.at(find_table_index(TableName)) = Table;
 }
 
-int Engine::num_open_tables() { return open_tables_.size(); }
+int Engine::num_open_tables() { return (int)open_tables_.size(); }
 
 int Engine::openTable(std::string TableName) {
   std::string line;
@@ -189,11 +189,14 @@ int Engine::showTable(std::string TableName) {
     int num_com = open_tables_.at(i).num_cols();
     int num_entries = open_tables_.at(i).num_rows();
 #ifdef DEBUG
-    std::cout << std::endl;
-    std::cout << "Relation Title: " << TableName << std::endl;
-    std::cout << "Number of Columns: " << num_com << std::endl;
-    std::cout << "Number of Rows: " << num_entries << std::endl;
-    std::cout << std::endl;
+    std::cerr << color(RED, "showTable: Relation Title: ")
+              << color(RED, TableName) << std::endl;
+    std::cerr << color(RED, "showTable: Number of Columns: ")
+              << color(RED, std::to_string(num_com)) << std::endl;
+    std::cerr << color(RED, "showTable: Number of Rows: ")
+              << color(RED, std::to_string(num_entries)) << std::endl;
+    std::cerr << color(RED, "showTable: Columns: ")
+              << color(RED, find_relation(TableName).string_column_titles()) << std::endl;
 #endif
 
     std::cout << "Contents of Table: " << TableName << " (" << num_com << " x "
@@ -230,7 +233,7 @@ Relation Engine::createNewTable(std::string TableName,
 int Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) {
   int i = find_table_index(TableName);
   if (i != -1) {
-    if (open_tables_.at(i).columns().size() < tuple.size()) {
+    if ((int)open_tables_.at(i).columns().size() < (int)tuple.size()) {
       // Error -3 tuple row is larger than number of columns
       return -3;
     } else if (open_tables_.at(i).columns().size() > tuple.size()) {
@@ -377,7 +380,7 @@ Relation Engine::project(std::vector<std::string> ColumnNames,
     }
     // Build new relation from column_indexes
     std::vector<Column<std::string>> selectcolumns;
-    for (int i = 0; i < column_indexes.size(); ++i) {
+    for (int i = 0; i < (int)column_indexes.size(); ++i) {
       selectcolumns.push_back(table.get_column(column_indexes[i]));
     }
     return Relation(TableName, selectcolumns);
@@ -421,6 +424,7 @@ Relation Engine::setdifference(std::string TableName1, std::string TableName2) {
   } else {
     find_relation(TableName1);
     find_relation(TableName2);
+    return Relation("DifferenceTable");
   }
 }
 
@@ -443,7 +447,7 @@ Relation Engine::select(std::vector<std::string> ColumnNames,
     }
     // Build new relation from column_indexes
     std::vector<Column<std::string>> selectcolumns;
-    for (int i = 0; i < column_indexes.size(); ++i) {
+    for (int i = 0; i < (int)column_indexes.size(); ++i) {
       selectcolumns.push_back(table.get_column(column_indexes[i]));
     }
     selectTable = Relation(TableName, selectcolumns);
@@ -457,7 +461,7 @@ Relation Engine::select(std::vector<std::string> ColumnNames,
   Relation table = find_relation(TableName);
   Relation selectTable;
 
-  if (ColumnNames.size() == 0) {
+  if ((int)ColumnNames.size() == 0) {
     // table is whole table from TableName
     selectTable = table;
   } else {
@@ -469,7 +473,7 @@ Relation Engine::select(std::vector<std::string> ColumnNames,
     }
     // Build new relation from column_indexes
     std::vector<Column<std::string>> selectcolumns;
-    for (int i = 0; i < column_indexes.size(); ++i) {
+    for (int i = 0; i < (int)column_indexes.size(); ++i) {
       selectcolumns.push_back(table.get_column(column_indexes[i]));
     }
     selectTable = Relation(TableName, selectcolumns);
