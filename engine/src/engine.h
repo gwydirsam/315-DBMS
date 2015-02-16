@@ -10,6 +10,7 @@
 #include "attribute.h"
 #include "sqltypes.h"
 #include "relation.h"
+#include "utility.h"
 
 class Engine {
  public:
@@ -21,16 +22,15 @@ class Engine {
   // Default Destructor
   ~Engine() {
 #ifdef DEBUG
-    std::cout << "Shutting Down Database Engine" << std::endl;
-#endif
-#ifdef DEBUG
-    std::cout << "Writing all open tables to disk" << std::endl;
+    errlog("Engine: Shutting Down Database Engine");
+    errlog("Engine: Writing all open tables to disk");
 #endif
     for (const Relation& relation : open_tables_) {
       writeTable(relation);
     }
 #ifdef DEBUG
-    std::cout << "Done writing tables to disk" << std::endl;
+    errlog("Engine: Done writing tables to disk");
+    draw_line();
 #endif
   }
 
@@ -99,7 +99,8 @@ class Engine {
 
   // Exit
   // TODO: NEEDS FIXING
-  int exitDatabase() { delete this; }
+  // void exitDatabase() { this->Engine::~Engine(); }
+  void exitDatabase(){};
 
   // Queries
 
