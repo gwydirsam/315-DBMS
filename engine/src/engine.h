@@ -7,7 +7,6 @@
 #include <vector>
 #include <functional>
 
-#include "attribute.h"
 #include "sqltypes.h"
 #include "relation.h"
 #include "utility.h"
