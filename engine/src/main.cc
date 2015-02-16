@@ -3,23 +3,19 @@
 // main.cc
 
 #include <iostream>
+#include <memory>
+
 #include "engine.h"
 #include "column.h"
 #include "relation.h"
-
-void draw_line() {
-  // Draw 80 line characters
-  for (int i = 0; i < 80; ++i) {
-    std::cout << "─";
-  }
-  std::cout << std::endl;
-}
+#include "utility.h"
 
 int main(int argc, char *argv[]) {
   draw_line();
   std::cout << "Database Engine" << std::endl;
   draw_line();
-  Engine db;
+
+  std::unique_ptr<Engine> db(new Engine);
 
   // Column<std::string> column("Name");
   std::vector<Column<std::string> > columns0;
@@ -63,63 +59,63 @@ int main(int argc, char *argv[]) {
   columns2.push_back(first_col);
   columns2.push_back(fourth_col);
 
-  db.createNewTable("Test0", columns0);
-  db.createNewTable("Test1", columns1);
-  db.createNewTable("Test2", columns2);
+  db->createNewTable("Test0", columns0);
+  db->createNewTable("Test1", columns1);
+  db->createNewTable("Test2", columns2);
 
-  std::cout << "Number of Open Tables: " << db.num_open_tables() << std::endl;
+  std::cout << "Number of Open Tables: " << db->num_open_tables() << std::endl;
 
   std::cout << "List of Open Tables: ";
-  db.print_list_open_tables();
+  db->print_list_open_tables();
   std::cout << std::endl;
   draw_line();
 
   std::cout << "Unknown Table Index(Should be -1): "
-            << db.find_table_index("Unknown") << std::endl;
+            << db->find_table_index("Unknown") << std::endl;
   draw_line();
 
-  std::cout << "Test0 Table Index: " << db.find_table_index("Test0")
+  std::cout << "Test0 Table Index: " << db->find_table_index("Test0")
             << std::endl;
-  db.showTable("Test0");
+  db->showTable("Test0");
   std::cout << std::endl;
   draw_line();
 
-  std::cout << "Test1 Table Index: " << db.find_table_index("Test1")
+  std::cout << "Test1 Table Index: " << db->find_table_index("Test1")
             << std::endl;
-  db.showTable("Test1");
+  db->showTable("Test1");
   std::cout << std::endl;
   draw_line();
 
-  std::cout << "Test2 Table Index: " << db.find_table_index("Test2")
+  std::cout << "Test2 Table Index: " << db->find_table_index("Test2")
             << std::endl;
-  db.showTable("Test2");
+  db->showTable("Test2");
   std::cout << std::endl;
   draw_line();
 
   std::cout << "Select * From Test0" << std::endl;
-  std::cout << db.select({}, "Test0") << std::endl;
+  std::cout << db->select({}, "Test0") << std::endl;
   draw_line();
 
   std::cout << "Select Money From Test1 where Money == Money2" << std::endl;
-  std::cout << db.select({"Money"}, "Test1", "Money", "Money2") << std::endl;
+  std::cout << db->select({"Money"}, "Test1", "Money", "Money2") << std::endl;
   draw_line();
 
   std::cout << "Select Money From Test2 where Scrooge == bar" << std::endl;
-  std::cout << db.select({"Money"}, "Test2", "Scrooge", "bar") << std::endl;
+  std::cout << db->select({"Money"}, "Test2", "Scrooge", "bar") << std::endl;
   draw_line();
 
   std::cout << "Project Scrooge From Test0" << std::endl;
-  std::cout << db.project({"Scrooge"}, "Test0") << std::endl;
+  std::cout << db->project({"Scrooge"}, "Test0") << std::endl;
   draw_line();
 
   std::cout << "Test0 Union Test1" << std::endl;
-  std::cout << db.setunion("Test0", "Test1") << std::endl;
+  std::cout << db->setunion("Test0", "Test1") << std::endl;
   draw_line();
 
   std::cout << "Test0 Union (Select Money From Test2) (Should be invalid)"
             << std::endl;
-  std::cout << db.setunion(db.find_relation("Test0"),
-                           db.select({"Money"}, "Test2")) << std::endl;
+  std::cout << db->setunion(db->find_relation("Test0"),
+                           db->select({"Money"}, "Test2")) << std::endl;
   draw_line();
 
   // std::cout << "Test1 Union Test0" << std::endl;
@@ -133,6 +129,10 @@ int main(int argc, char *argv[]) {
 
   // std::cout << "Test2 Union Test1" << std::endl;
   // draw_line();
+
+  std::cout << "Close Database" << std::endl;
+  db->exitDatabase();
+  draw_line();
 
   return 0;
 }
