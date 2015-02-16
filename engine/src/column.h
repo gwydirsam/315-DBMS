@@ -26,17 +26,10 @@ class Column {
         type_(type),
         primary_key_(primary_key),
         entries_(entries){};
-  // Shouldn't need to define our own copy constructor
-  // Column(Column& column)
-  //    : title_(column.title()),
-  //      type_(column.type()),
-  //      entries_(column.entries()),
-  //      primary_key_(column.primary_key()){};
   // Default Constructor
   Column() : title_("INVALID"), type_(), primary_key_(false), entries_(){};
 
   // Destructors
-  // Default Destructor
   ~Column(){};
 
   // Getters
@@ -68,7 +61,6 @@ class Column {
   }
 
   // Functions
-  // rows start at 0
   typename std::vector<T>::iterator erase(int row) {
     return entries_.erase(std::begin(entries_) + row);
   }
@@ -83,7 +75,6 @@ class Column {
   // Data Structures
   std::string title_;
   T type_;
-  // True if this column is a primary key
   bool primary_key_;
   std::vector<T> entries_;
 };
