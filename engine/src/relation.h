@@ -10,6 +10,7 @@
 
 #include "column.h"
 #include "sqltypes.h"
+#include "utility.h"
 
 // A Relation is our representation of a table
 // A relation has a title and contains tuples with each column having a type
@@ -71,10 +72,18 @@ class Relation {
 
   std::vector<std::string> get_column_titles() {
     std::vector<std::string> column_titles;
-    for (const Column<std::string>& column : columns_) {
+    for (Column<std::string> column : columns_) {
       column_titles.push_back(column.title());
     }
     return column_titles;
+  }
+
+  std::string string_column_titles() {
+    std::string column_titles = "{ ";
+    for (std::string title : get_column_titles()) {
+      column_titles = column_titles + title + ' ';
+    }
+    return (column_titles + "}");
   }
 
   std::vector<std::string> get_column_types() {
