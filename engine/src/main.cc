@@ -116,8 +116,11 @@ int main(int argc, char *argv[]) {
   std::cout << db.setunion("Test0", "Test1") << std::endl;
   draw_line();
 
-  // std::cout << "Test0 Union Test2" << std::endl;
-  // draw_line();
+  std::cout << "Test0 Union (Select Money From Test2) (Should be invalid)"
+            << std::endl;
+  std::cout << db.setunion(db.find_relation("Test0"),
+                           db.select({"Money"}, "Test2")) << std::endl;
+  draw_line();
 
   // std::cout << "Test1 Union Test0" << std::endl;
   // draw_line();

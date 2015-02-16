@@ -129,10 +129,14 @@ class Engine {
 
   // Set Union
   // return true if union compatible
+  bool unioncompatible(Relation TableName1, Relation TableName2);
   bool unioncompatible(std::string TableName1, std::string TableName2);
 
   // if Union-Compatible
+  Relation setunion(Relation TableName1, Relation TableName2);
   Relation setunion(std::string TableName1, std::string TableName2);
+  Relation setunion(Relation TableName1, std::string TableName2);
+  Relation setunion(std::string TableName1, Relation TableName2);
 
   // Set Difference
   // if Union-Compatible

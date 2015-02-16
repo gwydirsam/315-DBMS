@@ -349,16 +349,17 @@ int Engine::rename_column(std::string TableName, std::string ColumnName,
   return 0;
 }
 
-bool Engine::unioncompatible(std::string TableName1, std::string TableName2) {
-  Relation table1 = find_relation(TableName1);
-  Relation table2 = find_relation(TableName2);
-
+bool Engine::unioncompatible(Relation table1, Relation table2) {
   if ((table1.get_column_titles() == table2.get_column_titles()) &&
       (table1.get_column_types() == table2.get_column_types())) {
     return true;
   } else {
     return false;
   }
+}
+
+bool Engine::unioncompatible(std::string TableName1, std::string TableName2) {
+  return unioncompatible(find_relation(TableName1), find_relation(TableName2));
 }
 
 Relation Engine::project(std::vector<std::string> ColumnNames,
@@ -383,23 +384,33 @@ Relation Engine::project(std::vector<std::string> ColumnNames,
   }
 }
 
-Relation Engine::setunion(std::string TableName1, std::string TableName2) {
+Relation Engine::setunion(Relation TableName1, Relation TableName2) {
   if (!unioncompatible(TableName1, TableName2)) {
     // Return invalid relation
     return Relation();
   } else {
-    Relation table1 = find_relation(TableName1);
-    Relation table2 = find_relation(TableName2);
-    std::vector<Column<std::string>> unioncolumns;
+    // Perform Union
+    Relation table1 = TableName1;
+    Relation table2 = TableName2;
+    std::vector<Column<std::string> > unioncolumns;
     for (Column<std::string> column : table1.columns()) {
       unioncolumns.push_back(column);
     }
-    // not done
-    // for(Column<std::string> column : table2.columns()) {
-    //  unioncolumns.push_back(column);
-    //}
+    for (Column<std::string> t2column : table2.columns()) {
+      unioncolumns[table2.find_column_index(t2column.title())].append_column(t2column);
+    }
     return Relation("UnionTable", unioncolumns);
   }
+}
+
+Relation Engine::setunion(std::string TableName1, std::string TableName2) {
+  return setunion(find_relation(TableName1), find_relation(TableName2));
+}
+Relation Engine::setunion(std::string TableName1, Relation TableName2) {
+  return setunion(find_relation(TableName1), TableName2);
+}
+Relation Engine::setunion(Relation TableName1, std::string TableName2) {
+  return setunion(TableName1, find_relation(TableName2));
 }
 
 Relation Engine::setdifference(std::string TableName1, std::string TableName2) {
