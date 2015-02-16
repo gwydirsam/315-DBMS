@@ -65,6 +65,22 @@ class Relation {
   }
   int num_cols() { return columns_.size(); }
 
+  std::vector<std::string> get_column_titles() {
+    std::vector<std::string> column_titles;
+    for(const Column<std::string>& column : columns_) {
+      column_titles.push_back(column.title());
+    }
+    return column_titles;
+  }
+
+  std::vector<std::string> get_column_types() {
+    std::vector<std::string> column_types;
+    for(const Column<std::string>& column : columns_) {
+      column_types.push_back(column.type());
+    }
+    return column_types;
+  }
+
   // Setters
   void title(std::string title) { title_ = title; }
   // not sure if these are right...
