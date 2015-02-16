@@ -13,8 +13,8 @@ void draw_line() {
 }
 
 // color must be a valid color from utility.h
-std::string color(std::string color, std::string text) {
-  return (color + text + RESET);
+std::string setcolor(std::string color, std::string text) {
+  return (color + text + color::RESET);
 }
 
 const std::string currentDateTime() {
@@ -30,7 +30,7 @@ const std::string currentDateTime() {
 // ifdef DEBUG output message and log to file. Otherwise just log.
 void errlog(std::string message) {
 #ifdef DEBUG
-  std::cerr << color(RED, message) << std::endl;
+  std::cerr << setcolor(color::RED, message) << std::endl;
 #endif
 
   std::ofstream logfile("logfile", std::ios::app);

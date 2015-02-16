@@ -6,6 +6,7 @@
 
 void draw_line();
 
+namespace color {
 const std::string RESET = "\033[0m";               /* Reset */
 const std::string BLACK = "\033[30m";              /* Black */
 const std::string RED = "\033[31m";                /* Red */
@@ -23,8 +24,9 @@ const std::string BOLDBLUE = "\033[1m\033[34m";    /* Bold Blue */
 const std::string BOLDMAGENTA = "\033[1m\033[35m"; /* Bold Magenta */
 const std::string BOLDCYAN = "\033[1m\033[36m";    /* Bold Cyan */
 const std::string BOLDWHITE = "\033[1m\033[37m";   /* Bold White */
+}
 
-std::string color(std::string color, std::string text);
+std::string setcolor(std::string color, std::string text);
 
 const std::string currentDateTime();
 void errlog(std::string message);
