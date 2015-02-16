@@ -13,9 +13,8 @@
 int main(int argc, char *argv[]) {
   draw_line();
   std::cout << "Database Engine" << std::endl;
-  draw_line();
-
   std::unique_ptr<Engine> db(new Engine);
+  draw_line();
 
   // Column<std::string> column("Name");
   std::vector<Column<std::string> > columns0;
@@ -129,6 +128,7 @@ int main(int argc, char *argv[]) {
 
   // std::cout << "Test2 Union Test1" << std::endl;
   // draw_line();
+
 
   std::cout << "Close Database" << std::endl;
   db->exitDatabase();
