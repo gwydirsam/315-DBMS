@@ -27,6 +27,9 @@
 *.out
 *.app
 
+# Database Files
+*.db
+
 # Cmake Files		
 CMakeCache.txt
 CMakeFiles
