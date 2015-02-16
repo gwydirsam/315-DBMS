@@ -19,15 +19,27 @@ class Engine {
 
   // Destructors
   // Default Destructor
-  ~Engine(){};
+  ~Engine() {
+#ifdef DEBUG
+    std::cout << "Shutting Down Database Engine" << std::endl;
+#endif
+#ifdef DEBUG
+    std::cout << "Writing all open tables to disk" << std::endl;
+#endif
+    for (const Relation& relation : open_tables_) {
+      writeTable(relation);
+    }
+#ifdef DEBUG
+    std::cout << "Done writing tables to disk" << std::endl;
+#endif
+  }
 
   // Finders
   // Find Table
-  // Returns the index of where the table is. Returns -1 if failed to find.
-  // int find_table(std::string TableName);
-  // Returns an iterator
   Relation find_relation(std::string TableName);
+  // Returns an iterator
   std::vector<Relation>::iterator find_table(std::string TableName);
+  // Returns the index of where the table is. Returns -1 if failed to find.
   int find_table_index(std::string TableName);
 
   int find_tuple_index(std::string TableName, std::vector<std::string> tuple);
@@ -65,7 +77,7 @@ class Engine {
   int insertTuple(std::string TableName, std::vector<std::string> tuple);
 
   // Drop Table
-  //TODO: FEB 15
+  // TODO: FEB 15
   int dropTable(std::string TableName);
   int dropTable(Relation Table);
 
@@ -75,7 +87,7 @@ class Engine {
   // Exec DML
   // Returns 0 on success, non-zero on failure
   // DML string is a valid string based on the grammar
-  //int execDML(std::string DML);
+  // int execDML(std::string DML);
 
   // Write table to filename TableName.db
   // Returns 0 on success, non-zero on failure
@@ -87,7 +99,7 @@ class Engine {
 
   // Exit
   // TODO: NEEDS FIXING
-  int exitDatabase() { delete this;}
+  int exitDatabase() { delete this; }
 
   // Queries
 
@@ -100,10 +112,14 @@ class Engine {
   // Select
   // Select in TableName where Function takes a tuple and returns a bool,
   // return vector of tuples where function is true
-  //Relation select(std::string TableName,
-  //std::function<bool(Tuple)> function);
+  // Relation select(std::string TableName,
+  // std::function<bool(Tuple)> function);
   // TODO:
-  Relation select(std::vector<std::string> ColumnNames, std::string TableName);
+  // If ColumnNames is empty, interpret as *, or all
+  // where is passed as a lambda function returning a bool and taking a column
+  // name and a value
+  Relation select(std::vector<std::string> ColumnNames, std::string TableName,
+                  std::string WhereColumn, std::string WhereEqual);
 
   // Project
   // return vector of tuples from tablename with only Attributes attributes

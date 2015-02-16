@@ -47,6 +47,10 @@ class Relation {
   void print_row(int i);
   void print_row(int i, char delimiter);
 
+  const std::vector<std::string> get_row(int i) const;
+  void print_row(int i) const;
+  void print_row(int i, char delimiter) const;
+
   std::vector<Column<std::string> >::iterator find_column(
       std::string column_name);
 
@@ -56,18 +60,18 @@ class Relation {
 
   // Return the number of entries in the first column. This should be equal to
   // all columns' number of entries
-  int num_rows() {
+  int num_rows() const {
     if (columns_.size() == 0) {
       return 0;
     } else {
       return columns_.at(0).size();
     }
   }
-  int num_cols() { return columns_.size(); }
+  int num_cols() const { return columns_.size(); }
 
   std::vector<std::string> get_column_titles() {
     std::vector<std::string> column_titles;
-    for(const Column<std::string>& column : columns_) {
+    for (const Column<std::string>& column : columns_) {
       column_titles.push_back(column.title());
     }
     return column_titles;
@@ -75,10 +79,16 @@ class Relation {
 
   std::vector<std::string> get_column_types() {
     std::vector<std::string> column_types;
-    for(const Column<std::string>& column : columns_) {
+    for (const Column<std::string>& column : columns_) {
       column_types.push_back(column.type());
     }
     return column_types;
+  }
+
+  void drop_row(int i) {
+    for (Column<std::string>& column : columns_) {
+      column.erase(i);
+    }
   }
 
   // Setters
@@ -108,5 +118,7 @@ class Relation {
   std::string title_;
   std::vector<Column<std::string> > columns_;
 };
+
+std::ostream& operator<<(std::ostream& os, const Relation& relation);
 
 #endif  // RELATION_H_

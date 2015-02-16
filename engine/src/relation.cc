@@ -18,6 +18,24 @@ void Relation::print_row(int i, char delimiter) {
   }
 }
 
+const std::vector<std::string> Relation::get_row(int i) const {
+  std::vector<std::string> row;
+
+  // Create row from each column
+  for (const Column<std::string>& column : columns_) {
+    row.push_back(column[i]);
+  }
+  return row;
+}
+
+void Relation::print_row(int i) const { print_row(i, '\t'); }
+
+void Relation::print_row(int i, char delimiter) const {
+  for (const std::string& entry : get_row(i)) {
+    std::cout << entry << delimiter;
+  }
+}
+
 std::vector<Column<std::string> >::iterator Relation::find_column(
     std::string column_name) {
   return std::find_if(std::begin(columns_), std::end(columns_),
@@ -30,8 +48,15 @@ std::ostream& operator<<(std::ostream& os, const Relation& relation) {
   os << relation.title() << std::endl;
 
   for (const Column<std::string>& column : relation.columns()) {
-    os << "hello" << std::endl;
+    os << column.title() << "\t";
   }
+  os << std::endl;
+
+  for (int i = 0; i < relation.num_rows(); ++i) {
+    relation.print_row(i);
+    if (i != (relation.num_rows()-1)) os << std::endl;
+  }
+  
 
   return os;
 }

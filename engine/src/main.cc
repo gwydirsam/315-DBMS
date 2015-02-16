@@ -5,6 +5,7 @@
 #include <iostream>
 #include "engine.h"
 #include "column.h"
+#include "relation.h"
 
 void draw_line() {
   // Draw 80 line characters
@@ -21,7 +22,10 @@ int main(int argc, char *argv[]) {
   Engine db;
 
   // Column<std::string> column("Name");
-  std::vector<Column<std::string> > columns;
+  std::vector<Column<std::string> > columns0;
+  std::vector<Column<std::string> > columns1;
+  std::vector<Column<std::string> > columns2;
+  
   Column<std::string> first_col("Scrooge");
   first_col.insert_entry("bah");
   first_col.insert_entry("hum");
@@ -35,12 +39,33 @@ int main(int argc, char *argv[]) {
   second_col.insert_entry("$1000");
   second_col.insert_entry("$10000");
   second_col.insert_entry("$100000");
-  columns.push_back(first_col);
-  columns.push_back(second_col);
 
-  db.createNewTable("Test0", columns);
-  db.createNewTable("Test1", columns);
-  db.createNewTable("Test2", columns);
+  Column<std::string> third_col("Scrooge");
+  third_col.insert_entry("1");
+  third_col.insert_entry("2");
+  third_col.insert_entry("3");
+  third_col.insert_entry("4");
+  third_col.insert_entry("5");
+
+  Column<std::string> fourth_col("Money");
+  fourth_col.insert_entry("Money1");
+  fourth_col.insert_entry("Money2");
+  fourth_col.insert_entry("Money3");
+  fourth_col.insert_entry("Money4");
+  fourth_col.insert_entry("Money5");
+
+  columns0.push_back(first_col);
+  columns0.push_back(second_col);
+
+  columns1.push_back(third_col);
+  columns1.push_back(fourth_col);
+
+  columns2.push_back(first_col);
+  columns2.push_back(fourth_col);
+
+  db.createNewTable("Test0", columns0);
+  db.createNewTable("Test1", columns1);
+  db.createNewTable("Test2", columns2);
 
   std::cout << "Number of Open Tables: " << db.num_open_tables() << std::endl;
 
@@ -57,16 +82,52 @@ int main(int argc, char *argv[]) {
             << std::endl;
   db.showTable("Test0");
   std::cout << std::endl;
+  draw_line();
 
   std::cout << "Test1 Table Index: " << db.find_table_index("Test1")
             << std::endl;
   db.showTable("Test1");
   std::cout << std::endl;
+  draw_line();
 
   std::cout << "Test2 Table Index: " << db.find_table_index("Test2")
             << std::endl;
   db.showTable("Test2");
   std::cout << std::endl;
+  draw_line();
+
+  std::cout << "Select * From Test0" << std::endl;
+  std::cout << db.select({}, "Test0") << std::endl;
+  draw_line();
+
+  std::cout << "Select Money From Test1 where Money == Money2" << std::endl;
+  std::cout << db.select({"Money"}, "Test1", "Money", "Money2") << std::endl;
+  draw_line();
+
+  std::cout << "Project Scrooge From Test2" << std::endl;
+  std::cout << db.project({"Scrooge"}, "Test2") << std::endl;
+  draw_line();
+
+  std::cout << "Test0 Union Test1" << std::endl;
+  draw_line();
+
+  std::cout << "Test0 Union Test2" << std::endl;
+  draw_line();
+
+  std::cout << "Test1 Union Test0" << std::endl;
+  draw_line();
+
+  std::cout << "Test1 Union Test2" << std::endl;
+  draw_line();
+
+  std::cout << "Test2 Union Test0" << std::endl;
+  draw_line();
+
+  std::cout << "Test2 Union Test1" << std::endl;
+  draw_line();
+
+  std::cout << "Killing Database" << std::endl;
+  //db.exitDatabase();
   draw_line();
 
   return 0;

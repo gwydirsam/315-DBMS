@@ -4,6 +4,7 @@
 #include <fstream>
 #include <algorithm>
 #include <iterator>
+#include <functional>
 
 #include "column.h"
 #include "relation.h"
@@ -19,7 +20,6 @@
 Relation Engine::find_relation(std::string TableName) {
   return open_tables_.at(find_table_index(TableName));
 }
-
 
 std::vector<std::string> Engine::list_open_tables() {
   std::vector<std::string> tables_list;
@@ -188,7 +188,7 @@ int Engine::showTable(std::string TableName) {
   } else {
     int num_com = open_tables_.at(i).num_cols();
     int num_entries = open_tables_.at(i).num_rows();
-#ifdef VERBOSE
+#ifdef DEBUG
     std::cout << std::endl;
     std::cout << "Relation Title: " << TableName << std::endl;
     std::cout << "Number of Columns: " << num_com << std::endl;
@@ -361,7 +361,74 @@ bool Engine::unioncompatible(std::string TableName1, std::string TableName2) {
   }
 }
 
-Relation setunion(std::string TableName1, std::string TableName2) {
-  
+Relation Engine::project(std::vector<std::string> ColumnNames,
+                         std::string TableName) {
+  Relation table = find_relation(TableName);
+  if (ColumnNames.size() == 0) {
+    // Return Empty Relation
+    return Relation(TableName);
+  } else {
+    std::vector<int> column_indexes;
+    // Select ColumnNames from TableName
+    for (const std::string& column_name : ColumnNames) {
+      // Get indexes of columns requested
+      column_indexes.push_back(table.find_column_index(column_name));
+    }
+    // Build new relation from column_indexes
+    std::vector<Column<std::string>> selectcolumns;
+    for (int i = 0; i < column_indexes.size(); ++i) {
+      selectcolumns.push_back(table.get_column(column_indexes[i]));
+    }
+    return Relation(TableName, selectcolumns);
+  }
 }
 
+Relation Engine::setunion(std::string TableName1, std::string TableName2) {
+  if (!unioncompatible(TableName1, TableName2)) {
+    // Return invalid relation
+    return Relation();
+  }
+}
+
+Relation Engine::setdifference(std::string TableName1, std::string TableName2) {
+  if (!unioncompatible(TableName1, TableName2)) {
+    // Return invalid relation
+    return Relation();
+  }
+}
+
+Relation Engine::setcrossproduct(std::string TableName1,
+                                 std::string TableName2) {}
+
+Relation Engine::select(std::vector<std::string> ColumnNames,
+                        std::string TableName, std::string WhereColumn,
+                        std::string WhereEqual) {
+  Relation table = find_relation(TableName);
+  Relation selectTable;
+  if (ColumnNames.size() == 0) {
+    // table is whole table from TableName
+    selectTable = table;
+  } else {
+    std::vector<int> column_indexes;
+    // Select ColumnNames from TableName
+    for (const std::string& column_name : ColumnNames) {
+      // Get indexes of columns requested
+      column_indexes.push_back(table.find_column_index(column_name));
+    }
+    // Build new relation from column_indexes
+    std::vector<Column<std::string> > selectcolumns;
+    for (int i = 0; i < column_indexes.size(); ++i) {
+      selectcolumns.push_back(table.get_column(column_indexes[i]));
+    }
+    selectTable = Relation(TableName, selectcolumns);
+  }
+  // Now process where clause
+  for (int i = 0; i < selectTable.num_rows(); ++i) {
+    std::vector<std::string> current_row = selectTable.get_row(i);
+    // if where clause fails, drop row
+    if (current_row[selectTable.find_column_index(WhereColumn)] != WhereEqual) {
+      selectTable.drop_row(i);
+    }
+  }
+  return selectTable;
+}
