@@ -194,14 +194,14 @@ int Engine::showTable(std::string TableName) {
     int num_com = open_tables_.at(i).num_cols();
     int num_entries = open_tables_.at(i).num_rows();
 #ifdef DEBUG
-    std::cerr << color(RED, "showTable: Relation Title: ")
-              << color(RED, TableName) << std::endl;
-    std::cerr << color(RED, "showTable: Number of Columns: ")
-              << color(RED, std::to_string(num_com)) << std::endl;
-    std::cerr << color(RED, "showTable: Number of Rows: ")
-              << color(RED, std::to_string(num_entries)) << std::endl;
-    std::cerr << color(RED, "showTable: Columns: ")
-              << color(RED, find_relation(TableName).string_column_titles())
+    std::cerr << setcolor(color::RED, "showTable: Relation Title: ")
+              << setcolor(color::RED, TableName) << std::endl;
+    std::cerr << setcolor(color::RED, "showTable: Number of Columns: ")
+              << setcolor(color::RED, std::to_string(num_com)) << std::endl;
+    std::cerr << setcolor(color::RED, "showTable: Number of Rows: ")
+              << setcolor(color::RED, std::to_string(num_entries)) << std::endl;
+    std::cerr << setcolor(color::RED, "showTable: Columns: ")
+              << setcolor(color::RED, find_relation(TableName).string_column_titles())
               << std::endl;
 #endif
 
