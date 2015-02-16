@@ -390,12 +390,12 @@ Relation Engine::setunion(std::string TableName1, std::string TableName2) {
   } else {
     Relation table1 = find_relation(TableName1);
     Relation table2 = find_relation(TableName2);
-    std::vector<Column<std::string> > unioncolumns;
-    for(Column<std::string> column : table1.columns()) {
+    std::vector<Column<std::string>> unioncolumns;
+    for (Column<std::string> column : table1.columns()) {
       unioncolumns.push_back(column);
     }
     // not done
-    //for(Column<std::string> column : table2.columns()) {
+    // for(Column<std::string> column : table2.columns()) {
     //  unioncolumns.push_back(column);
     //}
     return Relation("UnionTable", unioncolumns);
@@ -444,6 +444,7 @@ Relation Engine::select(std::vector<std::string> ColumnNames,
                         std::string WhereEqual) {
   Relation table = find_relation(TableName);
   Relation selectTable;
+
   if (ColumnNames.size() == 0) {
     // table is whole table from TableName
     selectTable = table;
@@ -462,10 +463,11 @@ Relation Engine::select(std::vector<std::string> ColumnNames,
     selectTable = Relation(TableName, selectcolumns);
   }
   // Now process where clause
-  int select_rows = selectTable.num_rows();
-  for (int i = 0; i < select_rows; ++i) {
+  for (int i = (selectTable.num_rows() - 1); i >= 0; --i) {
     std::vector<std::string> current_row = selectTable.get_row(i);
     // if where clause fails, drop row
+    // std::cout << current_row[selectTable.find_column_index(WhereColumn)] <<
+    // std::endl;
     if (current_row[selectTable.find_column_index(WhereColumn)] != WhereEqual) {
       selectTable.drop_row(i);
     }

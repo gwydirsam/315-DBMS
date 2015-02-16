@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
   std::vector<Column<std::string> > columns0;
   std::vector<Column<std::string> > columns1;
   std::vector<Column<std::string> > columns2;
-  
+
   Column<std::string> first_col("Scrooge");
   first_col.insert_entry("bah");
   first_col.insert_entry("hum");
@@ -112,20 +112,20 @@ int main(int argc, char *argv[]) {
   std::cout << db.setunion("Test0", "Test1") << std::endl;
   draw_line();
 
-  //std::cout << "Test0 Union Test2" << std::endl;
-  //draw_line();
+  // std::cout << "Test0 Union Test2" << std::endl;
+  // draw_line();
 
-  //std::cout << "Test1 Union Test0" << std::endl;
-  //draw_line();
+  // std::cout << "Test1 Union Test0" << std::endl;
+  // draw_line();
 
-  //std::cout << "Test1 Union Test2" << std::endl;
-  //draw_line();
+  // std::cout << "Test1 Union Test2" << std::endl;
+  // draw_line();
 
-  //std::cout << "Test2 Union Test0" << std::endl;
-  //draw_line();
+  // std::cout << "Test2 Union Test0" << std::endl;
+  // draw_line();
 
-  //std::cout << "Test2 Union Test1" << std::endl;
-  //draw_line();
+  // std::cout << "Test2 Union Test1" << std::endl;
+  // draw_line();
 
   return 0;
 }

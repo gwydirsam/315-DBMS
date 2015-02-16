@@ -43,7 +43,7 @@ std::vector<Column<std::string> >::iterator Relation::find_column(
                           -> bool { return column.title() == column_name; });
 }
 
-//TODO: FINISH
+// TODO: FINISH
 std::ostream& operator<<(std::ostream& os, const Relation& relation) {
   os << relation.title() << std::endl;
 
@@ -54,9 +54,8 @@ std::ostream& operator<<(std::ostream& os, const Relation& relation) {
 
   for (int i = 0; i < relation.num_rows(); ++i) {
     relation.print_row(i);
-    if (i != (relation.num_rows()-1)) os << std::endl;
+    if (i != (relation.num_rows() - 1)) os << std::endl;
   }
-  
 
   return os;
 }
