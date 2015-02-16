@@ -464,11 +464,11 @@ Relation Engine::select(std::vector<std::string> ColumnNames,
   }
   // Now process where clause
   for (int i = (selectTable.num_rows() - 1); i >= 0; --i) {
-    std::vector<std::string> current_row = selectTable.get_row(i);
+    std::vector<std::string> current_row = table.get_row(i);
     // if where clause fails, drop row
     // std::cout << current_row[selectTable.find_column_index(WhereColumn)] <<
     // std::endl;
-    if (current_row[selectTable.find_column_index(WhereColumn)] != WhereEqual) {
+    if (current_row[table.find_column_index(WhereColumn)] != WhereEqual) {
       selectTable.drop_row(i);
     }
   }

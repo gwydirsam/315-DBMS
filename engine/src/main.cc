@@ -104,8 +104,12 @@ int main(int argc, char *argv[]) {
   std::cout << db.select({"Money"}, "Test1", "Money", "Money2") << std::endl;
   draw_line();
 
-  std::cout << "Project Scrooge From Test2" << std::endl;
-  std::cout << db.project({"Scrooge"}, "Test2") << std::endl;
+  std::cout << "Select Money From Test2 where Scrooge == bar" << std::endl;
+  std::cout << db.select({"Money"}, "Test2", "Scrooge", "bar") << std::endl;
+  draw_line();
+
+  std::cout << "Project Scrooge From Test0" << std::endl;
+  std::cout << db.project({"Scrooge"}, "Test0") << std::endl;
   draw_line();
 
   std::cout << "Test0 Union Test1" << std::endl;
