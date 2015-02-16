@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
   std::cout << "Test0 Union (Select Money From Test2) (Should be invalid)"
             << std::endl;
   std::cout << db->setunion(db->find_relation("Test0"),
-                           db->select({"Money"}, "Test2")) << std::endl;
+                            db->select({"Money"}, "Test2")) << std::endl;
   draw_line();
 
   // std::cout << "Test1 Union Test0" << std::endl;
@@ -128,7 +128,6 @@ int main(int argc, char *argv[]) {
 
   // std::cout << "Test2 Union Test1" << std::endl;
   // draw_line();
-
 
   std::cout << "Close Database" << std::endl;
   db->exitDatabase();

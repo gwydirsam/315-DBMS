@@ -32,6 +32,7 @@ void errlog(std::string message) {
 #ifdef DEBUG
   std::cerr << color(RED, message) << std::endl;
 #endif
+
   std::ofstream logfile("logfile", std::ios::app);
   logfile << currentDateTime() << std::endl;
   logfile << "\t" << message << std::endl;

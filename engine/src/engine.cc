@@ -196,7 +196,8 @@ int Engine::showTable(std::string TableName) {
     std::cerr << color(RED, "showTable: Number of Rows: ")
               << color(RED, std::to_string(num_entries)) << std::endl;
     std::cerr << color(RED, "showTable: Columns: ")
-              << color(RED, find_relation(TableName).string_column_titles()) << std::endl;
+              << color(RED, find_relation(TableName).string_column_titles())
+              << std::endl;
 #endif
 
     std::cout << "Contents of Table: " << TableName << " (" << num_com << " x "
