@@ -9,7 +9,6 @@
 #include <algorithm>
 
 #include "column.h"
-#include "sqltypes.h"
 #include "utility.h"
 
 // A Relation is our representation of a table
@@ -20,94 +19,66 @@ class Relation {
   Relation(std::string title) : title_(title), columns_(){};
   Relation(std::string title, std::vector<Column<std::string> > columns)
       : title_(title), columns_(columns){};
-  // Shouldn't need to define our own copy constructor
-  // Relation(Relation& Table)
-  //: title_(Table.title()), columns_(Table.columns()){};
   // Default Constructor
   Relation() : title_("INVALID"), columns_(){};
 
   // Destructors
-  // Default Destructor
   ~Relation(){};
 
   // Getters
   std::string title() { return title_; }
   std::vector<Column<std::string> > columns() { return columns_; }
+  std::vector<Column<std::string> > primary_keys();
+
   // Const Getters
   const std::string& title() const { return title_; }
   const std::vector<Column<std::string> >& columns() const { return columns_; }
+  const std::vector<Column<std::string> > primary_keys() const;
 
-  // TODO: redefine
-  //  std::vector<Attribute> attributes() {return attributes_;}
-  //  std::vector<Attribute> primarykeys() {return primarykeys_;}
-  //  Attribute attribute(int i) {return attributes_.at(i);}
-  //  Attribute primarykey(int i) {return primarykeys_.at(i);}
   Column<std::string> get_column(int i) { return columns_.at(i); }
-
   std::vector<std::string> get_row(int i);
-  void print_row(int i);
-  void print_row(int i, char delimiter);
 
+  const Column<std::string> get_column(int i) const { return columns_.at(i); }
   const std::vector<std::string> get_row(int i) const;
-  void print_row(int i) const;
-  void print_row(int i, char delimiter) const;
-
-  std::vector<Column<std::string> >::iterator find_column(
-      std::string column_name);
-
-  int find_column_index(std::string column_name) {
-    return std::distance(std::begin(columns_), find_column(column_name));
-  }
-
-  // Return the number of entries in the first column. This should be equal to
-  // all columns' number of entries
-  int num_rows() const {
-    if (columns_.size() == 0) {
-      return 0;
-    } else {
-      return columns_.at(0).size();
-    }
-  }
-  int num_cols() const { return columns_.size(); }
-
-  std::vector<std::string> get_column_titles() {
-    std::vector<std::string> column_titles;
-    for (Column<std::string> column : columns_) {
-      column_titles.push_back(column.title());
-    }
-    return column_titles;
-  }
-
-  std::string string_column_titles() {
-    std::string column_titles = "{ ";
-    for (std::string title : get_column_titles()) {
-      column_titles = column_titles + title + ' ';
-    }
-    return (column_titles + "}");
-  }
-
-  std::vector<std::string> get_column_types() {
-    std::vector<std::string> column_types;
-    for (const Column<std::string>& column : columns_) {
-      column_types.push_back(column.type());
-    }
-    return column_types;
-  }
-
-  void drop_row(int i) {
-    for (Column<std::string>& column : columns_) {
-      column.erase(i);
-    }
-  }
 
   // Setters
   void title(std::string title) { title_ = title; }
-  // not sure if these are right...
-  // you know for deep copy
   void columns(std::vector<Column<std::string> > columns) {
     columns_ = columns;
   }
 
+  // Printers
+  // Print row seperated by tabs
+  void print_row(int i);
+  // Print row seperated by delimiter
+  void print_row(int i, char delimiter);
+
+  void print_row(int i) const;
+  void print_row(int i, char delimiter) const;
+
+  // Finders
+  std::vector<Column<std::string> >::iterator find_column(
+      std::string column_name);
+
+  int find_column_index(std::string column_name);
+
+  // Statistics
+  int num_rows() const;
+  int num_cols() const { return columns_.size(); }
+
+  // Return vector of string title
+  std::vector<std::string> get_column_titles();
+
+  // Return string of titles
+  std::string string_column_titles();
+
+  // Return vector of columns type
+  std::vector<std::string> get_column_types();
+
+  // Drop
+  void drop_row(int i);
+
+  // Rename
   // rename column i to newName
   void rename_column(int i, std::string newName) {
     columns_.at(i).title(newName);
@@ -117,18 +88,8 @@ class Relation {
     columns_.at(find_column_index(oldName)).title(newName);
   }
 
-  //  void apped_column(std::string ColumnName, Column<std::string> column) {
-  //    columns_[find_column_index(ColumnName)];
-  //    for()
-  //  }
-
-  // Need to redefine for columns
-  // void primarykeys(std::vector<Attribute> primarykeys) {primarykeys_ =
-  // primarykeys;}
-
  private:
   // Data Structures
-  // File Descriptor
   std::string title_;
   std::vector<Column<std::string> > columns_;
 };
