@@ -25,3 +25,13 @@ cd build
 make
 # binaries will be in engine/build/src/
 ```
+
+# Execution
+## Engine
+```bash
+# cd to project root
+cd CSCE315-Project2
+#for debug binary
+./engine/build/src/dbengined
+#for relase binary
+./engine/build/src/dbengine
