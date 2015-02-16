@@ -1,6 +1,7 @@
 set(SRCS
   engine.cc
   relation.cc
+  utility.cc
 	)
 
 set(MAIN_SRC main.cc)
