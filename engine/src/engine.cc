@@ -9,38 +9,17 @@
 #include "relation.h"
 
 /* **********************************************************
-   **********************************************************
    ******************** What's not done *********************
 
-   int closeTable(std::string TableName);
-
-   **********************************************************
    **********************************************************
    ********************* IDK what to do *********************
-
-   // Setters
-   // Set Tuple
-   //anything dealing with tuples is throwing me cause IDK what they are being
-   used for at the moment.
-
-   std::tuple table(std::string TableName, int id);
-   int execDML(std::string DML);
    int exitDatabase();
-   std::vector<std::tuple> select(std::string TableName,
-   std::function<bool(std::Tuple)> function);
-   std::vector<std::tuple> project(std::string TableName, std::vector<Attribute>
-   attributes);
-   std::vector<std::tuple> setunion(std::string TableName1, std::string
-   TableName2);
-   std::vector<std::tuple> setdifference(std::string TableName1, std::string
-   TableName2);
-   std::vector<std::tuple> setcrossproduct(std::string TableName1, std::string
-   TableName2);
-
-   **********************************************************
-   **********************************************************
-   **********************************************************
 */
+
+Relation Engine::find_relation(std::string TableName) {
+  return open_tables_.at(find_table_index(TableName));
+}
+
 
 std::vector<std::string> Engine::list_open_tables() {
   std::vector<std::string> tables_list;
@@ -369,3 +348,20 @@ int Engine::rename_column(std::string TableName, std::string ColumnName,
   // Success
   return 0;
 }
+
+bool Engine::unioncompatible(std::string TableName1, std::string TableName2) {
+  Relation table1 = find_relation(TableName1);
+  Relation table2 = find_relation(TableName2);
+
+  if ((table1.get_column_titles() == table2.get_column_titles()) &&
+      (table1.get_column_types() == table2.get_column_types())) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+Relation setunion(std::string TableName1, std::string TableName2) {
+  
+}
+
