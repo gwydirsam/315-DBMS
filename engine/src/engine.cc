@@ -104,7 +104,12 @@ int Engine::openTable(std::string TableName) {
   std::vector<Column<std::string>> columns_;
   bool end_of_line = false;
   bool end_of_file = false;
-  std::ifstream dbfile(TableName.append(".db"), std::ios::in);
+
+  std::string directory = "tables/";
+  std::string filename = TableName.append(".db");
+  std::string filepath = directory + filename;
+
+  std::ifstream dbfile(filepath, std::ios::in);
   // Reads table's title
   dbfile >> title_;
   // Reads in Column Names
@@ -288,7 +293,10 @@ int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
 }
 
 void Engine::writeTable(Relation relation) {
-  std::ofstream dbfile(relation.title().append(".db"), std::ios::out);
+  std::string directory = "tables/";
+  std::string filename = relation.title().append(".db");
+  std::string filepath = directory + filename;
+  std::ofstream dbfile(filepath, std::ios::out);
   // Lines:
   // 0: relation.title()
   // Columns separated by commas
