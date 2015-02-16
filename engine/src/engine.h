@@ -16,22 +16,21 @@ class Engine {
  public:
   // Constructors
   // Default Constructor
-  Engine(){};
+  Engine() { errlog("Engine: Creating New Engine"); }
 
   // Destructors
   // Default Destructor
   ~Engine() {
-#ifdef DEBUG
     errlog("Engine: Shutting Down Database Engine");
     errlog("Engine: Writing all open tables to disk");
-#endif
     for (const Relation& relation : open_tables_) {
+      std::string errstring = "Engine: Writing " + relation.title() + ".db";
+      errlog(errstring);
       writeTable(relation);
     }
-#ifdef DEBUG
     errlog("Engine: Done writing tables to disk");
+    endlog();
     draw_line();
-#endif
   }
 
   // Finders
