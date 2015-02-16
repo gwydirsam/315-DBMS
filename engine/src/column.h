@@ -51,7 +51,7 @@ class Column {
   const T& type() const { return type_; }
   const std::vector<T>& entries() const { return entries_; }
   const bool& primary_key() const { return primary_key_; }
-  const int& size() const { return entries_.size(); }
+  int size() const { return entries_.size(); }
 
   // Setters
   void type(T type) { type_ = type; }
