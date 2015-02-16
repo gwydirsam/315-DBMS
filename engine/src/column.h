@@ -62,7 +62,7 @@ class Column {
   void insert_entry(T entry) { entries_.push_back(entry); }
 
   void append_column(Column<T> column) {
-    for(const T& entry : column.entries()) {
+    for (const T& entry : column.entries()) {
       entries_.push_back(entry);
     }
   }

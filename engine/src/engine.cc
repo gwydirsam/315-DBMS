@@ -392,12 +392,13 @@ Relation Engine::setunion(Relation TableName1, Relation TableName2) {
     // Perform Union
     Relation table1 = TableName1;
     Relation table2 = TableName2;
-    std::vector<Column<std::string> > unioncolumns;
+    std::vector<Column<std::string>> unioncolumns;
     for (Column<std::string> column : table1.columns()) {
       unioncolumns.push_back(column);
     }
     for (Column<std::string> t2column : table2.columns()) {
-      unioncolumns[table2.find_column_index(t2column.title())].append_column(t2column);
+      unioncolumns[table2.find_column_index(t2column.title())].append_column(
+          t2column);
     }
     return Relation("UnionTable", unioncolumns);
   }
