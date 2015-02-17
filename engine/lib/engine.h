@@ -23,7 +23,7 @@ class Engine {
   // Find Table
   Relation& find_relation(std::string TableName);
   // Returns an iterator
-  //TODO: sould probably be private
+  // TODO: sould probably be private
   std::vector<Relation>::iterator find_table(std::string TableName);
   // Returns the index of where the table is. Returns -1 if failed to find.
   int find_table_index(std::string TableName);
@@ -36,7 +36,6 @@ class Engine {
   std::vector<std::string> list_open_tables();
   int num_open_tables();
   void print_list_open_tables();
-
 
   // Setters
   // Set Table

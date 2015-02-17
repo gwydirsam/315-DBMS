@@ -93,7 +93,7 @@ std::ifstream& operator>>(std::ifstream& is, Column<T>& column) {
 
   is >> entry;
   column.insert_entry(entry);
-  
+
   return is;
 }
 
