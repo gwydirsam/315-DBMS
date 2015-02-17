@@ -112,7 +112,10 @@ int Engine::openTable(std::string TableName) {
 
   // If file doesn't exist return -1
   if (!dbfile.good()) {
-    std::string errmsg = "openTable: File Doesn't Exist: " + filepath;
+    std::string errmsg =
+        "openTable: File Doesn't Exist (Probably need to create the "
+        "directory): " +
+        filepath;
     errlog(errmsg);
     return -1;
   }
