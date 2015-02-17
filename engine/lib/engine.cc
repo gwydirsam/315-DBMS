@@ -330,20 +330,18 @@ bool Engine::unioncompatible(std::string TableName1, std::string TableName2) {
   return unioncompatible(find_relation(TableName1), find_relation(TableName2));
 }
 
-Relation Engine::setunion(Relation TableName1, Relation TableName2) {
-  if (!unioncompatible(TableName1, TableName2)) {
+Relation Engine::setunion(Relation Table1, Relation Table2) {
+  if (!unioncompatible(Table1, Table2)) {
     // Return invalid relation
     return Relation();
   } else {
     // Perform Union
-    Relation table1 = TableName1;
-    Relation table2 = TableName2;
     std::vector<Column<std::string>> unioncolumns;
-    for (Column<std::string> column : table1.columns()) {
+    for (Column<std::string> column : Table1.columns()) {
       unioncolumns.push_back(column);
     }
-    for (Column<std::string> t2column : table2.columns()) {
-      unioncolumns[table2.find_column_index(t2column.title())].append_column(
+    for (Column<std::string> t2column : Table2.columns()) {
+      unioncolumns[Table2.find_column_index(t2column.title())].append_column(
           t2column);
     }
     return Relation("UnionTable", unioncolumns);
@@ -360,16 +358,89 @@ Relation Engine::setunion(Relation TableName1, std::string TableName2) {
   return setunion(TableName1, find_relation(TableName2));
 }
 
-Relation Engine::setdifference(std::string TableName1, std::string TableName2) {
-  if (!unioncompatible(TableName1, TableName2)) {
+Relation Engine::setdifference(Relation Table1, Relation Table2) {
+  Relation difference("DifferenceTable");
+  if (!unioncompatible(Table1, Table2)) {
     // Return invalid relation
-    return Relation();
+    return difference;
   } else {
-    find_relation(TableName1);
-    find_relation(TableName2);
-    return Relation("DifferenceTable");
+    // Create Columns for Difference Relation
+    std::vector<Column<std::string>> diffcolumns;
+    for (Column<std::string> column : Table1.columns()) {
+      diffcolumns.push_back(Column<std::string>(column.title()));
+    }
+    // Put columns into difference
+    difference.columns(diffcolumns);
+
+    // Perform difference
+    // iterate through rows in table 1
+    for (int i = 0; i < Table1.num_rows(); ++i) {
+      // set false before for each row
+      bool rowfound = false;
+
+      // iterate through rows in table 2
+      // if row is found rowfound will become true
+      for (int j = 0; j < Table2.num_rows(); ++j) {
+        rowfound = rowfound || (Table1.get_row(i) == Table2.get_row(j));
+      }
+
+      // If row was not found, put it in difference
+      if (!rowfound) difference.append_row(Table1.get_row(i));
+    }
+
+    return difference;
   }
 }
 
+Relation Engine::setdifference(std::string TableName1, std::string TableName2) {
+  return setdifference(find_relation(TableName1), find_relation(TableName2));
+}
+
+Relation Engine::setdifference(Relation TableName1, std::string TableName2) {
+  return setdifference(TableName1, find_relation(TableName2));
+}
+
+Relation Engine::setdifference(std::string TableName1, Relation TableName2) {
+  return setdifference(find_relation(TableName1), TableName2);
+}
+
+Relation Engine::setcrossproduct(Relation Table1, Relation Table2) {
+  Relation crossproduct("CrossProductTable");
+  // Create Columns for Difference Relation
+  std::vector<Column<std::string>> crosscolumns;
+  for (Column<std::string> column : Table1.columns()) {
+    crosscolumns.push_back(Column<std::string>(column.title()));
+  }
+  for (Column<std::string> column : Table2.columns()) {
+    crosscolumns.push_back(Column<std::string>(column.title()));
+  }
+  // Put columns into difference
+  crossproduct.columns(crosscolumns);
+
+  // Perform cross product
+  // iterate through rows in table 1
+  for (int i = 0; i < Table1.num_rows(); ++i) {
+    // iterate through rows in table 2
+    for (int j = 0; j < Table2.num_rows(); ++j) {
+      std::vector<std::string> row = Table1.get_row(i);
+      std::vector<std::string> t2row = Table2.get_row(j);
+      row.insert(std::end(row), std::begin(t2row), std::end(t2row));
+      crossproduct.append_row(row);
+    }
+  }
+
+  return crossproduct;
+}
+
 Relation Engine::setcrossproduct(std::string TableName1,
-                                 std::string TableName2) {}
+                                 std::string TableName2) {
+  return setcrossproduct(find_relation(TableName1), find_relation(TableName2));
+}
+
+Relation Engine::setcrossproduct(Relation TableName1, std::string TableName2) {
+  return setcrossproduct(TableName1, find_relation(TableName2));
+}
+
+Relation Engine::setcrossproduct(std::string TableName1, Relation TableName2) {
+  return setcrossproduct(find_relation(TableName1), TableName2);
+}

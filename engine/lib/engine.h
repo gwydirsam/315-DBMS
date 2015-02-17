@@ -111,10 +111,16 @@ class Engine {
 
   // Set Difference
   // if Union-Compatible
+  Relation setdifference(Relation Table1, Relation Table2);
   Relation setdifference(std::string TableName1, std::string TableName2);
+  Relation setdifference(Relation TableName1, std::string TableName2);
+  Relation setdifference(std::string TableName1, Relation TableName2);
 
   // Set Cross Product
+  Relation setcrossproduct(Relation Table1, Relation Table2);
   Relation setcrossproduct(std::string TableName1, std::string TableName2);
+  Relation setcrossproduct(Relation TableName1, std::string TableName2);
+  Relation setcrossproduct(std::string TableName1, Relation TableName2);
 
  private:
   // Data Structures
