@@ -21,7 +21,7 @@ class Engine {
 
   // Finders
   // Find Table
-  Relation find_relation(std::string TableName);
+  Relation& find_relation(std::string TableName);
   // Returns an iterator
   //TODO: sould probably be private
   std::vector<Relation>::iterator find_table(std::string TableName);
@@ -53,6 +53,7 @@ class Engine {
   // Update Table
 
   // Insert Tuple into Table
+  int insertTuple(Relation& relation, std::vector<std::string> tuple);
   int insertTuple(std::string TableName, std::vector<std::string> tuple);
 
   // Drop Table

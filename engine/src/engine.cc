@@ -24,7 +24,7 @@ Engine::~Engine() {
   draw_line();
 }
 
-Relation Engine::find_relation(std::string TableName) {
+Relation& Engine::find_relation(std::string TableName) {
   return open_tables_.at(find_table_index(TableName));
 }
 
@@ -136,27 +136,26 @@ Relation Engine::createNewTable(std::string TableName,
   return table;
 }
 
-int Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) {
-  int i = find_table_index(TableName);
-  if (i != -1) {
-    if ((int)open_tables_.at(i).columns().size() < (int)tuple.size()) {
-      // Error -3 tuple row is larger than number of columns
-      return -3;
-    } else if (open_tables_.at(i).columns().size() > tuple.size()) {
-      // Error -4 tuple row is smaller than number of columns
-      // This may be changed later where it adds the default value to the
-      // columns with no value.
-      return -4;
-    } else {
-      for (unsigned int c = 0; c < tuple.size(); c++) {
-        open_tables_.at(i).columns().at(c).entries().push_back(tuple.at(c));
-      }
-      // Success
-      return 0;
+int Engine::insertTuple(Relation& relation, std::vector<std::string> tuple) {
+  if (relation.num_cols() < (int)tuple.size()) {
+    // Error -3 tuple row is larger than number of columns
+    return -3;
+  } else if (relation.num_cols() > (int)tuple.size()) {
+    // Error -4 tuple row is smaller than number of columns
+    // This may be changed later where it adds the default value to the
+    // columns with no value.
+    return -4;
+  } else {
+    for (unsigned int c = 0; c < tuple.size(); c++) {
+      relation.append_row(tuple);
     }
+    // Success
+    return 0;
   }
-  // Couldn't find Table
-  return -1;
+}
+
+int Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) {
+  return insertTuple(find_relation(TableName), tuple);
 }
 
 int Engine::dropTable(std::string TableName) {
