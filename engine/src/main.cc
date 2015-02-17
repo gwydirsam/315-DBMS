@@ -133,7 +133,6 @@ int main(int argc, char *argv[]) {
 
   std::cout << "Close Database" << std::endl;
   db->exitDatabase();
-  draw_line();
 
   return 0;
 }
