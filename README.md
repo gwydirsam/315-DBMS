@@ -35,6 +35,10 @@ cd engine
 # cd to project root
 cd CSCE315-Project2
 #for debug binary
-./engine/build/debug/dbengine/dbengine
+cd engine/build/debug/dbengine/
+mkdir tables
+./dbengine
 #for relase binary
-./engine/build/release/dbengined/dbengine
+cd engine/build/release/dbengined/
+mkdir tables
+./dbengine
