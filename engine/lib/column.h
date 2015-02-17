@@ -97,4 +97,15 @@ std::ifstream& operator>>(std::ifstream& is, Column<T>& column) {
   return is;
 }
 
+template <typename T>
+bool operator==(const Column<T>& lhs, const Column<T>& rhs) {
+  return lhs.title() == rhs.title() && lhs.type() == rhs.type() &&
+         lhs.entries() == rhs.entries();
+}
+
+template <typename T>
+bool operator!=(const Column<T>& lhs, const Column<T>& rhs) {
+  return !(lhs == rhs);
+}
+
 #endif  // COLUMN_H_
