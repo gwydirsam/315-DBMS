@@ -14,40 +14,26 @@
 class Engine {
  public:
   // Constructors
-  // Default Constructor
   Engine() { errlog("Engine: Creating New Engine"); }
 
   // Destructors
-  // Default Destructor
-  ~Engine() {
-    errlog("Engine: Shutting Down Database Engine");
-    errlog("Engine: Writing all open tables to disk");
-    for (const Relation& relation : open_tables_) {
-      std::string errstring = "Engine: Writing " + relation.title() + ".db";
-      errlog(errstring);
-      writeTable(relation);
-    }
-    errlog("Engine: Done writing tables to disk");
-    endlog();
-    draw_line();
-  }
+  ~Engine();
 
   // Finders
-  // Find Table
   Relation find_relation(std::string TableName);
+  // Find Table
   // Returns an iterator
   std::vector<Relation>::iterator find_table(std::string TableName);
   // Returns the index of where the table is. Returns -1 if failed to find.
   int find_table_index(std::string TableName);
-
   int find_tuple_index(std::string TableName, std::vector<std::string> tuple);
 
   // Getters
   // List Tables
   std::vector<std::string> list_open_tables();
   int num_open_tables();
-
   void print_list_open_tables();
+
   // Get Table
   Relation get_table(std::string TableName);
   // Get All Tables
@@ -75,29 +61,23 @@ class Engine {
   int insertTuple(std::string TableName, std::vector<std::string> tuple);
 
   // Drop Table
-  // TODO: FEB 15
   int dropTable(std::string TableName);
   int dropTable(Relation Table);
 
   // Delete Tuple in Table
   int dropTuple(std::string TableName, std::vector<std::string> tuple);
 
-  // Exec DML
-  // Returns 0 on success, non-zero on failure
-  // DML string is a valid string based on the grammar
-  // int execDML(std::string DML);
+  // Exec SQL
+  // return 0 on success
+  int execSQL(std::string DML);
 
   // Write table to filename TableName.db
-  // Returns 0 on success, non-zero on failure
   void writeTable(Relation relation);
 
-  // Delete File Descriptor and Write table to filename TableName.db
-  // Returns 0 on success, non-zero on failure
+  // Delete table from open_tables_ and Write table to filename TableName.db
   int closeTable(std::string TableName);
 
   // Exit
-  // TODO: NEEDS FIXING
-  // void exitDatabase() { this->Engine::~Engine(); }
   void exitDatabase(){};
 
   // Queries
@@ -111,14 +91,11 @@ class Engine {
   // Select
   // Select in TableName where Function takes a tuple and returns a bool,
   // return vector of tuples where function is true
-  // Relation select(std::string TableName,
-  // std::function<bool(Tuple)> function);
-  // TODO:
+
   // If ColumnNames is empty, interpret as *, or all
   // where is passed as a lambda function returning a bool and taking a column
   // name and a value
   Relation select(std::vector<std::string> ColumnNames, std::string TableName);
-
   Relation select(std::vector<std::string> ColumnNames, std::string TableName,
                   std::string WhereColumn, std::string WhereEqual);
 
