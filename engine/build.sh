@@ -13,13 +13,13 @@ then
     #clang
     #CC="/usr/local/opt/llvm/bin/clang" CXX="/usr/local/opt/llvm/bin/clang++" cmake ..
     #g++
-    CC="/usr/local/bin/gcc-4.9 -fdiagnostics-color=auto" CXX="/usr/local/bin/g++-4.9 -fdiagnostics-color=auto" cmake -DCMAKE_BUILD_TYPE=Release ../.. && make
+    CC="/usr/local/bin/gcc-4.9 -fdiagnostics-color=auto" CXX="/usr/local/bin/g++-4.9 -fdiagnostics-color=auto" cmake -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
 # if Solaris
 elif [ "$UNAME" = "SunOS" ]
 then
-    CC="/opt/csw/bin/gcc -fdiagnostics-color=auto" CXX="/opt/csw/bin/g++ -fdiagnostics-color=auto" cmake -DCMAKE_BUILD_TYPE=Release ../.. && make
+    CC="/opt/csw/bin/gcc -fdiagnostics-color=auto" CXX="/opt/csw/bin/g++ -fdiagnostics-color=auto" cmake -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
 else
-    cmake -DCMAKE_BUILD_TYPE=Release ../.. && make
+    cmake -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
 fi
 cd ../debug;
 echo "Running cmake for Release"
@@ -29,13 +29,13 @@ then
     #clang
     #CC="/usr/local/opt/llvm/bin/clang" CXX="/usr/local/opt/llvm/bin/clang++" cmake ..
     #g++
-    CC="/usr/local/bin/gcc-4.9 -fdiagnostics-color=auto" CXX="/usr/local/bin/g++-4.9 -fdiagnostics-color=auto" cmake -DCMAKE_BUILD_TYPE=Debug ../.. && make
+    CC="/usr/local/bin/gcc-4.9 -fdiagnostics-color=auto" CXX="/usr/local/bin/g++-4.9 -fdiagnostics-color=auto" cmake -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
 # if Solaris
 elif [ "$UNAME" = "SunOS" ]
 then
-    CC="/opt/csw/bin/gcc -fdiagnostics-color=auto" CXX="/opt/csw/bin/g++ -fdiagnostics-color=auto" cmake -DCMAKE_BUILD_TYPE=Debug ../.. && make
+    CC="/opt/csw/bin/gcc -fdiagnostics-color=auto" CXX="/opt/csw/bin/g++ -fdiagnostics-color=auto" cmake -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
 else
-    cmake -DCMAKE_BUILD_TYPE=Debug ../.. && make
+    cmake -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
 fi
 cd ..
 
