@@ -33,10 +33,10 @@ class Column {
   ~Column(){};
 
   // Getters
-  std::string title() { return title_; }
-  T type() { return type_; }
-  std::vector<T> entries() { return entries_; }
-  bool primary_key() { return primary_key_; }
+  std::string& title() { return title_; }
+  T& type() { return type_; }
+  std::vector<T>& entries() { return entries_; }
+  bool& primary_key() { return primary_key_; }
   int size() { return entries_.size(); }
 
   // Const Getters
@@ -85,6 +85,16 @@ std::ostream& operator<<(std::ostream& os, const Column<T>& column) {
     os << entry << std::endl;
   }
   return os;
+}
+
+template <typename T>
+std::ifstream& operator>>(std::ifstream& is, Column<T>& column) {
+  T entry;
+
+  is >> entry;
+  column.insert_entry(entry);
+  
+  return is;
 }
 
 #endif  // COLUMN_H_
