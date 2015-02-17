@@ -24,9 +24,11 @@ dbengine, libdbengine.so(or dylib on os x)
 cd engine
 ./build.sh
 # release binaries will be in engine/build/release/dbengine/
+# release libraries will be in engine/build/release/dbengine/lib/
+# release unittest will be in engine/build/release/dbengine/
 # debug binaries will be in engine/build/debug/dbengine/
-# release libraries will bin in engine/build/release/dbengine/lib/
-# debug libraries will bin in engine/build/debug/dbengine/lib/
+# debug libraries will be in engine/build/debug/dbengine/lib/
+# debug unittest will be in engine/build/debug/dbengine/
 ```
 
 # Execution
@@ -38,7 +40,12 @@ cd CSCE315-Project2
 cd engine/build/debug/dbengine/
 mkdir tables
 ./dbengine
+#for debug unittest binary
+./dbenginetest
 #for relase binary
 cd engine/build/release/dbengined/
 mkdir tables
 ./dbengine
+#for release unittest binary
+./dbenginetest
+```

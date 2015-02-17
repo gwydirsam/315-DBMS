@@ -1,4 +1,3 @@
-
 set(MAIN_SRC main.cc)
 
 set(UNITTEST_SRCS
@@ -7,7 +6,7 @@ set(UNITTEST_SRCS
 #find_package(Boost 1.57.0)
 #include_directories(${Boost_INCLUDE_DIRS})
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${gtest_INCLUDE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(${RELEASE_BINARY} ${MAIN_SRC})
 
@@ -23,23 +22,13 @@ target_link_libraries(${RELEASE_BINARY} ${ENGINE_LIBRARY})
 
 # Testing
 if (test)
-  # add gtest
-  add_subdirectory(${INCLUDES_DIR}/gtest)
-
   enable_testing()
 
-  # Include the gtest library. gtest_SOURCE_DIR is available due to
-  # 'project(gtest)' above.
-  include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-
   # Unit Tests
-	add_executable(${UNITTEST_BINARY}
-		${UNITTEST_SRCS}
-		$<TARGET_OBJECTS:${DEBUG_OBJECT_LIBRARY}>)
+	add_executable(${UNITTEST_BINARY} ${UNITTEST_SRCS})
 
   # Standard linking to gtest stuff.
-	set_target_properties(${UNITTEST_BINARY} PROPERTIES COMPILE_FLAGS "${CXXFLAGS_DEBUG}")
-	target_link_libraries(${UNITTEST_BINARY} gtest gtest_main)
+	target_link_libraries(${UNITTEST_BINARY} ${ENGINE_LIBRARY} gtest gtest_main)
 
   # This is so you can do 'make test' to see all your tests run, instead of
   # manually running the executable runUnitTests to see those specific tests.

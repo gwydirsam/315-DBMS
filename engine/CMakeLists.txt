@@ -20,6 +20,11 @@ set(LIB_DIR "${CMAKE_SOURCE_DIR}/lib")
 
 # include directories
 include_directories(lib)
+# if testing include gtest
+if (test)
+  add_subdirectory(${INCLUDES_DIR}/gtest)
+  include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+endif()
 
 # set names
 set(RELEASE_BINARY "main")
