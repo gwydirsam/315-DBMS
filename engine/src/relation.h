@@ -76,6 +76,10 @@ class Relation {
   // Return vector of columns type
   std::vector<std::string> get_column_types();
 
+  // Append
+  // 0 for success else failure
+  int append_row(std::vector<std::string> row);
+
   // Drop
   void drop_row(int i);
 

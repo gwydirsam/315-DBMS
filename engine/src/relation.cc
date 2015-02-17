@@ -4,8 +4,8 @@
 #include <fstream>
 #include <sstream>
 
-std::vector<Column<std::string> > Relation::primary_keys() {
-  std::vector<Column<std::string> > primary_keys;
+std::vector<Column<std::string>> Relation::primary_keys() {
+  std::vector<Column<std::string>> primary_keys;
   for (const Column<std::string>& column : columns_) {
     if (column.primary_key()) {
       primary_keys.push_back(column);
@@ -14,8 +14,8 @@ std::vector<Column<std::string> > Relation::primary_keys() {
   return primary_keys;
 }
 
-const std::vector<Column<std::string> > Relation::primary_keys() const {
-  std::vector<Column<std::string> > primary_keys;
+const std::vector<Column<std::string>> Relation::primary_keys() const {
+  std::vector<Column<std::string>> primary_keys;
   for (const Column<std::string>& column : columns_) {
     if (column.primary_key()) {
       primary_keys.push_back(column);
@@ -56,7 +56,7 @@ void Relation::print_row(int i, std::string delimiter) const {
   }
 }
 
-std::vector<Column<std::string> >::iterator Relation::find_column(
+std::vector<Column<std::string>>::iterator Relation::find_column(
     std::string column_name) {
   return std::find_if(std::begin(columns_), std::end(columns_),
                       [&column_name](Column<std::string> column)
@@ -93,7 +93,6 @@ const std::vector<std::string> Relation::get_column_titles() const {
   return column_titles;
 }
 
-
 std::string Relation::string_column_titles() {
   std::string column_titles = "{ ";
   for (std::string title : get_column_titles()) {
@@ -108,6 +107,18 @@ std::vector<std::string> Relation::get_column_types() {
     column_types.push_back(column.type());
   }
   return column_types;
+}
+
+int Relation::append_row(std::vector<std::string> row) {
+  if (row.size() != num_cols()) {
+    // cannot append row if it doesn't have same number of entries as relation
+    // has columns
+    return -1;
+  } else {
+    for (int i = 0; i < row.size(); ++i) {
+      columns_[i].insert_entry(row[i]);
+    }
+  }
 }
 
 void Relation::drop_row(int i) {
@@ -198,8 +209,10 @@ std::ifstream& operator>>(std::ifstream& is, Relation& relation) {
   for (int j = 0; j < num_rows; ++j) {
     for (int i = 0; i < num_cols; ++i) {
       is >> columns[i];
-      std::string errmsg = std::string("OpenTable: Column[") + std::to_string(i) +
-        std::string("][") + std::to_string(j) + std::string("] : ") + columns[i][j];
+      std::string errmsg = std::string("OpenTable: Column[") +
+                           std::to_string(i) + std::string("][") +
+                           std::to_string(j) + std::string("] : ") +
+                           columns[i][j];
       errlog(errmsg);
     }
   }
@@ -256,4 +269,3 @@ std::ofstream& operator<<(std::ofstream& os, const Relation& relation) {
 
   return os;
 }
-
