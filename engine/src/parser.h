@@ -13,13 +13,13 @@ class Parser {
   // Destructors
   // Default Destructor
   ~Parser(){};
-  
+
   // Receives command and returns a string of that command.
   std::string receive_command(std::string command);
   // Translate a command to Engine command string.
   std::string translate_command(std::string command);
   // Sends the engine command to be executed or excutes it here.
-  void exec_engine_command(std:: string command);
+  void exec_engine_command(std::string command);
 
  private:
 };
