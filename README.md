@@ -18,12 +18,14 @@
 
 # Building
 ## Engine
+The following will build the release, debug and shared library version of dbengine,
+dbengine, dbengined, lib15dbengine.so (or dylib on os x)
 ```bash
 cd engine
 ./configure.sh
 cd build
 make
-# binaries will be in engine/build/src/
+# binaries and library will be in engine/build/src/
 ```
 
 # Execution
