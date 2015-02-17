@@ -22,6 +22,7 @@ int main(int argc, char *argv[]) {
   std::vector<Column<std::string> > columns2;
 
   Column<std::string> first_col("Scrooge");
+  first_col.primary_key(true);
   first_col.insert_entry("bah");
   first_col.insert_entry("hum");
   first_col.insert_entry("bug");
@@ -36,6 +37,7 @@ int main(int argc, char *argv[]) {
   second_col.insert_entry("$100000");
 
   Column<std::string> third_col("Scrooge");
+  third_col.primary_key(true);
   third_col.insert_entry("1");
   third_col.insert_entry("2");
   third_col.insert_entry("3");
