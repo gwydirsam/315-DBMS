@@ -2,12 +2,14 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <algorithm>
 #include <iterator>
 #include <functional>
 
 #include "column.h"
 #include "relation.h"
+#include "utility.h"
 
 Engine::~Engine() {
   errlog("Engine: Shutting Down Database Engine");
@@ -104,134 +106,91 @@ void Engine::Table(std::string TableName, Relation Table) {
 }
 
 int Engine::openTable(std::string TableName) {
-  std::string line;
-  std::string title_;
-  std::vector<Column<std::string>> columns_;
-  bool end_of_line = false;
-  bool end_of_file = false;
+  // Lines:
+  // 0: relation.title()
+  // 1: relation.num_rows()
+  // 2: relation.num_cols()
+  // 3: number of primary keys
+  // 4: primary keys (column names if theyre primary key)
+  // Columns separated by tabs
+  // 5: relation.columns()
+  // 6-infinity: columns.entries()
 
+  // Create filepath
   std::string directory = "tables/";
   std::string filename = TableName.append(".db");
   std::string filepath = directory + filename;
 
+  // Open filepath
   std::ifstream dbfile(filepath, std::ios::in);
-  // Reads table's title
-  dbfile >> title_;
-  // Reads in Column Names
-  while (!end_of_line) {
-    dbfile >> line;
-    // Detects end of ColumnName
-    if (line == ",") {
-      // do nothing
-    } else if (line == "~$EOF") {
-      end_of_file = true;
-      end_of_line = true;
-    }
-    // Detects EOL
-    else if (line == "~$EOL") {
-      end_of_line = true;
-    }
-    // Detects if primary key
-    else if (line == "~^") {
-      dbfile >> line;
-      Column<std::string> column(line, "string", true);
-      columns_.push_back(column);
-    }
-    // Normal Column
-    else {
-      Column<std::string> column(line, "string", false);
-      columns_.push_back(column);
-    }
-  }
-  // Detects EOF
-  if (line == "~$EOF") {
-    end_of_file = true;
+
+  // If file doesn't exist return -1
+  if (!dbfile.good()) {
+    std::string errmsg = "openTable: File Doesn't Exist: " + filepath;
+    errlog(errmsg);
+    return -1;
   }
 
-  // Reads in entries TIL EOF
-  while (!end_of_file) {
-    end_of_line = false;
-    int c = 0;
-    while (!end_of_line) {
-      dbfile >> line;
+  // delimiter is used to seperate columns
+  std::string delimiter = "\t";
 
-      // Detects EOF
-      if (line == "~$EOF") {
-        end_of_file = true;
-        end_of_line = true;
-      }
-      // Detects EOL
-      else if (line == "~$EOL") {
-        end_of_line = true;
-      }
-      // Detects end of entry
-      else if (line == ",") {
-        // do nothing
-      } else {
-        columns_.at(c).insert_entry(line);
-        c++;
+  // Line 0: TableName
+  std::string relation_title;
+  dbfile >> relation_title;
+  {
+    std::string errmsg = "OpenTable: title: " + relation_title;
+    errlog(errmsg);
+  }
+
+  int num_rows, num_cols, num_primary_keys;
+  // Line 1: Number of Rows
+  dbfile >> num_rows;
+  // line 2: number of Columns
+  dbfile >> num_cols;
+  // line 3: number of primary keys
+  dbfile >> num_primary_keys;
+
+  // Line 4: Primary Keys
+  std::vector<std::string> primary_keys(num_primary_keys);
+  for (unsigned int i = 0; i < num_primary_keys; ++i) {
+    dbfile >> primary_keys[i];
+    std::string errmsg = "OpenTable: Primary Keys: " + primary_keys[i];
+    errlog(errmsg);
+  }
+
+  // Line 5: Column Names
+  std::vector<Column<std::string>> columns(num_cols);
+  for (int i = 0; i < num_cols; ++i) {
+    dbfile >> columns[i].title();
+
+    // if column title is in primary_keys, then set it as a primary key
+    for (const std::string& key_name : primary_keys) {
+      if (columns[i].title() == key_name) {
+        columns[i].primary_key(true);
       }
     }
+
+    std::string errmsg = "OpenTable: Column Names: " + columns[i].title();
+    errlog(errmsg);
   }
+
+  // Line 6-infinity: entries
+  for (int j = 0; j < num_rows; ++j) {
+    for (int i = 0; i < num_cols; ++i) {
+      dbfile >> columns[i];
+      std::string errmsg = std::string("OpenTable: Column[") + std::to_string(i) +
+        std::string("][") + std::to_string(j) + std::string("] : ") + columns[i][j];
+      errlog(errmsg);
+    }
+  }
+
+  // Create Relation
+  Relation table(relation_title, columns);
+
   // Adds table to vector of open tables
-  Relation table(title_, columns_);
   open_tables_.push_back(table);
   return (num_open_tables());
-
-  // Lines:
-  // 0: relation.title()
-  // Columns separated by commas
-  // End of Line (EOL) denoted by "~$EOL" this is used only on column and
-  // entries row
-  // if a column is a primary key denoted with "~^ ColumnName"
-  // 1: relation.columns()
-  // 2-infinity: columns.entries()
-  // EOF denoted with "~$EOF"
-  // write this
 }
-
-int Engine::showTable(std::string TableName) {
-  int i = find_table_index(TableName);
-  if (i == -1) {
-    // Return Failure
-    return -1;
-  } else {
-    int num_com = open_tables_.at(i).num_cols();
-    int num_entries = open_tables_.at(i).num_rows();
-#ifdef DEBUG
-    std::cerr << setcolor(color::RED, "showTable: Relation Title: ")
-              << setcolor(color::RED, TableName) << std::endl;
-    std::cerr << setcolor(color::RED, "showTable: Number of Columns: ")
-              << setcolor(color::RED, std::to_string(num_com)) << std::endl;
-    std::cerr << setcolor(color::RED, "showTable: Number of Rows: ")
-              << setcolor(color::RED, std::to_string(num_entries)) << std::endl;
-    std::cerr << setcolor(color::RED, "showTable: Columns: ")
-              << setcolor(color::RED, find_relation(TableName)
-                                          .string_column_titles()) << std::endl;
-#endif
-
-    std::cout << "Contents of Table: " << TableName << " (" << num_com << " x "
-              << num_entries << ")" << std::endl;
-
-    // Prints out column titles
-    for (int c = 0; c < num_com; ++c) {
-      std::cout << open_tables_.at(i).columns().at(c).title() << "\t";
-    }
-    std::cout << std::endl;
-
-    // Iterates through rows
-    for (int r = 0; r < num_entries; ++r) {
-      // Iterates through columns to print row r.
-      open_tables_.at(i).print_row(r);
-      if (r != (num_entries - 1)) std::cout << std::endl;
-    }
-
-    // Success
-    return 0;
-  }
-}
-
-int Engine::showTable(Relation Table) { return showTable(Table.title()); }
 
 Relation Engine::createNewTable(std::string TableName,
                                 std::vector<Column<std::string>> columns) {
@@ -301,46 +260,54 @@ int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
 int Engine::execSQL(std::string DML) { return -1; }
 
 void Engine::writeTable(Relation relation) {
-  std::string directory = "tables/";
-  std::string filename = relation.title().append(".db");
-  std::string filepath = directory + filename;
-  std::ofstream dbfile(filepath, std::ios::out);
   // Lines:
   // 0: relation.title()
-  // Columns separated by commas
-  // End of Line (EOL) denoted by "~$EOL" this is used only on column and
-  // entries row
-  // if a column is a primary key denoted with "~^ ColumnName"
-  // 1: relation.columns()
-  // 2-infinity: columns.entries()
-  // EOF denoted with "~$EOF"
-  // write this
+  // 1: relation.num_rows()
+  // 2: relation.num_cols()
+  // 3: number of primary keys
+  // 4: primary keys (column names if theyre primary key)
+  // Columns separated by tabs
+  // 5: relation.columns()
+  // 6-infinity: columns.entries()
 
-  // Writes TableName to file.
-  dbfile << relation.title() << "\n";
+  std::string directory = "tables/";
+  std::string filename = relation.title() + ".db";
+  std::string filepath = directory + filename;
+  std::ofstream dbfile(filepath, std::ios::out);
 
-  // Writing columns to file
-  if (relation.columns().size() != 0) {
-    for (unsigned int c = 0; c < relation.columns().size(); c++) {
-      if (relation.columns().at(c).primary_key()) {
-        dbfile << "~^ ";
-      }
-      dbfile << relation.columns().at(c).title() << " , ";
-    }
-    dbfile << "~$EOL \n";
+  // delimiter is used to seperate columns
+  std::string delimiter = "\t";
+
+  // Line 0: TableName
+  dbfile << relation.title() << std::endl;
+
+  // Line 1: Number of Rows
+  dbfile << relation.num_rows() << std::endl;
+  // line 2: number of Columns
+  dbfile << relation.num_cols() << std::endl;
+  // line 3: number of primary keys
+  dbfile << relation.primary_keys().size() << std::endl;
+
+  // Line 4: Primary Keys
+  for (const Column<std::string>& column : relation.primary_keys()) {
+    dbfile << column.title() << delimiter;
   }
-  // Writing entries to file.
-  if (relation.columns().at(0).entries().size() != 0) {
-    for (unsigned int r = 0; r < relation.columns().at(0).entries().size();
-         r++) {
-      for (unsigned int c = 0; c < relation.columns().size(); c++) {
-        dbfile << relation.columns().at(c).entries().at(r);
-        dbfile << " , ";
-      }
-      dbfile << "~$EOL \n";
-    }
+  dbfile << std::endl;
+
+  // Line 5: Column Names
+  for (const std::string& title : relation.get_column_titles()) {
+    dbfile << title << delimiter;
   }
-  dbfile << "~$EOF";
+  dbfile << std::endl;
+
+  // Line 6-infinity: entries
+  for (int i = 0; i < relation.num_rows(); ++i) {
+    for (const std::string& entry : relation.get_row(i)) {
+      dbfile << entry << delimiter;
+    }
+    dbfile << std::endl;
+  }
+
   dbfile.close();
 }
 
