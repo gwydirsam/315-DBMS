@@ -49,12 +49,12 @@ class Relation {
 
   // Printers
   // Print row seperated by tabs
-  void print_row(int i);
+  void print_row(int i) { print_row(i, "\t"); }
   // Print row seperated by delimiter
-  void print_row(int i, char delimiter);
+  void print_row(int i, std::string delimiter);
 
-  void print_row(int i) const;
-  void print_row(int i, char delimiter) const;
+  void print_row(int i) const { print_row(i, "\t"); }
+  void print_row(int i, std::string delimiter) const;
 
   // Finders
   std::vector<Column<std::string> >::iterator find_column(
