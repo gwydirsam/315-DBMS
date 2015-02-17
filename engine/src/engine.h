@@ -47,10 +47,6 @@ class Engine {
   // Open
   int openTable(std::string TableName);
 
-  // Show
-  int showTable(std::string TableName);
-  int showTable(Relation Table);
-
   // Create Table
   Relation createNewTable(std::string TableName,
                           std::vector<Column<std::string> > columns);
