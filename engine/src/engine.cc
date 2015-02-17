@@ -106,16 +106,6 @@ void Engine::Table(std::string TableName, Relation Table) {
 }
 
 int Engine::openTable(std::string TableName) {
-  // Lines:
-  // 0: relation.title()
-  // 1: relation.num_rows()
-  // 2: relation.num_cols()
-  // 3: number of primary keys
-  // 4: primary keys (column names if theyre primary key)
-  // Columns separated by tabs
-  // 5: relation.columns()
-  // 6-infinity: columns.entries()
-
   // Create filepath
   std::string directory = "tables/";
   std::string filename = TableName.append(".db");
@@ -131,61 +121,11 @@ int Engine::openTable(std::string TableName) {
     return -1;
   }
 
-  // delimiter is used to seperate columns
-  std::string delimiter = "\t";
+  // Create Table
+  Relation table;
 
-  // Line 0: TableName
-  std::string relation_title;
-  dbfile >> relation_title;
-  {
-    std::string errmsg = "OpenTable: title: " + relation_title;
-    errlog(errmsg);
-  }
-
-  int num_rows, num_cols, num_primary_keys;
-  // Line 1: Number of Rows
-  dbfile >> num_rows;
-  // line 2: number of Columns
-  dbfile >> num_cols;
-  // line 3: number of primary keys
-  dbfile >> num_primary_keys;
-
-  // Line 4: Primary Keys
-  std::vector<std::string> primary_keys(num_primary_keys);
-  for (unsigned int i = 0; i < num_primary_keys; ++i) {
-    dbfile >> primary_keys[i];
-    std::string errmsg = "OpenTable: Primary Keys: " + primary_keys[i];
-    errlog(errmsg);
-  }
-
-  // Line 5: Column Names
-  std::vector<Column<std::string>> columns(num_cols);
-  for (int i = 0; i < num_cols; ++i) {
-    dbfile >> columns[i].title();
-
-    // if column title is in primary_keys, then set it as a primary key
-    for (const std::string& key_name : primary_keys) {
-      if (columns[i].title() == key_name) {
-        columns[i].primary_key(true);
-      }
-    }
-
-    std::string errmsg = "OpenTable: Column Names: " + columns[i].title();
-    errlog(errmsg);
-  }
-
-  // Line 6-infinity: entries
-  for (int j = 0; j < num_rows; ++j) {
-    for (int i = 0; i < num_cols; ++i) {
-      dbfile >> columns[i];
-      std::string errmsg = std::string("OpenTable: Column[") + std::to_string(i) +
-        std::string("][") + std::to_string(j) + std::string("] : ") + columns[i][j];
-      errlog(errmsg);
-    }
-  }
-
-  // Create Relation
-  Relation table(relation_title, columns);
+  // Create table by reading in file
+  dbfile >> table;
 
   // Adds table to vector of open tables
   open_tables_.push_back(table);
@@ -260,54 +200,12 @@ int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
 int Engine::execSQL(std::string DML) { return -1; }
 
 void Engine::writeTable(Relation relation) {
-  // Lines:
-  // 0: relation.title()
-  // 1: relation.num_rows()
-  // 2: relation.num_cols()
-  // 3: number of primary keys
-  // 4: primary keys (column names if theyre primary key)
-  // Columns separated by tabs
-  // 5: relation.columns()
-  // 6-infinity: columns.entries()
-
   std::string directory = "tables/";
   std::string filename = relation.title() + ".db";
   std::string filepath = directory + filename;
   std::ofstream dbfile(filepath, std::ios::out);
 
-  // delimiter is used to seperate columns
-  std::string delimiter = "\t";
-
-  // Line 0: TableName
-  dbfile << relation.title() << std::endl;
-
-  // Line 1: Number of Rows
-  dbfile << relation.num_rows() << std::endl;
-  // line 2: number of Columns
-  dbfile << relation.num_cols() << std::endl;
-  // line 3: number of primary keys
-  dbfile << relation.primary_keys().size() << std::endl;
-
-  // Line 4: Primary Keys
-  for (const Column<std::string>& column : relation.primary_keys()) {
-    dbfile << column.title() << delimiter;
-  }
-  dbfile << std::endl;
-
-  // Line 5: Column Names
-  for (const std::string& title : relation.get_column_titles()) {
-    dbfile << title << delimiter;
-  }
-  dbfile << std::endl;
-
-  // Line 6-infinity: entries
-  for (int i = 0; i < relation.num_rows(); ++i) {
-    for (const std::string& entry : relation.get_row(i)) {
-      dbfile << entry << delimiter;
-    }
-    dbfile << std::endl;
-  }
-
+  dbfile << relation;
   dbfile.close();
 }
 

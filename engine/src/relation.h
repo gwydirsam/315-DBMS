@@ -68,6 +68,7 @@ class Relation {
 
   // Return vector of string title
   std::vector<std::string> get_column_titles();
+  const std::vector<std::string> get_column_titles() const;
 
   // Return string of titles
   std::string string_column_titles();
@@ -95,5 +96,7 @@ class Relation {
 };
 
 std::ostream& operator<<(std::ostream& os, const Relation& relation);
+std::ifstream& operator>>(std::ifstream& is, Relation& relation);
+std::ofstream& operator<<(std::ofstream& os, const Relation& relation);
 
 #endif  // RELATION_H_
