@@ -18,14 +18,15 @@
 
 # Building
 ## Engine
-The following will build the release, debug and shared library version of dbengine,
-dbengine, dbengined, lib15dbengine.so (or dylib on os x)
+The following will build the release, debug and shared library version of dbengine (a release and debug version),
+dbengine, dbengined, libdbengine.so, libdbengined.so (or dylib on os x)
 ```bash
 cd engine
 ./configure.sh
 cd build
 make
-# binaries and library will be in engine/build/src/
+# binaries will be in engine/build/dbengine/
+# libraries will bin in engine/build/dbengine/lib/
 ```
 
 # Execution
@@ -34,6 +35,6 @@ make
 # cd to project root
 cd CSCE315-Project2
 #for debug binary
-./engine/build/src/dbengined
+./engine/build/dbengine/dbengined
 #for relase binary
-./engine/build/src/dbengine
+./engine/build/dbengined/dbengine

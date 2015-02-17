@@ -20,6 +20,20 @@ option(test "Build ${PROJECT_NAME}'s tests" OFF)
 # set some locations
 set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
 set(INCLUDES_DIR "${CMAKE_SOURCE_DIR}/include")
+set(LIB_DIR "${CMAKE_SOURCE_DIR}/lib")
 
-# add directory for project source files
-add_subdirectory(${SOURCE_DIR})
+# include directories
+include_directories(lib)
+
+# set names
+set(DEBUG_BINARY "maind")
+set(RELEASE_BINARY "main")
+set(DEBUG_BINARY_OUTNAME "${PROJECT_NAME}d")
+set(RELEASE_BINARY_OUTNAME "${PROJECT_NAME}")
+set(UNITTEST_BINARY "${PROJECT_NAME}test")
+set(ENGINE_LIBRARY "${PROJECT_NAME}")
+set(ENGINE_LIBRARY_DEBUG "${PROJECT_NAME}d")
+
+# add directory for project source files and libraries
+add_subdirectory(${SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME})
+add_subdirectory(${LIB_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/lib)
