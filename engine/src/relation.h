@@ -26,8 +26,8 @@ class Relation {
   ~Relation(){};
 
   // Getters
-  std::string title() { return title_; }
-  std::vector<Column<std::string> > columns() { return columns_; }
+  std::string& title() { return title_; }
+  std::vector<Column<std::string> >& columns() { return columns_; }
   std::vector<Column<std::string> > primary_keys();
 
   // Const Getters
