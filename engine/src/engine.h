@@ -40,7 +40,7 @@ class Engine {
 
   // Setters
   // Set Table
-  void Table(std::string TableName, Relation Table);
+  void set_table(std::string TableName, Relation Table);
 
   // Commands
   // Open

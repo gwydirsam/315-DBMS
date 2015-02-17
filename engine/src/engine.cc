@@ -97,7 +97,7 @@ void Engine::print_list_open_tables() {
   std::cout << "}";
 }
 
-void Engine::Table(std::string TableName, Relation Table) {
+void Engine::set_table(std::string TableName, Relation Table) {
   open_tables_.at(find_table_index(TableName)) = Table;
 }
 
