@@ -1,7 +1,11 @@
+
 set(MAIN_SRC main.cc)
 
 set(UNITTEST_SRCS
   test_main.cc)
+
+#find_package(Boost 1.57.0)
+#include_directories(${Boost_INCLUDE_DIRS})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${gtest_INCLUDE_DIR})
 
@@ -14,6 +18,7 @@ set_property(TARGET ${RELEASE_BINARY} PROPERTY CXX_STANDARD_REQUIRED ON)
 
 set_target_properties(${RELEASE_BINARY} PROPERTIES OUTPUT_NAME "${RELEASE_BINARY_OUTNAME}")
 
+#target_link_libraries(${RELEASE_BINARY} ${ENGINE_LIBRARY} ${Boost_LIBRARIES})
 target_link_libraries(${RELEASE_BINARY} ${ENGINE_LIBRARY})
 
 # Testing
