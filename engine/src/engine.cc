@@ -97,10 +97,6 @@ void Engine::print_list_open_tables() {
   std::cout << "}";
 }
 
-Relation Engine::get_table(std::string TableName) {
-  return open_tables_.at(find_table_index(TableName));
-}
-
 void Engine::Table(std::string TableName, Relation Table) {
   open_tables_.at(find_table_index(TableName)) = Table;
 }
@@ -222,8 +218,6 @@ int Engine::closeTable(std::string TableName) {
   return d;
 }
 
-// TODO: Does this need to delete old table file and make a new one??
-// TODO: We can rename from C++ I believe
 int Engine::rename_table(std::string TableName, std::string newname) {
   int i = find_table_index(TableName);
   open_tables_.at(i).title(newname);

@@ -20,24 +20,23 @@ class Engine {
   ~Engine();
 
   // Finders
-  Relation find_relation(std::string TableName);
   // Find Table
+  Relation find_relation(std::string TableName);
   // Returns an iterator
+  //TODO: sould probably be private
   std::vector<Relation>::iterator find_table(std::string TableName);
   // Returns the index of where the table is. Returns -1 if failed to find.
   int find_table_index(std::string TableName);
   int find_tuple_index(std::string TableName, std::vector<std::string> tuple);
 
   // Getters
+  // Get All Tables
+  std::vector<Relation> open_tables() { return open_tables_; }
   // List Tables
   std::vector<std::string> list_open_tables();
   int num_open_tables();
   void print_list_open_tables();
 
-  // Get Table
-  Relation get_table(std::string TableName);
-  // Get All Tables
-  std::vector<Relation> open_tables() { return open_tables_; }
 
   // Setters
   // Set Table
