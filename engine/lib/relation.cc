@@ -269,3 +269,11 @@ std::ofstream& operator<<(std::ofstream& os, const Relation& relation) {
 
   return os;
 }
+
+bool operator==(const Relation& lhs, const Relation& rhs) {
+  bool equal = lhs.title() == rhs.title();
+  for (int i = 0; i < lhs.num_cols(); ++i) {
+    equal = equal && (lhs.columns()[i] == rhs.columns()[i]);
+  }
+  return equal;
+}

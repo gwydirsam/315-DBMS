@@ -102,5 +102,7 @@ class Relation {
 std::ostream& operator<<(std::ostream& os, const Relation& relation);
 std::ifstream& operator>>(std::ifstream& is, Relation& relation);
 std::ofstream& operator<<(std::ofstream& os, const Relation& relation);
+bool operator==(const Relation& lhs, const Relation& rhs);
+
 
 #endif  // RELATION_H_
