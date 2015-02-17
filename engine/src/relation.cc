@@ -40,17 +40,13 @@ const std::vector<std::string> Relation::get_row(int i) const {
   return row;
 }
 
-void Relation::print_row(int i) { print_row(i, '\t'); }
-
-void Relation::print_row(int i, char delimiter) {
+void Relation::print_row(int i, std::string delimiter) {
   for (const std::string& entry : get_row(i)) {
     std::cout << entry << delimiter;
   }
 }
 
-void Relation::print_row(int i) const { print_row(i, '\t'); }
-
-void Relation::print_row(int i, char delimiter) const {
+void Relation::print_row(int i, std::string delimiter) const {
   for (const std::string& entry : get_row(i)) {
     std::cout << entry << delimiter;
   }
@@ -108,15 +104,23 @@ void Relation::drop_row(int i) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Relation& relation) {
+  std::string delimiter = "\t\t";
+
   os << relation.title() << std::endl;
 
   for (const Column<std::string>& column : relation.columns()) {
-    os << column.title() << "\t";
+    std::string title;
+    if (column.primary_key()) {
+      title = "*" + column.title() + "*";
+    } else {
+      title = column.title();
+    }
+    os << title << delimiter;
   }
   os << std::endl;
 
   for (int i = 0; i < relation.num_rows(); ++i) {
-    relation.print_row(i);
+    relation.print_row(i, delimiter);
     if (i != (relation.num_rows() - 1)) os << std::endl;
   }
 
