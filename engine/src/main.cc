@@ -77,19 +77,19 @@ int main(int argc, char *argv[]) {
 
   std::cout << "Test0 Table Index: " << db->find_table_index("Test0")
             << std::endl;
-  db->showTable("Test0");
+  std::cout << db->find_relation("Test0");
   std::cout << std::endl;
   draw_line();
 
   std::cout << "Test1 Table Index: " << db->find_table_index("Test1")
             << std::endl;
-  db->showTable("Test1");
+  std::cout << db->find_relation("Test1");
   std::cout << std::endl;
   draw_line();
 
   std::cout << "Test2 Table Index: " << db->find_table_index("Test2")
             << std::endl;
-  db->showTable("Test2");
+  std::cout << db->find_relation("Test2");
   std::cout << std::endl;
   draw_line();
 
