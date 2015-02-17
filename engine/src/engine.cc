@@ -200,12 +200,17 @@ int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
 int Engine::execSQL(std::string DML) { return -1; }
 
 void Engine::writeTable(Relation relation) {
+  // Create filepath
   std::string directory = "tables/";
   std::string filename = relation.title() + ".db";
   std::string filepath = directory + filename;
+
+  // Open filepath
   std::ofstream dbfile(filepath, std::ios::out);
 
+  // Write relation to dbfile
   dbfile << relation;
+
   dbfile.close();
 }
 
