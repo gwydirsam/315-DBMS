@@ -31,6 +31,12 @@ cd engine
 # debug unittest will be in engine/build/debug/dbengine/
 ```
 
+for repeating builds
+```bash
+cd engine/build/debug/dbengine
+make -j4 && cd dbengine && ./dbengine&& cd ..
+```
+
 # Execution
 ## Engine
 ```bash
