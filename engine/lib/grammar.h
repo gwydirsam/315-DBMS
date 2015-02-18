@@ -17,26 +17,7 @@
 #include <boost/spirit/include/qi.hpp>
 #include <boost/algorithm/string.hpp>
 
-// relation-name := identifier
 
-// identifier := alpha { ( alpha | digit ) }
-// alpha := a | … | z | A | … | Z | _
-// digit := 0 | … | 9
-// atomic-expr := relation-name | ( expr )
-// selection := select ( condition ) atomic-expr
-// condition := conjunction { || conjunction }
-// conjunction := comparison { && comparison }
-// comparison := operand op operand | ( condition )
-// op := == | != | < | > | <= | >=
-// operand := attribute-name | literal
-// attribute-name := identifier
-// literal := intentionally left unspecified (strings, numbers, etc.)
-// projection := project ( attribute-list ) atomic-expr
-// attribute-list := attribute-name { , attribute-name }
-// renaming := rename ( attribute-list ) atomic-expr
-// union := atomic-expr + atomic-expr
-// difference := atomic-expr - atomic-expr
-// product := atomic-expr * atomic-expr
 
 struct Query;
 struct Select;
@@ -138,9 +119,6 @@ BOOST_FUSION_ADAPT_STRUCT(Program,
                           (Query, query)
                           (Command, command))
 
-// expr := atomic-expr | selection | projection | renaming | union | difference
-// | product
-
 template <typename It, typename Skipper = boost::spirit::qi::space_type>
 class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
  public:
@@ -154,65 +132,149 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     //whereclause = no_case["where"] >> lexeme[+(char_ - ';')];
     //start = query_type >> columns >> tables >> whereclause >> ';';
 
+    // alpha := a | … | z | A | … | Z | _
+    // digit := 0 | … | 9
+
     // atomic-expr := relation-name | ( expr )
-    //atomic_expression = relation_name | ( '(' >> expression >> ')');
+    // condition := conjunction { || conjunction }
+    // conjunction := comparison { && comparison }
+    // comparison := operand op operand | ( condition )
+    // op := == | != | < | > | <= | >=
+    // operand := attribute-name | literal
+    // attribute-name := identifier
+    // literal := intentionally left unspecified (strings, numbers, etc.)
 
 
     // command := ( open-cmd | close-cmd | write-cmd | exit-cmd | show-cmd |
     // create-cmd | update-cmd | insert-cmd | delete-cmd ) ;
     cmd_name = lexeme[+(upper)];
     argument = lexeme[*(char_ - ';')];
-    io_cmd = cmd_name; // open, close, write and exit
+    io_cmd = cmd_name.alias(); // open, close, write and exit
 
-    //show_cmd =   cmd_name >> atomic_expression;
-    show_cmd = no_case["SHOW"];
+    // show-cmd := SHOW atomic-expr 
+    show_cmd = no_case["SHOW"] >> atomic_expression;
 
-    //create_cmd = no_case["SHOW"] >> ...;
-    create_cmd = no_case["CREATE"] >> ';';
-    //update_cmd = no_case["SHOW"] >> ...;
-    update_cmd = no_case["UPDATE"] >> ';';
-    //insert_cmd = no_case["SHOW"] >> relation_name;
-    insert_cmd = no_case["INSERT"] >> ';';
-    //delete_cmd = no_case["SHOW"] >> relation_name;
-    delete_cmd = no_case["DELETE"] >> ';';
+    // create-cmd := CREATE TABLE relation-name ( typed-attribute-list ) PRIMARY KEY
+    // ( attribute-list )
+    create_cmd = no_case["create table"] >> ';';
+
+    // update-cmd := UPDATE relation-name SET attribute-name = literal { ,
+    // attribute-name = literal } WHERE condition
+    update_cmd = no_case["update"] >> ';';
+
+    // insert-cmd := INSERT INTO relation-name VALUES FROM ( literal { , literal } )
+    // |
+    //    INSERT INTO relation-name VALUES FROM RELATION expr
+    insert_cmd = no_case["insert"] >> ';';
+
+    // delete-cmd := DELETE FROM relation-name WHERE condition
+    delete_cmd = no_case["delete"] >> ';';
     cmd = io_cmd | show_cmd |
-              create_cmd | update_cmd | insert_cmd | delete_cmd;
+      create_cmd | update_cmd | insert_cmd | delete_cmd;
     command = cmd >> argument >> ';';
 
-    // command = expression >> ';';
+    // condition := conjunction { || conjunction }
+    condition = conjunction >> *("||" >> conjunction);
+
+    // conjunction := comparison { && comparison }
+    conjunction = comparison >> *("&&" >> comparison);
+    
+    // comparison := operand op operand | ( condition )
+    comparison = (operand >> op >> operand) | '(' >> condition >> ')';
+
+    // op := == | != | < | > | <= | >=
+    op = char_("==") | char_("!=") | char_("<") | char_(">") | char_("<=") | char_(">=");
+    
+    // operand := attribute-name | literal
+    operand = attribute_name | literal;
+
+    // attribute-name := identifier
+    attribute_name = identifier.alias();
+
+    // literal := intentionally left unspecified (strings, numbers, etc.)
+    literal = lexeme[+alnum];
+    
+    // attribute-list := attribute-name { , attribute-name }
+    attribute_list = attribute_name >> *(',' >> space >> attribute_name) - ')';
+
+    // atomic-expr := relation-name | ( expr )
+    atomic_expression = relation_name | ( '(' >> expression >> ')' );
+
+    // selection := select ( condition ) atomic-expr
+    selection = no_case["select"] >> '(' >> condition >> ')' >> atomic_expression;
+    // projection := project ( attribute-list ) atomic-expr
+    projection = no_case["project"] >> '(' >> attribute_list >> ')' >> atomic_expression;
+    // renaming := rename ( attribute-list ) atomic-expr
+    renaming = no_case["rename"] >> '(' >> attribute_list >> ')' >> atomic_expression;
+    // setunion := atomic-expr + atomic-expr
+    setunion = atomic_expression >> char_('+') >> atomic_expression;
+    // difference := atomic-expr - atomic-expr
+    difference = atomic_expression >> char_('-') >> atomic_expression;
+    // product := atomic-expr * atomic-expr
+    product = atomic_expression >> char_('*') >> atomic_expression;
+
+    // expr := atomic-expr | selection | projection | renaming | union | difference
+    // | product
+    expression = selection | projection | renaming | setunion | difference |
+                 product | atomic_expression;
+    // expression = lexeme[+alnum >> *(space >> +alnum)] - ';';
+
+    // identifier := alpha { ( alpha | digit ) }
+    identifier = lexeme[alpha >> *char_("0-9a-zA-Z_") >> *char_("0-9a-zA-Z")];
+
+    // relation-name := identifier
+    relation_name = identifier.alias();
 
     // query := relation-name <- expr ;
-    expression = lexeme[+(char_ - ';')];
-    relation_name = lexeme[alpha >> *alnum];
     query = relation_name >> "<-" >> expression >> ';';
     
     // program := { ( query | command ) }
     program = query | command;
 
     BOOST_SPIRIT_DEBUG_NODE(program);
-    BOOST_SPIRIT_DEBUG_NODE(query);
     BOOST_SPIRIT_DEBUG_NODE(command);
+    BOOST_SPIRIT_DEBUG_NODE(query);
     BOOST_SPIRIT_DEBUG_NODE(relation_name);
     BOOST_SPIRIT_DEBUG_NODE(expression);
-    BOOST_SPIRIT_DEBUG_NODE(cmd);
     BOOST_SPIRIT_DEBUG_NODE(cmd_name);
-    BOOST_SPIRIT_DEBUG_NODE(relation_name);
+    BOOST_SPIRIT_DEBUG_NODE(cmd);
     BOOST_SPIRIT_DEBUG_NODE(argument);
+    BOOST_SPIRIT_DEBUG_NODE(atomic_expression);
+    BOOST_SPIRIT_DEBUG_NODE(selection);
+    BOOST_SPIRIT_DEBUG_NODE(projection);
+    BOOST_SPIRIT_DEBUG_NODE(renaming);
+    BOOST_SPIRIT_DEBUG_NODE(setunion);
+    BOOST_SPIRIT_DEBUG_NODE(difference);
+    BOOST_SPIRIT_DEBUG_NODE(product);
+    BOOST_SPIRIT_DEBUG_NODE(identifier);
+    BOOST_SPIRIT_DEBUG_NODE(condition);
+    BOOST_SPIRIT_DEBUG_NODE(conjunction);
+    BOOST_SPIRIT_DEBUG_NODE(comparison);
+    BOOST_SPIRIT_DEBUG_NODE(op);
+    BOOST_SPIRIT_DEBUG_NODE(operand);
+    BOOST_SPIRIT_DEBUG_NODE(attribute_name);
+    BOOST_SPIRIT_DEBUG_NODE(attribute_list);
+    BOOST_SPIRIT_DEBUG_NODE(literal);
     BOOST_SPIRIT_DEBUG_NODE(io_cmd);
     BOOST_SPIRIT_DEBUG_NODE(show_cmd);
     BOOST_SPIRIT_DEBUG_NODE(create_cmd);
     BOOST_SPIRIT_DEBUG_NODE(update_cmd);
     BOOST_SPIRIT_DEBUG_NODE(insert_cmd);
     BOOST_SPIRIT_DEBUG_NODE(delete_cmd);
+
   }
 
  private:
   boost::spirit::qi::rule<It, Command(), Skipper> command;
   boost::spirit::qi::rule<It, Query(), Skipper> query;
   boost::spirit::qi::rule<It, std::string(), Skipper> relation_name, expression,
-                                 cmd_name, cmd, argument;
-  boost::spirit::qi::rule<It, std::string(), Skipper> io_cmd,
-    show_cmd, create_cmd, update_cmd, insert_cmd, delete_cmd;
+      cmd_name, cmd, argument;
+  boost::spirit::qi::rule<It, std::string(), Skipper> atomic_expression,
+      selection, projection, renaming, setunion, difference, product;
+  boost::spirit::qi::rule<It, std::string(), Skipper> identifier, condition,
+    conjunction, comparison, op, operand, attribute_name, attribute_list, literal;
+  boost::spirit::qi::rule<It, std::string(), Skipper> io_cmd, show_cmd,
+      create_cmd, update_cmd, insert_cmd, delete_cmd;
   boost::spirit::qi::rule<It, Program(), Skipper> program;
 };
 
@@ -242,65 +304,5 @@ bool doParse(const C& input, const Skipper& skipper) {
 
   return false;
 }
-
-//// old version
-// template <typename It, typename Skipper = boost::spirit::qi::space_type>
-// class Grammar : public boost::spirit::qi::grammar<It, Query(), Skipper> {
-// public:
-//  Grammar() : Grammar::base_type(start) {
-//    using namespace boost::spirit::qi;
-//
-//    sqlident = lexeme[alpha >> *alnum];  // table or column name
-//
-//    query_type = lexeme[alpha >> *alnum];  // query type
-//
-//    columns = (sqlident % ',');
-//    tables = no_case["from"] >> (sqlident % ',');
-//    whereclause = no_case["where"] >> lexeme[+(char_ - ';')];
-//
-//    start = query_type >> columns >> tables >> whereclause >> ';';
-//
-//    BOOST_SPIRIT_DEBUG_NODE(start);
-//    BOOST_SPIRIT_DEBUG_NODE(sqlident);
-//    BOOST_SPIRIT_DEBUG_NODE(query_type);
-//    BOOST_SPIRIT_DEBUG_NODE(columns);
-//    BOOST_SPIRIT_DEBUG_NODE(tables);
-//    BOOST_SPIRIT_DEBUG_NODE(whereclause);
-//  }
-//
-// private:
-//  boost::spirit::qi::rule<It, std::string(), Skipper> sqlident;
-//  boost::spirit::qi::rule<It, std::string(), Skipper> query_type;
-//  boost::spirit::qi::rule<It, std::vector<std::string>(), Skipper> columns,
-//      tables, whereclause;
-//  boost::spirit::qi::rule<It, Query(), Skipper> start;
-//};
-//
-// template <typename C, typename Skipper>
-// bool doParse(const C& input, const Skipper& skipper) {
-//  auto f(std::begin(input)), l(std::end(input));
-//
-//  Grammar<decltype(f), Skipper> p;
-//  Query query;
-//
-//  try {
-//    using namespace boost::spirit::qi;
-//    bool ok = phrase_parse(f, l, p, skipper, query);
-//    if (ok) {
-//      std::cout << "parse success\n";
-//      std::cout << "Query: " << query << "\n";
-//    } else
-//      std::cerr << "parse failed: '" << std::string(f, l) << "'\n";
-//
-//    if (f != l)
-//      std::cerr << "trailing unparsed: '" << std::string(f, l) << "'\n";
-//    return ok;
-//  } catch (const boost::spirit::qi::expectation_failure<decltype(f)>& e) {
-//    std::string frag(e.first, e.last);
-//    std::cerr << e.what() << "'" << frag << "'\n";
-//  }
-//
-//  return false;
-//}
 
 #endif  // GRAMMAR_H_
