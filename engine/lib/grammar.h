@@ -37,15 +37,7 @@
 // union := atomic-expr + atomic-expr
 // difference := atomic-expr - atomic-expr
 // product := atomic-expr * atomic-expr
-//
-// DML
-//
-// command := ( open-cmd | close-cmd | write-cmd | exit-cmd | show-cmd |
-// create-cmd | update-cmd | insert-cmd | delete-cmd ) ;
-//
-// A program in our data manipulation language (DML) is then defined as:
-//
-// program := { ( query | command ) }
+
 struct Query;
 struct Select;
 struct Command;
@@ -57,7 +49,7 @@ struct Query {
   std::string expression;
 
   friend std::ostream& operator<<(std::ostream& os, Query const& ss) {
-    return os << ss.relation_name << " <- " << ss.expression << ";";
+    return os << ss.relation_name << "|" << ss.expression << ";";
   }
 };
 
@@ -105,15 +97,22 @@ BOOST_FUSION_ADAPT_STRUCT(Select,
 // type := VARCHAR ( integer ) | INTEGER
 // integer := digit { digit }
 struct Command {
+  Command(std::string c, std::string a): command(c), argument(a){};
+  Command(std::string c): command(c), argument(){};
+  //Command(std::string a): command(), argument(a){};
+  Command(): command(), argument(){};
+  
   std::string command;
+  std::string argument;
 
   friend std::ostream& operator<<(std::ostream& os, Command const& ss) {
-    return os << ss.command;
+    return os << ss.command << "|" << ss.argument << ";";
   }
 };
 
 BOOST_FUSION_ADAPT_STRUCT(Command,
-                          (std::string, command))
+                          (std::string, command)
+                          (std::string, argument))
 
 // program := { ( query | command ) }
 struct Program {
@@ -155,15 +154,36 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     //whereclause = no_case["where"] >> lexeme[+(char_ - ';')];
     //start = query_type >> columns >> tables >> whereclause >> ';';
 
+    // atomic-expr := relation-name | ( expr )
+    //atomic_expression = relation_name | ( '(' >> expression >> ')');
+
+
     // command := ( open-cmd | close-cmd | write-cmd | exit-cmd | show-cmd |
     // create-cmd | update-cmd | insert-cmd | delete-cmd ) ;
-    command = expression >> ';';
-    //command = ( open_cmd | close_cmd | write_cmd | exit_cmd | show_cmd |
-    //create_cmd | update_cmd | insert_cmd | delete_cmd ) >> ";";
+    cmd_name = lexeme[+(upper)];
+    argument = lexeme[*(char_ - ';')];
+    io_cmd = cmd_name; // open, close, write and exit
+
+    //show_cmd =   cmd_name >> atomic_expression;
+    show_cmd = no_case["SHOW"];
+
+    //create_cmd = no_case["SHOW"] >> ...;
+    create_cmd = no_case["CREATE"] >> ';';
+    //update_cmd = no_case["SHOW"] >> ...;
+    update_cmd = no_case["UPDATE"] >> ';';
+    //insert_cmd = no_case["SHOW"] >> relation_name;
+    insert_cmd = no_case["INSERT"] >> ';';
+    //delete_cmd = no_case["SHOW"] >> relation_name;
+    delete_cmd = no_case["DELETE"] >> ';';
+    cmd = io_cmd | show_cmd |
+              create_cmd | update_cmd | insert_cmd | delete_cmd;
+    command = cmd >> argument >> ';';
+
+    // command = expression >> ';';
 
     // query := relation-name <- expr ;
     expression = lexeme[+(char_ - ';')];
-    relation_name = lexeme[+(char_ - ' ' - '<')];
+    relation_name = lexeme[alpha >> *alnum];
     query = relation_name >> "<-" >> expression >> ';';
     
     // program := { ( query | command ) }
@@ -174,12 +194,25 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     BOOST_SPIRIT_DEBUG_NODE(command);
     BOOST_SPIRIT_DEBUG_NODE(relation_name);
     BOOST_SPIRIT_DEBUG_NODE(expression);
+    BOOST_SPIRIT_DEBUG_NODE(cmd);
+    BOOST_SPIRIT_DEBUG_NODE(cmd_name);
+    BOOST_SPIRIT_DEBUG_NODE(relation_name);
+    BOOST_SPIRIT_DEBUG_NODE(argument);
+    BOOST_SPIRIT_DEBUG_NODE(io_cmd);
+    BOOST_SPIRIT_DEBUG_NODE(show_cmd);
+    BOOST_SPIRIT_DEBUG_NODE(create_cmd);
+    BOOST_SPIRIT_DEBUG_NODE(update_cmd);
+    BOOST_SPIRIT_DEBUG_NODE(insert_cmd);
+    BOOST_SPIRIT_DEBUG_NODE(delete_cmd);
   }
 
  private:
   boost::spirit::qi::rule<It, Command(), Skipper> command;
   boost::spirit::qi::rule<It, Query(), Skipper> query;
-  boost::spirit::qi::rule<It, std::string(), Skipper> relation_name, expression;
+  boost::spirit::qi::rule<It, std::string(), Skipper> relation_name, expression,
+                                 cmd_name, cmd, argument;
+  boost::spirit::qi::rule<It, std::string(), Skipper> io_cmd,
+    show_cmd, create_cmd, update_cmd, insert_cmd, delete_cmd;
   boost::spirit::qi::rule<It, Program(), Skipper> program;
 };
 
