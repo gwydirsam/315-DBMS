@@ -235,14 +235,6 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     // program := { ( query | command ) }
     program = query | command;
 
-    on_error<fail>(program,
-                   std::cout << boost::phoenix::val("Error! Expecting ")
-                             << _4  // what failed?
-                             << boost::phoenix::val(" here: \"")
-                             // iterators to error-pos, end
-                             << boost::phoenix::construct<std::string>(_3, _2)
-                             << boost::phoenix::val("\"") << std::endl);
-
     BOOST_SPIRIT_DEBUG_NODE(program);
     BOOST_SPIRIT_DEBUG_NODE(command);
     BOOST_SPIRIT_DEBUG_NODE(query);
