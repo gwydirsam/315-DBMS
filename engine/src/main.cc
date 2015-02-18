@@ -23,6 +23,18 @@ int main(int argc, char *argv[]) {
   std::cout << input2 << std::endl;
   doParse(input2, boost::spirit::qi::space);
 
+  const std::string input3 = "EXIT;";
+  std::cout << input3 << std::endl;
+  doParse(input3, boost::spirit::qi::space);
+
+  const std::string input4 = "CLOSE table;";
+  std::cout << input4 << std::endl;
+  doParse(input4, boost::spirit::qi::space);
+
+  const std::string input5 = "WRITE table;";
+  std::cout << input5 << std::endl;
+  doParse(input5, boost::spirit::qi::space);
+
   // doParse(input2, boost::spirit::qi::space);
 
   //auto f(std::begin(input)), l(std::end(input));
