@@ -13,9 +13,13 @@
 #include <string>
 #include <iterator>
 
+#include <boost/algorithm/string.hpp>
+
 #include <boost/fusion/adapted.hpp>
 #include <boost/spirit/include/qi.hpp>
-#include <boost/algorithm/string.hpp>
+
+#include <boost/spirit/include/phoenix_operator.hpp>
+#include <boost/spirit/include/phoenix_object.hpp>
 
 
 
@@ -230,6 +234,14 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     
     // program := { ( query | command ) }
     program = query | command;
+
+    on_error<fail>(program,
+                   std::cout << boost::phoenix::val("Error! Expecting ")
+                             << _4  // what failed?
+                             << boost::phoenix::val(" here: \"")
+                             // iterators to error-pos, end
+                             << boost::phoenix::construct<std::string>(_3, _2)
+                             << boost::phoenix::val("\"") << std::endl);
 
     BOOST_SPIRIT_DEBUG_NODE(program);
     BOOST_SPIRIT_DEBUG_NODE(command);
