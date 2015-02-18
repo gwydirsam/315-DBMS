@@ -21,7 +21,6 @@ Engine::~Engine() {
   }
   errlog("Engine: Done writing tables to disk");
   endlog();
-  draw_line();
 }
 
 Relation& Engine::find_relation(std::string TableName) {

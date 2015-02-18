@@ -17,52 +17,6 @@
 #include <boost/spirit/include/qi.hpp>
 #include <boost/algorithm/string.hpp>
 
-// Grammar
-// program := { ( query | command ) }
-struct ProgramStatement {
-  std::string statement;
-};
-
-BOOST_FUSION_ADAPT_STRUCT(ProgramStatement, (std::string, statement))
-
-// query := relation-name <- expr ;
-struct QueryStatement {
-  std::string relation_name;
-  std::string expresion;
-};
-
-BOOST_FUSION_ADAPT_STRUCT(QueryStatement,
-                          (std::string, relation_name)(std::string, expression))
-
-// command := ( open-cmd | close-cmd | write-cmd | exit-cmd | show-cmd |
-// create-cmd | update-cmd | insert-cmd | delete-cmd ) ;
-struct CommandStatement {
-  std::string command;
-};
-
-// selection := select ( condition ) atomic-expr
-// expr := atomic-expr | selection | projection | renaming | union | difference
-// | product
-struct Expression {
-  std::string query_type;  // select, union, etc.
-  std::vector<std::string> columns;
-  std::vector<std::string> fromtables;
-  std::vector<std::string> whereclause;
-
-  friend std::ostream& operator<<(std::ostream& os, Expression const& ss) {
-    std::string query_type_upper = ss.query_type;
-    boost::to_upper(query_type_upper);  // uppercase query name
-    return os << query_type_upper << " [" << ss.columns.size()
-              << " columns] FROM [" << ss.fromtables.size()
-              << " tables] WHERE [" << ss.whereclause.size() << " clauses]";
-  }
-};
-
-BOOST_FUSION_ADAPT_STRUCT(
-    Expression, (std::string, query_type)(std::vector<std::string>, columns)(
-                    std::vector<std::string>,
-                    fromtables)(std::vector<std::string>, whereclause))
-
 // relation-name := identifier
 
 // identifier := alpha { ( alpha | digit ) }
@@ -88,6 +42,49 @@ BOOST_FUSION_ADAPT_STRUCT(
 //
 // command := ( open-cmd | close-cmd | write-cmd | exit-cmd | show-cmd |
 // create-cmd | update-cmd | insert-cmd | delete-cmd ) ;
+//
+// A program in our data manipulation language (DML) is then defined as:
+//
+// program := { ( query | command ) }
+struct Query;
+struct Select;
+struct Command;
+struct Program;
+
+// query := relation-name <- expr ;
+struct Query {
+  std::string relation_name;
+  std::string expression;
+
+  friend std::ostream& operator<<(std::ostream& os, Query const& ss) {
+    return os << ss.relation_name << " <- " << ss.expression << ";";
+  }
+};
+
+BOOST_FUSION_ADAPT_STRUCT(Query,
+                          (std::string, relation_name)
+                          (std::string, expression))
+
+// selection := select ( condition ) atomic-expr
+struct Select {
+  std::vector<std::string> columns;
+  std::vector<std::string> fromtables;
+  std::vector<std::string> whereclause;
+
+  friend std::ostream& operator<<(std::ostream& os, Select const& ss) {
+    return os << "SELECT [" << ss.columns.size() << " columns] FROM ["
+              << ss.fromtables.size() << " tables] WHERE ["
+              << ss.whereclause.size() << " clauses]";
+  }
+};
+
+BOOST_FUSION_ADAPT_STRUCT(Select,
+                          (std::vector<std::string>, columns)
+                          (std::vector<std::string>, fromtables)
+                          (std::vector<std::string>, whereclause))
+
+// command := ( open-cmd | close-cmd | write-cmd | exit-cmd | show-cmd |
+// create-cmd | update-cmd | insert-cmd | delete-cmd ) ;
 // open-cmd := OPEN relation-name
 // close-cmd := CLOSE relation-name
 // write-cmd := WRITE relation-name
@@ -107,41 +104,83 @@ BOOST_FUSION_ADAPT_STRUCT(
 // typed-attribute-list := attribute-name type { , attribute-name type }
 // type := VARCHAR ( integer ) | INTEGER
 // integer := digit { digit }
-//
-// A program in our data manipulation language (DML) is then defined as:
-//
+struct Command {
+  std::string command;
+
+  friend std::ostream& operator<<(std::ostream& os, Command const& ss) {
+    return os << ss.command;
+  }
+};
+
+BOOST_FUSION_ADAPT_STRUCT(Command,
+                          (std::string, command))
+
 // program := { ( query | command ) }
+struct Program {
+  Program(Query q): query(q), isquery(true){};
+  Program(Command c): command(c), isquery(false){};
+  Program(): query(), command(){};
+  
+  
+  Query query;
+  Command command;
+  bool isquery; // if true, query, if false, command
+
+  friend std::ostream& operator<<(std::ostream& os, Program const& ss) {
+    if (ss.isquery) {
+      return os << ss.query;
+    } else {
+      return os << ss.command;
+    }
+  }
+};
+
+BOOST_FUSION_ADAPT_STRUCT(Program,
+                          (Query, query)
+                          (Command, command))
+
+// expr := atomic-expr | selection | projection | renaming | union | difference
+// | product
 
 template <typename It, typename Skipper = boost::spirit::qi::space_type>
-class Grammar : public boost::spirit::qi::grammar<It, Expression(), Skipper> {
+class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
  public:
-  Grammar() : Grammar::base_type(start) {
+  Grammar() : Grammar::base_type(program) {
     using namespace boost::spirit::qi;
 
-    sqlident = lexeme[alpha >> *alnum];  // table or column name
+    //sqlident = lexeme[alpha >> *alnum];  // table or column name
+    //query_type = lexeme[alpha >> *alnum];  // query type
+    //columns = (sqlident % ',');
+    //tables = no_case["from"] >> (sqlident % ',');
+    //whereclause = no_case["where"] >> lexeme[+(char_ - ';')];
+    //start = query_type >> columns >> tables >> whereclause >> ';';
 
-    query_type = lexeme[alpha >> *alnum];  // query type
+    // command := ( open-cmd | close-cmd | write-cmd | exit-cmd | show-cmd |
+    // create-cmd | update-cmd | insert-cmd | delete-cmd ) ;
+    command = expression >> ';';
+    //command = ( open_cmd | close_cmd | write_cmd | exit_cmd | show_cmd |
+    //create_cmd | update_cmd | insert_cmd | delete_cmd ) >> ";";
 
-    columns = (sqlident % ',');
-    tables = no_case["from"] >> (sqlident % ',');
-    whereclause = no_case["where"] >> lexeme[+(char_ - ';')];
+    // query := relation-name <- expr ;
+    expression = lexeme[+(char_ - ';')];
+    relation_name = lexeme[+(char_ - ' ' - '<')];
+    query = relation_name >> "<-" >> expression >> ';';
+    
+    // program := { ( query | command ) }
+    program = query | command;
 
-    start = query_type >> columns >> tables >> whereclause >> ';';
-
-    BOOST_SPIRIT_DEBUG_NODE(start);
-    BOOST_SPIRIT_DEBUG_NODE(sqlident);
-    BOOST_SPIRIT_DEBUG_NODE(query_type);
-    BOOST_SPIRIT_DEBUG_NODE(columns);
-    BOOST_SPIRIT_DEBUG_NODE(tables);
-    BOOST_SPIRIT_DEBUG_NODE(whereclause);
+    BOOST_SPIRIT_DEBUG_NODE(program);
+    BOOST_SPIRIT_DEBUG_NODE(query);
+    BOOST_SPIRIT_DEBUG_NODE(command);
+    BOOST_SPIRIT_DEBUG_NODE(relation_name);
+    BOOST_SPIRIT_DEBUG_NODE(expression);
   }
 
  private:
-  boost::spirit::qi::rule<It, std::string(), Skipper> sqlident;
-  boost::spirit::qi::rule<It, std::string(), Skipper> query_type;
-  boost::spirit::qi::rule<It, std::vector<std::string>(), Skipper> columns,
-      tables, whereclause;
-  boost::spirit::qi::rule<It, Expression(), Skipper> start;
+  boost::spirit::qi::rule<It, Command(), Skipper> command;
+  boost::spirit::qi::rule<It, Query(), Skipper> query;
+  boost::spirit::qi::rule<It, std::string(), Skipper> relation_name, expression;
+  boost::spirit::qi::rule<It, Program(), Skipper> program;
 };
 
 template <typename C, typename Skipper>
@@ -149,14 +188,14 @@ bool doParse(const C& input, const Skipper& skipper) {
   auto f(std::begin(input)), l(std::end(input));
 
   Grammar<decltype(f), Skipper> p;
-  Expression query;
+  Program program;
 
   try {
     using namespace boost::spirit::qi;
-    bool ok = phrase_parse(f, l, p, skipper, query);
+    bool ok = phrase_parse(f, l, p, skipper, program);
     if (ok) {
       std::cout << "parse success\n";
-      std::cout << "Expression: " << query << "\n";
+      std::cout << "Program: " << program << "\n";
     } else
       std::cerr << "parse failed: '" << std::string(f, l) << "'\n";
 
@@ -170,5 +209,65 @@ bool doParse(const C& input, const Skipper& skipper) {
 
   return false;
 }
+
+//// old version
+// template <typename It, typename Skipper = boost::spirit::qi::space_type>
+// class Grammar : public boost::spirit::qi::grammar<It, Query(), Skipper> {
+// public:
+//  Grammar() : Grammar::base_type(start) {
+//    using namespace boost::spirit::qi;
+//
+//    sqlident = lexeme[alpha >> *alnum];  // table or column name
+//
+//    query_type = lexeme[alpha >> *alnum];  // query type
+//
+//    columns = (sqlident % ',');
+//    tables = no_case["from"] >> (sqlident % ',');
+//    whereclause = no_case["where"] >> lexeme[+(char_ - ';')];
+//
+//    start = query_type >> columns >> tables >> whereclause >> ';';
+//
+//    BOOST_SPIRIT_DEBUG_NODE(start);
+//    BOOST_SPIRIT_DEBUG_NODE(sqlident);
+//    BOOST_SPIRIT_DEBUG_NODE(query_type);
+//    BOOST_SPIRIT_DEBUG_NODE(columns);
+//    BOOST_SPIRIT_DEBUG_NODE(tables);
+//    BOOST_SPIRIT_DEBUG_NODE(whereclause);
+//  }
+//
+// private:
+//  boost::spirit::qi::rule<It, std::string(), Skipper> sqlident;
+//  boost::spirit::qi::rule<It, std::string(), Skipper> query_type;
+//  boost::spirit::qi::rule<It, std::vector<std::string>(), Skipper> columns,
+//      tables, whereclause;
+//  boost::spirit::qi::rule<It, Query(), Skipper> start;
+//};
+//
+// template <typename C, typename Skipper>
+// bool doParse(const C& input, const Skipper& skipper) {
+//  auto f(std::begin(input)), l(std::end(input));
+//
+//  Grammar<decltype(f), Skipper> p;
+//  Query query;
+//
+//  try {
+//    using namespace boost::spirit::qi;
+//    bool ok = phrase_parse(f, l, p, skipper, query);
+//    if (ok) {
+//      std::cout << "parse success\n";
+//      std::cout << "Query: " << query << "\n";
+//    } else
+//      std::cerr << "parse failed: '" << std::string(f, l) << "'\n";
+//
+//    if (f != l)
+//      std::cerr << "trailing unparsed: '" << std::string(f, l) << "'\n";
+//    return ok;
+//  } catch (const boost::spirit::qi::expectation_failure<decltype(f)>& e) {
+//    std::string frag(e.first, e.last);
+//    std::cerr << e.what() << "'" << frag << "'\n";
+//  }
+//
+//  return false;
+//}
 
 #endif  // GRAMMAR_H_
