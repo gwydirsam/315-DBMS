@@ -202,13 +202,14 @@ then
         # extract tar
         echo "Extracting CCache Tar..."
         cd "$HOME/.tmp/build"
-        tar -xvjf "$DLDIR/`basename $CCACHEURL`" > "$LOGFILE" 2>&1
+        tar -xvjf "$DLDIR/`basename $CCACHEURL`"# > "$LOGFILE" 2>&1
 
         # build
         echo "Building CCache..."
         cd "$HOME/.tmp/build/`basename $CCACHEURL .tar.bz2`"
-        ./configure --prefix="$HOME/usr" > "$LOGFILE" 2>&1
+        ./configure --prefix="$HOME/usr"# > "$LOGFILE" 2>&1
         make > "$LOGFILE" 2>&1
+
         echo "CCache Build Done. Installing to ~/usr/bin/ccache/"
 
         # install manpage
@@ -229,17 +230,17 @@ then
 
         echo "Adding CCache to Path"
         #add ~/usr/bin and ~/usr/bin/ccache to path
-        echo "export PATH=$HOME/usr/bin/ccache:$HOME/usr/bin:$PATH" >> "$HOME/.bash_profile"
+        echo 'export PATH=$HOME/usr/bin/ccache:$HOME/usr/bin:$PATH' >> "$HOME/.bash_profile"
         #add ~/usr/share/man to manpath
-        echo "export MANPATH=$HOME/usr/share/man:$MANPATH" >> "$HOME/.bash_profile"
+        echo 'export MANPATH=$HOME/usr/share/man:$MANPATH' >> "$HOME/.bash_profile"
         #add stuff for gcc
-        echo "export LD_LIBRARY_PATH=/usr/local/gcc4.9.2/lib64:$LD_LIBRARY_PATH" >> "$HOME/.bash_profile"
-        echo "export CC=\"$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto\"" >> "$HOME/.bash_profile" 
-        echo "export CXX=\"$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto\"" >> "$HOME/.bash_profile" 
+        echo 'export LD_LIBRARY_PATH=/usr/local/gcc4.9.2/lib64:$LD_LIBRARY_PATH' >> "$HOME/.bash_profile"
+        echo 'export CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto"' >> "$HOME/.bash_profile" 
+        echo 'export CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto"' >> "$HOME/.bash_profile" 
 
 
         # cleanup
-        rm -rf "$HOME/.tmp"
+        #rm -rf "$HOME/.tmp"
 
         echo "Done Installing CCache!"
         echo "Run \"source .bash_profile\" to use CCache"
