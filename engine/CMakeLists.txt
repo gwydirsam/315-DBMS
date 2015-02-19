@@ -21,7 +21,7 @@ set(LIB_DIR "${CMAKE_SOURCE_DIR}/lib")
 if(APPLE)
   # do nothing
 elseif(UNIX)
-  set(Boost_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}")
+  set(Boost_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include/boost")
 endif()
 
 # include directories
