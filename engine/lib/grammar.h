@@ -245,7 +245,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
 
     // typed-attribute-list := attribute-name type { , attribute-name type } 
     // type := VARCHAR ( integer ) | INTEGER 
-    typed_attribute_list = attribute_name >> type >> *(',' attribute_name) >> type);
+    typed_attribute_list = attribute_name >> type >> *(',' >> space >> attribute_name >> type) - ')';
 
     type = ( ) | string("");
 	type = ( ) | string("VARCHAR(%i)");
