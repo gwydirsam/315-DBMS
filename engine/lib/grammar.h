@@ -17,6 +17,7 @@
 
 #include <boost/fusion/adapted.hpp>
 #include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/qi_as.hpp>
 
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/spirit/include/phoenix_object.hpp>
@@ -160,6 +161,8 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
  public:
   Grammar() : Grammar::base_type(program) {
     using namespace boost::spirit::qi;
+    using boost::spirit::qi::as;
+    using boost::spirit::qi::as_string;
 
     //sqlident = lexeme[alpha >> *alnum];  // table or column name
     //query_type = lexeme[alpha >> *alnum];  // query type
@@ -192,7 +195,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
 
     // create-cmd := CREATE TABLE relation-name ( typed-attribute-list ) PRIMARY KEY
     // ( attribute-list )
-    create_cmd = no_case["create table"] >> ';';
+    create_cmd = no_case["create table"] >> relation_name >> string("(") >> typed_attribute_list >> string(")") >> no_case["primary key"] >> string("(") >> attribute_list >> string(")") >> ';';
 
     // update-cmd := UPDATE relation-name SET attribute-name = literal { ,
     // attribute-name = literal } WHERE condition
@@ -214,7 +217,8 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     // conjunction := comparison { && comparison }
     conjunction = comparison >> *(string("&&") >> comparison);
     // comparison := operand op operand | ( condition )
-    comparison = hold[(operand >> op >> operand)] | ( string("(") >> condition >> string(")") );
+    comparison = hold[(operand >> op >> operand)] |
+                 (string("(") >> condition >> string(")"));
 
     // op := == | != | < | > | <= | >=
     op = hold[string("==")] | hold[string("!=")] | hold[string("<")] |
@@ -232,16 +236,27 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     // attribute-list := attribute-name { , attribute-name }
     attribute_list = attribute_name >> *(',' >> space >> attribute_name) - ')';
 
+    // typed-attribute-list := attribute-name type { , attribute-name type } 
+    // type := VARCHAR ( integer ) | INTEGER 
+    typed_attribute_list = attribute_name >> type >> *(',' attribute_name) >> type);
+
+    type = ( ) | string("")
+    
+
     // atomic-expr := relation-name | ( expr )
-    atomic_expression = hold[( string("(") >> expression >> string(")") )] | relation_name;
+    atomic_expression =
+        hold[(string("(") >> expression >> string(")"))] | relation_name;
 
     // selection := select ( condition ) atomic-expr
-    selection = string("select") >> string("(") >> condition >> string(")") >> atomic_expression;
+    selection = string("select") >> string("(") >> condition >> string(")") >>
+                atomic_expression;
 
     // projection := project ( attribute-list ) atomic-expr
-    projection = no_case["project"] >> string("(") >> attribute_list >> string(")") >> atomic_expression;
+    projection = no_case["project"] >> string("(") >> attribute_list >>
+                 string(")") >> atomic_expression;
     // renaming := rename ( attribute-list ) atomic-expr
-    renaming = no_case["rename"] >> string("(") >> attribute_list >> string(")") >> atomic_expression;
+    renaming = no_case["rename"] >> string("(") >> attribute_list >>
+               string(")") >> atomic_expression;
 
     // setunion := atomic-expr + atomic-expr
     setunion = atomic_expression >> char_('+') >> atomic_expression;
