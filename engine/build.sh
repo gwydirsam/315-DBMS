@@ -207,8 +207,22 @@ then
         # build
         echo "Building CCache..."
         cd "$HOME/.tmp/build/`basename $CCACHEURL .tar.bz2`"
-        ./configure --prefix="$HOME/usr" > "$LOGFILE" 2>&1
+        CC="/opt/csw/bin/gcc" CXX="/opt/csw/bin/g++" \
+          ./configure --prefix="$HOME/usr" > "$LOGFILE" 2>&1
+        RESULT=$?
+        if [ $RESULT -ne 0 ]
+        then 
+            echo "CCache Configure Failed"
+            exit 1
+        fi
+
         make > "$LOGFILE" 2>&1
+        RESULT=$?
+        if [ $RESULT -ne 0 ]
+        then 
+            echo "CCache Build Failed"
+            exit 1
+        fi
 
         echo "CCache Build Done. Installing to ~/usr/bin/ccache/"
 
