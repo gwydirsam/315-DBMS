@@ -11,7 +11,7 @@ echo "Running cmake for Release with Tests"
 if [ "$UNAME" = "Darwin" ]
 then
     #clang
-    #CC="/usr/local/opt/llvm/bin/clang" CXX="/usr/local/opt/llvm/bin/clang++" cmake ..
+    #CC="/usr/local/opt/llvm/bin/clang" CXX="/usr/local/opt/llvm/bin/clang++" cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
     #g++
     CC="/usr/local/bin/gcc-4.9 -fdiagnostics-color=auto" CXX="/usr/local/bin/g++-4.9 -fdiagnostics-color=auto" cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
     RESULT=$?
