@@ -164,28 +164,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     using boost::spirit::qi::as;
     using boost::spirit::qi::as_string;
 
-    //sqlident = lexeme[alpha >> *alnum];  // table or column name
-    //query_type = lexeme[alpha >> *alnum];  // query type
-    //columns = (sqlident % ',');
-    //tables = no_case["from"] >> (sqlident % ',');
-    //whereclause = no_case["where"] >> lexeme[+(char_ - ';')];
-    //start = query_type >> columns >> tables >> whereclause >> ';';
 
-    // alpha := a | … | z | A | … | Z | _
-    // digit := 0 | … | 9
-
-    // atomic-expr := relation-name | ( expr )
-    // condition := conjunction { || conjunction }
-    // conjunction := comparison { && comparison }
-    // comparison := operand op operand | ( condition )
-    // op := == | != | < | > | <= | >=
-    // operand := attribute-name | literal
-    // attribute-name := identifier
-    // literal := intentionally left unspecified (strings, numbers, etc.)
-
-
-    // command := ( open-cmd | close-cmd | write-cmd | exit-cmd | show-cmd |
-    // create-cmd | update-cmd | insert-cmd | delete-cmd ) ;
     cmd_name = lexeme[+(upper)];
     argument = lexeme[as_string[*(char_ - ';')]];
     io_cmd = hold[no_case[string("open")]] | hold[no_case[string("close")]] |
@@ -196,12 +175,11 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     show_cmd = no_case[string("show")] >> atomic_expression;
 
     // create-cmd := CREATE TABLE relation-name ( typed-attribute-list ) PRIMARY
-    // KEY
-    // ( attribute-list )
     create_cmd = ( no_case[string("create table")] >> relation_name >>
                  string("(") >> typed_attribute_list >> string(")") >>
                  no_case[string("primary key")] >> string("(") >>
                  attribute_list >> string(")") ) - ';';
+    // KEY ( attribute-list )
 
     // update-cmd := UPDATE relation-name SET attribute-name = literal { ,
     // attribute-name = literal } WHERE condition
@@ -212,10 +190,9 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
         no_case[string("where")] >> condition ) - ';';
 
     // insert-cmd := INSERT INTO relation-name VALUES FROM ( literal { , literal
-    // } )
-    // | INSERT INTO relation-name VALUES FROM RELATION expr
     insert_cmd =
       (no_case[string("insert into")] >> relation_name >>
+    // } ) | INSERT INTO relation-name VALUES FROM RELATION expr
                   ((hold[(no_case[string("values from")] >>
                           !no_case[string("relation")] >> string("(") >>
                           literal >> *(',' >> literal) >> string(")"))])
@@ -229,7 +206,8 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     command = (hold[io_cmd] >> argument | hold[show_cmd] | hold[create_cmd] |
                hold[update_cmd] | hold[insert_cmd] | delete_cmd) >>
               ';';
-    // command = cmd >> argument >> ';';
+    // command := ( open-cmd | close-cmd | write-cmd | exit-cmd | show-cmd |
+    // create-cmd | update-cmd | insert-cmd | delete-cmd ) ;
 
     // condition := conjunction { || conjunction }
     condition = conjunction >> *(string("||") >> conjunction);
@@ -262,16 +240,6 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     // type := VARCHAR ( integer ) | INTEGER
     type = hold[(no_case[string("varchar")] >>
                  string("(") >> +digit >> string(")"))] | no_case[string("integer")];
-    // type = ( ) | string("VARCHAR(%i)");
-    // type = ( ) | string("INTEGER");
-    // type = ( ) | string("SMALLINT");
-    // type = ( ) | string("BIGINT");
-    // type = ( ) | string("DECIMAL");
-    // type = ( ) | string("NUMERIC");
-    // type = ( ) | string("DOUBLE");
-    // type = ( ) | string("DOUBLEPRECISION");
-    // type = ( ) | string("FLOAT");
-    // type = ( ) | string("REAL");
 
     // atomic-expr := relation-name | ( expr )
     atomic_expression =
