@@ -3,7 +3,7 @@ UNAME=`uname`
 echo "Checking if you have Boost 1.57.0"
 if [ "$UNAME" = "SunOS" ]; then
     # if you don't have boost
-    if [ -d "include/boost" ]; then
+    if [ -d "../include/boost_1_57_0" ]; then
         echo "You have boost 1.57.0. Continuing..." 
     else
         echo "You don't have boost 1.57.0"
@@ -13,12 +13,21 @@ if [ "$UNAME" = "SunOS" ]; then
         echo "Extracting in include...(this takes awhile)..."
         tar -xvjf boost_1_57_0.tar.bz2
         echo "Told you it took a long time!"
-        echo "Symlinking to app/include and engine/include..."
-        ln -s boost_1_57_0 ../app/include/boost
-        ln -s boost_1_57_0 ../engine/include/boost
+        echo "Symlinking to engine/include/boot -> ../../boost_1_57_0/ ..."
+        cd ../engine/include/
+        ln -s ../../boost_1_57_0/ boost
+        echo "Symlinking to app/include/boot -> ../../boost_1_57_0/ ..."
+        cd ../../app/include/
+        ln -s ../../boost_1_57_0/ boost
+        cd ../../engine/
+        if [ -a "../include/boost_1_57_0.tar.bz2" ]; then
+        echo "Deleting inlcude/boost_1_57_0.tar.bz2"
+        rm ../include/boost_1_57_0.tar.bz2
+        fi
+        echo "Done!"
     fi
 fi
-echo ""
+
 echo "Removing old build directory"
 rm -rf build;
 echo "Creating build directory..."
