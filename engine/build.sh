@@ -271,6 +271,7 @@ then
         cd "$ENGINEDIR"
         echo "Creating build/release directory..."
         mkdir -p "build/release";
+        cd "$ENGINEDIR/build/release"
         CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto" \
           CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
           cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
@@ -293,6 +294,7 @@ then
         cd "$ENGINEDIR"
         echo "Creating build/release directory..."
         mkdir -p "build/release";
+        cd "$ENGINEDIR/build/release"
         CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto" \
           CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
           cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
@@ -326,6 +328,7 @@ then
         cd "$ENGINEDIR"
         echo "Creating build/debug directory..."
         mkdir -p "build/debug";
+        cd "$ENGINEDIR/build/debug"
         CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto" \
           CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
           cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
@@ -355,6 +358,7 @@ then
     else
         cd "$ENGINEDIR"
         echo "Creating build/debug directory..."
+        cd "$ENGINEDIR/build/debug"
         mkdir -p "build/debug";
         CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto" \
           CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
