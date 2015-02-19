@@ -22,9 +22,9 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb -O0 -DDEBUG -Wall -Wex
 option(test "Build ${PROJECT_NAME}'s tests" OFF)
 
 # set some locations
-set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
-set(INCLUDES_DIR "${CMAKE_SOURCE_DIR}/include")
-set(LIB_DIR "${CMAKE_SOURCE_DIR}/lib")
+set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(INCLUDES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
+set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 
 if(APPLE)
   # do nothing
