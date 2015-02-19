@@ -97,7 +97,20 @@ int main(int argc, char *argv[]) {
   doParse(input13, boost::spirit::qi::space);
   draw_line();
 
+  const std::string input14 = "UPDATE species SET name = \"Sam\" WHERE ID == 11;";
+  std::cout << input14 << std::endl;
+  doParse(input14, boost::spirit::qi::space);
+  draw_line();
 
+  const std::string input15 = "DELETE FROM animals WHERE extinct == \"false\";";
+  std::cout << input15 << std::endl;
+  doParse(input15, boost::spirit::qi::space);
+  draw_line();
+
+  const std::string input16 = "animals <- species * animals;";
+  std::cout << input16 << std::endl;
+  doParse(input16, boost::spirit::qi::space);
+  draw_line();
 
   // doParse(input2, boost::spirit::qi::space);
 
