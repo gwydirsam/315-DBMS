@@ -162,6 +162,10 @@ then
         echo "export LD_LIBRARY_PATH=/usr/local/gcc4.9.2/lib64:$LD_LIBRARY_PATH" >> "$HOME/.bash_profile"
         echo "export CC=\"$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto\"" >> "$HOME/.bash_profile" 
         echo "export CXX=\"$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto\"" >> "$HOME/.bash_profile" 
+
+        # cleanup
+        rm -rf "$HOME/.tmp"
+
         echo "Done Installing CCache!"
         echo "Run \"source .bash_profile\" to use CCache"
     fi
