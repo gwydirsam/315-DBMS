@@ -358,17 +358,17 @@ bool doParse(const C& input, const Skipper& skipper) {
     using namespace boost::spirit::qi;
     bool ok = phrase_parse(f, l, p, skipper, program);
     if (ok) {
-      std::cout << "parse success\n";
-      std::cout << "Program: " << program << "\n";
+      std::cout << "parse success" << std::endl;
+      std::cout << "Program: " << program << std::endl;
     } else
-      std::cerr << "parse failed: '" << std::string(f, l) << "'\n";
+      std::cerr << "parse failed: '" << std::string(f, l) << std::endl;
 
     if (f != l)
-      std::cerr << "trailing unparsed: '" << std::string(f, l) << "'\n";
+      std::cerr << "trailing unparsed: '" << std::string(f, l) << std::endl;
     return ok;
   } catch (const boost::spirit::qi::expectation_failure<decltype(f)>& e) {
     std::string frag(e.first, e.last);
-    std::cerr << e.what() << "'" << frag << "'\n";
+    std::cerr << e.what() << "'" << frag << std::endl;
   }
 
   return false;
