@@ -5,6 +5,16 @@ project(${PROJECT_NAME} CXX)
 # version 2.8.12 is on unix.cse.tamu.edu
 cmake_minimum_required(VERSION 2.8.12)
 
+# can't run if build.sh hasn't been run
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.buildshran")
+  message("build.sh must run before cmake")
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/.buildshran
+    WORKING_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/library
+    COMMAND bash build.sh
+)
+endif()
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++1y")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb -O0 -DDEBUG -Wall -Wextra")

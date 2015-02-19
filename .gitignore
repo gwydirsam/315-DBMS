@@ -30,6 +30,10 @@
 # Database Files
 *.db
 
+# build.sh
+.buildshran
+.buildshlog
+
 # Cmake Files		
 CMakeCache.txt
 CMakeFiles

@@ -24,10 +24,79 @@ BOOSTSYMLINKS=( "$ENGINEDIR/include/boost" "$APPDIR/include/boost" )
 DLDIR="/tmp/${USER}dl"
 
 CCACHEURL="http://samba.org/ftp/ccache/ccache-3.2.1.tar.bz2"
+GTESTURL="https://googletest.googlecode.com/files/gtest-1.7.0.zip"
+GTESTDIR="$PROJECTROOTDIR/include/`basename $GTESTURL .zip`"
+GTESTSYMLINKS=( "$ENGINEDIR/include/gtest" "$APPDIR/include/gtest" )
 
 LOGFILE="$ENGINEDIR/.buildshlog"
 
-# if unix.cse.tamu.edu check for boost and ccache
+echo "Checking if you have gtest"
+if [ -d "$GTESTDIR" ]
+then
+    echo "You have gtest-1.7.0. Checking symlinks..." 
+    for i in "${GTESTSYMLINKS[@]}"
+    do
+        if [ ! -h "$i" ]
+        then
+            echo "Symlink $i doesn't exist..."
+            echo "Creating $i -> $GTESTDIR"
+            cd `dirname $i`
+            echo "Creating symlink..."
+            ln -s "$GTESTDIR" gtest
+        fi
+    done
+    echo "Done!"
+else
+    # if you don't have gtest
+    echo "You don't have gtest 1.7.0"
+
+    # download if you don't have it
+    if [ ! -d "$DLDIR" ]
+    then
+        # if dldir doesn't exist create it
+        mkdir -p "$DLDIR"
+        # download gtest
+        echo "Downloading gtest 1.7.0..."
+        wget -P "$DLDIR" "$GTESTURL" > "$LOGFILE" 2>&1
+    else
+        # dldir does exist
+        # check if gtest zip is already there
+        if [ -f "$DLDIR/`basename $GTESTURL`" ]
+        then
+            # it is there!
+            echo "Found $DLDIR/`basename $GTESTURL`"
+        else
+            # it's not... download
+            echo "Downloading gest 1.7.0..."
+            wget -P "$DLDIR" "$GTESTURL" > "$LOGFILE" 2>&1
+        fi
+    fi
+
+    # extract zip
+    echo "Extracting in include..."
+    cd "$PROJECTROOTDIR/include/"
+    unzip "$DLDIR/`basename $GTESTURL`" > "$LOGFILE" 2>&1
+
+    # create symlinks
+    echo "Creating Symlinks..."
+    for i in "${GTESTSYMLINKS[@]}"
+    do
+        if [ ! -h "$i" ]
+        then
+            echo "Symlink $i -> $GTESTDIR"
+            cd `dirname $i`
+            echo "Creating symlink..."
+            ln -s "$GTESTDIR" gtest
+        fi
+    done
+
+    # cleanup
+    rm -rf "$DLDIR"
+
+    echo "Done Installing Gtest 1.7.0!"
+fi
+
+# if on unix also check if you have boost and ccache
 if [ "$UNAME" = "SunOS" ]
 then
     echo "Checking if you have Boost 1.57.0"
@@ -73,7 +142,7 @@ then
         fi
 
         # extract tar
-        echo "Extracting in include...(this takes awhile)..."
+        echo "Extracting in include...(this takes awhile...like 5-10 minutes)..."
         cd "$PROJECTROOTDIR/include/"
         tar -xvjf "$DLDIR/$BOOSTTARFILENAME" > "$LOGFILE" 2>&1
         echo "Told you it took a long time!"
@@ -99,6 +168,7 @@ then
         echo "CCache Installed."
     else
         echo "CCache Not Found. Installing..."
+        echo "CCache will improve compile times..."
 
         # download if you don't have it
         if [ ! -d "$DLDIR" ]
@@ -145,8 +215,11 @@ then
         cp ccache.1 "$HOME/usr/share/man/man1/."
         cp ccache "$HOME/usr/bin/ccache/."
 
-        # setup symlinks
+        echo "Setting up CCache settings..."
         cd "$HOME/usr/bin/ccache/"
+        ccache -F 0 > "$LOGFILE" 2>&1
+        ccache -M 0 > "$LOGFILE" 2>&1
+        # setup symlinks
         ln -s ccache gcc
         ln -s ccache g++
         ln -s ccache cc
@@ -164,6 +237,7 @@ then
         echo "export CC=\"$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto\"" >> "$HOME/.bash_profile" 
         echo "export CXX=\"$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto\"" >> "$HOME/.bash_profile" 
 
+
         # cleanup
         rm -rf "$HOME/.tmp"
 
@@ -171,6 +245,9 @@ then
         echo "Run \"source .bash_profile\" to use CCache"
     fi
 fi
+
+# touch .buildshran after we ran build.sh and installed everything
+touch "$ENGINEDIR/.buildshran"
 
 echo "Removing old build directory"
 rm -rf "$ENGINEDIR/build";
@@ -184,8 +261,8 @@ if [ "$UNAME" = "Darwin" ]
 then
     #if OS X
     CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto" \
-    CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
-    cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
+      CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
+      cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
 
     RESULT=$?
     if [ $RESULT -ne 0 ]
@@ -197,8 +274,8 @@ elif [ "$UNAME" = "SunOS" ]
 then
     # if Solaris
     CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto" \
-    CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
-    cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
+      CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
+      cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
 
     RESULT=$?
     if [ $RESULT -ne 0 ]
@@ -214,8 +291,8 @@ if [ "$UNAME" = "Darwin" ]
 then
     #if OS X
     CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto" \
-    CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
-    cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+      CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
+      cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
 
     RESULT=$?
     if [ $RESULT -ne 0 ]
@@ -227,8 +304,8 @@ elif [ "$UNAME" = "SunOS" ]
 then
     # if Solaris
     CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto" \
-    CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
-    cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+      CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
+      cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
 
     RESULT=$?
     if [ $RESULT -ne 0 ]
