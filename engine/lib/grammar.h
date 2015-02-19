@@ -208,18 +208,19 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     update_cmd =
         ( no_case[string("update")] >> relation_name >> no_case[string("set")] >>
         attribute_name >> string("=") >> literal >>
-        *(',' >> space >> attribute_name >> space >> string("=") >> literal) >>
+        *(',' >> attribute_name >> string("=") >> literal) >>
         no_case[string("where")] >> condition ) - ';';
 
     // insert-cmd := INSERT INTO relation-name VALUES FROM ( literal { , literal
     // } )
     // | INSERT INTO relation-name VALUES FROM RELATION expr
     insert_cmd =
-        ( no_case[string("insert into")] >> relation_name >>
-            hold[(no_case[string("values from")] >>
-                  !no_case[string("relation")] >> string("(") >> literal >>
-                  *(',' >> space >> literal) >> string(")"))] |
-        (no_case[string("values from relation")] >> expression) ) - ';';
+      (no_case[string("insert into")] >> relation_name >>
+                  ((hold[(no_case[string("values from")] >>
+                          !no_case[string("relation")] >> string("(") >>
+                          literal >> *(',' >> literal) >> string(")"))])
+                   | (no_case[string("values from relation")] >> expression))
+       ) - ';';
 
     // delete-cmd := DELETE FROM relation-name WHERE condition
     delete_cmd = ( no_case[string("delete from")] >> relation_name >>
