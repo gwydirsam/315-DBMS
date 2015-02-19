@@ -193,21 +193,28 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     // show-cmd := SHOW atomic-expr 
     show_cmd = no_case["show"] >> atomic_expression;
 
-    // create-cmd := CREATE TABLE relation-name ( typed-attribute-list ) PRIMARY KEY
+	// create-cmd := CREATE TABLE relation-name ( typed-attribute-list ) PRIMARY KEY
     // ( attribute-list )
-    create_cmd = no_case["create table"] >> relation_name >> string("(") >> typed_attribute_list >> string(")") >> no_case["primary key"] >> string("(") >> attribute_list >> string(")") >> ';';
+    create_cmd = no_case["create table"] >>  relation_name >> string("(") 
+				>> typed_attribute_list >> string(")") >> no_case["primary key"]
+				>> string("(") >> attribute_list >> string(")") >> ';';
 
     // update-cmd := UPDATE relation-name SET attribute-name = literal { ,
     // attribute-name = literal } WHERE condition
-    update_cmd = no_case["update"] >> ';';
+    update_cmd = no_case["update"] >> relation_name >> no_case["set"]
+				>> attribute_name >> string("=") >> literal 
+				>> *(',' >> space >> attribute_name >> space >> string("=") >> literal) 
+				>> no_case["where"] >> condition >> ';';
 
     // insert-cmd := INSERT INTO relation-name VALUES FROM ( literal { , literal } )
     // |
     //    INSERT INTO relation-name VALUES FROM RELATION expr
-    insert_cmd = no_case["insert into"] >> ';';
+    insert_cmd = no_case["insert into"] >> relation_name >> no_case["values from"] 
+				>> string("(") >> literal >> *(',' >> space >> literal) >> string(")") >> ';';
 
     // delete-cmd := DELETE FROM relation-name WHERE condition
-    delete_cmd = no_case["delete"] >> ';';
+    delete_cmd = no_case["delete from"] >> space >> relation_name >> space >> no_case["where"] >> space >> condition >> ';';
+	
     command = (hold[io_cmd] >> argument | hold[show_cmd] | hold[create_cmd] |
                hold[update_cmd] | hold[insert_cmd] | delete_cmd) >> ';';
     // command = cmd >> argument >> ';';
