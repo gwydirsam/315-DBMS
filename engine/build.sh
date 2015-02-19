@@ -3,8 +3,10 @@ UNAME=`uname`
 echo "Checking if you have Boost 1.57.0"
 if [ "$UNAME" = "SunOS" ]; then
     # if you don't have boost
-    if [ ! -d "include/boost" ]; then
-        echo "You don't have boost."
+    if [ -d "include/boost" ]; then
+        echo "You have boost 1.57.0. Continuing..." 
+    else
+        echo "You don't have boost 1.57.0"
         cd ../include/
         echo "Downloading Boost 1.57.0..."
         wget https://downloads.sourceforge.net/project/boost/boost/1.57.0/boost_1_57_0.tar.bz2
