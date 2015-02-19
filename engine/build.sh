@@ -1,5 +1,22 @@
 #!/bin/bash
 UNAME=`uname`
+echo "Checking if you have Boost 1.57.0"
+if ["$UNAME" = "SunOS"]; then
+    # if you don't have boost
+    if [ ! -d "include/boost"]; then
+        echo "You don't have boost."
+        cd ../include/
+        echo "Downloading Boost 1.57.0..."
+        wget https://downloads.sourceforge.net/project/boost/boost/1.57.0/boost_1_57_0.tar.bz2
+        echo "Extracting in include...(this takes awhile)..."
+        tar -xvjf boost_1_57_0.tar.bz2
+        echo "Told you it took a long time!"
+        echo "Symlinking to app/include and engine/include..."
+        ln -s boost_1_57_0 ../app/include/boost
+        ln -s boost_1_57_0 ../engine/include/boost
+    fi
+fi
+echo ""
 echo "Removing old build directory"
 rm -rf build;
 echo "Creating build directory..."

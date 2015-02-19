@@ -18,6 +18,12 @@ set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
 set(INCLUDES_DIR "${CMAKE_SOURCE_DIR}/include")
 set(LIB_DIR "${CMAKE_SOURCE_DIR}/lib")
 
+if(APPLE)
+  # do nothing
+elseif(UNIX)
+  set(Boost_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}")
+endif()
+
 # include directories
 include_directories(lib)
 # if testing include gtest
