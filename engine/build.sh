@@ -358,8 +358,8 @@ then
     else
         cd "$ENGINEDIR"
         echo "Creating build/debug directory..."
-        cd "$ENGINEDIR/build/debug"
         mkdir -p "build/debug";
+        cd "$ENGINEDIR/build/debug"
         CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto" \
           CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
           cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
