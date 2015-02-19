@@ -184,8 +184,8 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     // command := ( open-cmd | close-cmd | write-cmd | exit-cmd | show-cmd |
     // create-cmd | update-cmd | insert-cmd | delete-cmd ) ;
     cmd_name = lexeme[+(upper)];
-    argument = lexeme[*(char_ - ';')];
-    io_cmd = cmd_name >> relation_name; // open, close, write and exit
+    argument = lexeme[as_string[*(char_ - ';')]];
+    io_cmd = cmd_name.alias(); // open, close, write and exit
 
     // show-cmd := SHOW atomic-expr 
     show_cmd = no_case["show"] >> atomic_expression;
@@ -201,20 +201,20 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     // insert-cmd := INSERT INTO relation-name VALUES FROM ( literal { , literal } )
     // |
     //    INSERT INTO relation-name VALUES FROM RELATION expr
-    insert_cmd = no_case["insert"] >> ';';
+    insert_cmd = no_case["insert into"] >> ';';
 
     // delete-cmd := DELETE FROM relation-name WHERE condition
     delete_cmd = no_case["delete"] >> ';';
-    command = ( hold[io_cmd] | hold[show_cmd] | hold[create_cmd] | hold[update_cmd] |
-                hold[insert_cmd] | delete_cmd ) >> ';';
-    //command = cmd >> argument >> ';';
+    command = (hold[io_cmd] >> argument | hold[show_cmd] | hold[create_cmd] |
+               hold[update_cmd] | hold[insert_cmd] | delete_cmd) >> ';';
+    // command = cmd >> argument >> ';';
 
     // condition := conjunction { || conjunction }
     condition = conjunction >> *(string("||") >> conjunction);
     // conjunction := comparison { && comparison }
     conjunction = comparison >> *(string("&&") >> comparison);
     // comparison := operand op operand | ( condition )
-    comparison = hold[(operand >> op >> operand)] | ( '(' >> condition >> ')' );
+    comparison = hold[(operand >> op >> operand)] | ( string("(") >> condition >> string(")") );
 
     // op := == | != | < | > | <= | >=
     op = hold[string("==")] | hold[string("!=")] | hold[string("<")] |
@@ -233,15 +233,15 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     attribute_list = attribute_name >> *(',' >> space >> attribute_name) - ')';
 
     // atomic-expr := relation-name | ( expr )
-    atomic_expression = hold[( '(' >> expression >> ')' )] | relation_name;
+    atomic_expression = hold[( string("(") >> expression >> string(")") )] | relation_name;
 
     // selection := select ( condition ) atomic-expr
-    selection = string("select") >> '(' >> condition >> ')' >> atomic_expression;
+    selection = string("select") >> string("(") >> condition >> string(")") >> atomic_expression;
 
     // projection := project ( attribute-list ) atomic-expr
-    projection = no_case["project"] >> '(' >> attribute_list >> ')' >> atomic_expression;
+    projection = no_case["project"] >> string("(") >> attribute_list >> string(")") >> atomic_expression;
     // renaming := rename ( attribute-list ) atomic-expr
-    renaming = no_case["rename"] >> '(' >> attribute_list >> ')' >> atomic_expression;
+    renaming = no_case["rename"] >> string("(") >> attribute_list >> string(")") >> atomic_expression;
 
     // setunion := atomic-expr + atomic-expr
     setunion = atomic_expression >> char_('+') >> atomic_expression;
@@ -258,7 +258,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     // expression = lexeme[+alnum >> *(space >> +alnum)] - ';';
 
     // identifier := alpha { ( alpha | digit ) }
-    identifier = lexeme[!char_("\"") >>*char_("a-zA-Z_") >> *char_("0-9a-zA-Z_")];
+    identifier = lexeme[!char_("\"") >> *char_("a-zA-Z_") >> *char_("0-9a-zA-Z_")];
 
     // relation-name := identifier
     relation_name = identifier.alias();
@@ -304,7 +304,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
 
  private:
   boost::spirit::qi::rule<It, Command(), Skipper> command;
-  boost::spirit::qi::rule<It, std::string(), Skipper> argument;
+  boost::spirit::qi::rule<It, std::vector<std::string>(), Skipper> argument;
 
   boost::spirit::qi::rule<It, Query(), Skipper> query;
   boost::spirit::qi::rule<It, std::string(), Skipper> relation_name;
