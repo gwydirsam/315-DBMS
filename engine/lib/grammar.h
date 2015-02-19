@@ -213,7 +213,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
 				>> string("(") >> literal >> *(',' >> space >> literal) >> string(")") >> ';';
 
     // delete-cmd := DELETE FROM relation-name WHERE condition
-    delete_cmd = no_case["delete from"] >> space >> relation_name >> space >> no_case["where"] >> space >> condition >> ';';
+    delete_cmd = no_case["delete from"] >> relation_name >> no_case["where"] >> condition >> ';';
 	
     command = (hold[io_cmd] >> argument | hold[show_cmd] | hold[create_cmd] |
                hold[update_cmd] | hold[insert_cmd] | delete_cmd) >> ';';
