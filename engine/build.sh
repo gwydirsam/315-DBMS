@@ -1,13 +1,29 @@
 #!/bin/bash
 UNAME=`uname`
+ENGINEDIR=`pwd`
+PROJECTROOTDIR="$ENGINEDIR/.."
+APPDIR="$PROJECTROOTDIR/app/"
 echo "Checking if you have Boost 1.57.0"
 if [ "$UNAME" = "SunOS" ]; then
+    BOOST="$PROJECTROOTDIR/include/boost_1_57_0"
+    SYMLINKS=( "$ENGINEDIR/include/boost" "$APPDIR/include/boost" )
+    if [ -d "$BOOST" ]; then
+        echo "You have boost 1.57.0. Checking symlinks..." 
+        for i in "${SYMLINKS[@]}"
+        do
+            if [ ! -h "$i" ]; then
+                echo "Symlink $i doesn't exist..."
+                cd `dirname $i`
+                echo "Creating symlink..."
+                ln -s $PROJECTROOTDIR/include/boost_1_57_0/ boost
+            fi
+        done
+        cd $ENGINEDIR
+        echo "Done!"
     # if you don't have boost
-    if [ -d "../include/boost_1_57_0" ]; then
-        echo "You have boost 1.57.0. Continuing..." 
     else
         echo "You don't have boost 1.57.0"
-        cd ../include/
+        cd $/include/
         echo "Downloading Boost 1.57.0..."
         wget https://downloads.sourceforge.net/project/boost/boost/1.57.0/boost_1_57_0.tar.bz2
         echo "Extracting in include...(this takes awhile)..."
