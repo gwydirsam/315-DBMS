@@ -7,12 +7,10 @@ cmake_minimum_required(VERSION 2.8.12)
 
 # can't run if build.sh hasn't been run
 if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.buildshran")
-  message("build.sh must run before cmake")
-  add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/.buildshran
-    WORKING_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/library
-    COMMAND bash build.sh
-)
+  message("build.sh must run before cmake. Running build.sh now")
+  execute_process(COMMAND bash build.sh WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+  message("build.sh must run before cmake. Ran build.sh for you")
+  message(FATAL_ERROR "cmake will now exit")
 endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++1y")
@@ -32,11 +30,10 @@ if(APPLE)
   # do nothing
 elseif(UNIX)
   set(Boost_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include/boost")
-  message(${Boost_INCLUDE_DIRS})
 endif()
 
 # include directories
-include_directories(lib ${Boost_INCLUDE_DIRS})
+include_directories(${LIB_DIR} ${Boost_INCLUDE_DIRS})
 # if testing include gtest
 if (test)
   add_subdirectory(${INCLUDES_DIR}/gtest)

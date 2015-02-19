@@ -249,11 +249,31 @@ fi
 # touch .buildshran after we ran build.sh and installed everything
 touch "$ENGINEDIR/.buildshran"
 
-echo "Removing old build directory"
-rm -rf "$ENGINEDIR/build";
+#echo "Removing old build directory"
+#rm -rf "$ENGINEDIR/build";
 
-echo "Creating build directory..."
-mkdir -p "$ENGINEDIR/build/release" "$ENGINEDIR/build/debug";
+# If build exists, run make clean else create directories
+if [ -d "$ENGINEDIR/build/debug" ]
+then
+    echo "Running make clean in build/debug"
+    cd "$ENGINEDIR/build/debug"
+    make clean
+else
+    cd "$ENGINEDIR"
+    echo "Creating build/debug directory..."
+    mkdir -p "build/debug";
+fi
+if [ -d "$ENGINEDIR/build/release" ]
+then
+    echo "Running Make Clean in build/release"
+    cd "$ENGINEDIR/build/release"
+    make clean
+else
+    cd "$ENGINEDIR"
+    echo "Creating build/release directory..."
+    mkdir -p "build/release";
+fi
+
 
 cd "$PROJECTROOTDIR/engine/build/release";
 echo "Running cmake for Release with Tests"
