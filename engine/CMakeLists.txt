@@ -22,10 +22,11 @@ if(APPLE)
   # do nothing
 elseif(UNIX)
   set(Boost_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include/boost")
+  message(${Boost_INCLUDE_DIRS})
 endif()
 
 # include directories
-include_directories(lib)
+include_directories(lib ${Boost_INCLUDE_DIRS})
 # if testing include gtest
 if (test)
   add_subdirectory(${INCLUDES_DIR}/gtest)
