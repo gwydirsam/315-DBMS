@@ -190,35 +190,42 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     argument = lexeme[as_string[*(char_ - ';')]];
     io_cmd = cmd_name.alias(); // open, close, write and exit
 
-    // show-cmd := SHOW atomic-expr 
-    show_cmd = no_case["show"] >> atomic_expression;
+    // show-cmd := SHOW atomic-expr
+    show_cmd = no_case[string("show")] >> atomic_expression;
 
-	// create-cmd := CREATE TABLE relation-name ( typed-attribute-list ) PRIMARY KEY
+    // create-cmd := CREATE TABLE relation-name ( typed-attribute-list ) PRIMARY
+    // KEY
     // ( attribute-list )
-    create_cmd = no_case["create table"] >>  relation_name >> string("(") 
-				>> typed_attribute_list >> string(")") >> no_case["primary key"]
-				>> string("(") >> attribute_list >> string(")") >> ';';
+    create_cmd = no_case[string("create table")] >> relation_name >>
+                 string("(") >> typed_attribute_list >> string(")") >>
+                 no_case[string("primary key")] >> string("(") >>
+                 attribute_list >> string(")") >> ';';
 
     // update-cmd := UPDATE relation-name SET attribute-name = literal { ,
     // attribute-name = literal } WHERE condition
-    update_cmd = no_case["update"] >> relation_name >> no_case["set"]
-				>> attribute_name >> string("=") >> literal 
-				>> *(',' >> space >> attribute_name >> space >> string("=") >> literal) 
-				>> no_case["where"] >> condition >> ';';
+    update_cmd =
+        no_case[string("update")] >> relation_name >> no_case[string("set")] >>
+        attribute_name >> string("=") >> literal >>
+        *(',' >> space >> attribute_name >> space >> string("=") >> literal) >>
+        no_case[string("where")] >> condition >> ';';
 
-    // insert-cmd := INSERT INTO relation-name VALUES FROM ( literal { , literal } )
+    // insert-cmd := INSERT INTO relation-name VALUES FROM ( literal { , literal
+    // } )
     // | INSERT INTO relation-name VALUES FROM RELATION expr
-    insert_cmd = no_case["insert into"] >> relation_name >>
-      hold[(no_case["values from"] >> !no_case["relation"] >> string("(") >> literal >>
-                      *(',' >> space >> literal) >> string(")"))]
-      | (no_case["values from relation"] >> expression)
-                                        >> ';';
+    insert_cmd =
+        no_case[string("insert into")] >> relation_name >>
+            hold[(no_case[string("values from")] >>
+                  !no_case[string("relation")] >> string("(") >> literal >>
+                  *(',' >> space >> literal) >> string(")"))] |
+        (no_case[string("values from relation")] >> expression) >> ';';
 
     // delete-cmd := DELETE FROM relation-name WHERE condition
-    delete_cmd = no_case["delete from"] >> relation_name >> no_case["where"] >> condition >> ';';
-	
+    delete_cmd = no_case[string("delete from")] >> relation_name >>
+                 no_case[string("where")] >> condition >> ';';
+
     command = (hold[io_cmd] >> argument | hold[show_cmd] | hold[create_cmd] |
-               hold[update_cmd] | hold[insert_cmd] | delete_cmd) >> ';';
+               hold[update_cmd] | hold[insert_cmd] | delete_cmd) >>
+              ';';
     // command = cmd >> argument >> ';';
 
     // condition := conjunction { || conjunction }
