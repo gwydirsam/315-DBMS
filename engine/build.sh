@@ -140,8 +140,9 @@ then
         ./configure --prefix="$HOME/usr" > "$LOGFILE" 2>&1
         make > "$LOGFILE" 2>&1
         echo "CCache Build Done. Installing to ~/usr/bin/ccache/"
+
         # install manpage
-        cp ccache.1 "$HOME/usr/bin/share/man/man1/."
+        cp ccache.1 "$HOME/usr/share/man/man1/."
         cp ccache "$HOME/usr/bin/ccache/."
 
         # setup symlinks
