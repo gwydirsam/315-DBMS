@@ -1,9 +1,9 @@
 #!/bin/bash
 UNAME=`uname`
 echo "Checking if you have Boost 1.57.0"
-if ["$UNAME" = "SunOS"]; then
+if [ "$UNAME" = "SunOS" ]; then
     # if you don't have boost
-    if [ ! -d "include/boost"]; then
+    if [ ! -d "include/boost" ]; then
         echo "You don't have boost."
         cd ../include/
         echo "Downloading Boost 1.57.0..."
