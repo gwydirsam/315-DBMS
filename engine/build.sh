@@ -97,7 +97,7 @@ else
 fi
 
 # if on unix also check if you have boost and ccache
-if [ "$UNAME" = "SunOS" ]
+if [ "$HOSTNAME" = "sun" ]
 then
     echo "Checking if you have Boost 1.57.0"
     if [ -d "$BOOSTDIR" ]
@@ -253,7 +253,7 @@ touch "$ENGINEDIR/.buildshran"
 #rm -rf "$ENGINEDIR/build";
 
 echo "Running cmake for Release with Tests"
-if [ "$UNAME" = "Darwin" ]
+if [ "$HOSTNAME" = "Tron" ]
 then
     if [ -d "$ENGINEDIR/build/release" ]
     then
@@ -281,7 +281,7 @@ then
             exit 1
         fi
     fi
-elif [ "$UNAME" = "SunOS" ]
+elif [ "$HOSTNAME" = "sun" ]
 then
     if [ -d "$ENGINEDIR/build/release" ]
     then
@@ -307,7 +307,7 @@ then
 fi
 
 echo "Running cmake for Debug with Tests"
-if [ "$UNAME" = "Darwin" ]
+if [ "$HOSTNAME" = "Tron" ]
 then
     if [ -d "$ENGINEDIR/build/debug" ]
     then
@@ -337,7 +337,7 @@ then
             exit 1
         fi
     fi
-elif [ "$UNAME" = "SunOS" ]
+elif [ "$HOSTNAME" = "sun" ]
 then
     if [ -d "$ENGINEDIR/build/debug" ]
     then
