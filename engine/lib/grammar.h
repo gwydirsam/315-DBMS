@@ -265,9 +265,9 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
 
     // expr := atomic-expr | selection | projection | renaming | union | difference
     // | product
-    expression = hold[selection] | hold[projection] | hold[renaming] |
+    expression = ( hold[selection] | hold[projection] | hold[renaming] |
                  hold[setunion] | hold[difference] | hold[product] |
-                 atomic_expression;
+      atomic_expression ) - ';';
     // expression = lexeme[+alnum >> *(space >> +alnum)] - ';';
 
     // identifier := alpha { ( alpha | digit ) }
