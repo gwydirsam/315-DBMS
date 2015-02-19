@@ -1,13 +1,27 @@
 #!/bin/bash
+
 UNAME=`uname`
+# get hostname
+if [ "$UNAME" = "SunOS" ]; then
+    HOSTNAME=`hostname`
+elif [ "$UNAME" = "Darwin" ]; then
+    HOSTNAME=`hostname -s`
+else
+    HOSTNAME="UNKOWN"
+fi
+echo $HOSTNAME
+exit 0
+
 ENGINEDIR=`pwd`
 PROJECTROOTDIR="$ENGINEDIR/.."
 APPDIR="$PROJECTROOTDIR/app/"
-echo "Checking if you have Boost 1.57.0"
+
+# if unix.cse.tamu.edu check for boost
 if [ "$UNAME" = "SunOS" ]; then
+    echo "Checking if you have Boost 1.57.0"
     BOOST="$PROJECTROOTDIR/include/boost_1_57_0"
-    SYMLINKS=( "$ENGINEDIR/include/boost" "$APPDIR/include/boost" )
     if [ -d "$BOOST" ]; then
+        SYMLINKS=( "$ENGINEDIR/include/boost" "$APPDIR/include/boost" )
         echo "You have boost 1.57.0. Checking symlinks..." 
         for i in "${SYMLINKS[@]}"
         do
@@ -20,7 +34,7 @@ if [ "$UNAME" = "SunOS" ]; then
         done
         cd $ENGINEDIR
         echo "Done!"
-    # if you don't have boost
+        # if you don't have boost
     else
         echo "You don't have boost 1.57.0"
         cd $/include/
@@ -37,8 +51,8 @@ if [ "$UNAME" = "SunOS" ]; then
         ln -s ../../boost_1_57_0/ boost
         cd ../../engine/
         if [ -a "../include/boost_1_57_0.tar.bz2" ]; then
-        echo "Deleting inlcude/boost_1_57_0.tar.bz2"
-        rm ../include/boost_1_57_0.tar.bz2
+            echo "Deleting inlcude/boost_1_57_0.tar.bz2"
+            rm ../include/boost_1_57_0.tar.bz2
         fi
         echo "Done!"
     fi
@@ -63,7 +77,7 @@ then
         echo "Release Tests Build Failed"
         exit 1
     fi
-# if Solaris
+    # if Solaris
 elif [ "$UNAME" = "SunOS" ]
 then
     CC="/opt/csw/bin/gcc -fdiagnostics-color=auto" CXX="/opt/csw/bin/g++ -fdiagnostics-color=auto" cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
@@ -94,7 +108,7 @@ then
         echo "Debug Tests Build Failed"
         exit 1
     fi
-# if Solaris
+    # if Solaris
 elif [ "$UNAME" = "SunOS" ]
 then
     CC="/opt/csw/bin/gcc -fdiagnostics-color=auto" CXX="/opt/csw/bin/g++ -fdiagnostics-color=auto" cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
