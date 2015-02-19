@@ -12,10 +12,8 @@
 #include "../lib/grammar.h"
 
 int main(int argc, char *argv[]) {
-  // const std::string input =
-  //    "select id, name, price from books, authors where books.author_id = "
-  //    "authors.id;";
-  const std::string input1 = "posts  <-   select entry from table0  ;";
+  // test spaces everywhere
+  const std::string input1 = " posts  <-   select (aname == name && akind != kind) (a * animals)  ;";
   std::cout << input1 << std::endl;
   doParse(input1, boost::spirit::qi::space);
   draw_line();
