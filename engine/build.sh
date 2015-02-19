@@ -202,12 +202,12 @@ then
         # extract tar
         echo "Extracting CCache Tar..."
         cd "$HOME/.tmp/build"
-        tar -xvjf "$DLDIR/`basename $CCACHEURL`"# > "$LOGFILE" 2>&1
+        tar -xvjf "$DLDIR/`basename $CCACHEURL`" > "$LOGFILE" 2>&1
 
         # build
         echo "Building CCache..."
         cd "$HOME/.tmp/build/`basename $CCACHEURL .tar.bz2`"
-        ./configure --prefix="$HOME/usr"# > "$LOGFILE" 2>&1
+        ./configure --prefix="$HOME/usr" > "$LOGFILE" 2>&1
         make > "$LOGFILE" 2>&1
 
         echo "CCache Build Done. Installing to ~/usr/bin/ccache/"
