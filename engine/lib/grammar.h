@@ -188,7 +188,9 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     // create-cmd | update-cmd | insert-cmd | delete-cmd ) ;
     cmd_name = lexeme[+(upper)];
     argument = lexeme[as_string[*(char_ - ';')]];
-    io_cmd = hold[no_case[string("open")]] | hold[no_case[string("close")]] | no_case[string("exit")]; // open, close, write and exit
+    io_cmd = hold[no_case[string("open")]] | hold[no_case[string("close")]] |
+             hold[no_case[string("write")]] |
+             no_case[string("exit")];  // open, close, write and exit
 
     // show-cmd := SHOW atomic-expr
     show_cmd = no_case[string("show")] >> atomic_expression;
