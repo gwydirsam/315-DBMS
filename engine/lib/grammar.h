@@ -252,11 +252,11 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     literal = lexeme[-char_("\"") >> +alnum >> -char_("\"")];
     
     // attribute-list := attribute-name { , attribute-name }
-    attribute_list = attribute_name >> *(',' >> space >> attribute_name) - ')';
+    attribute_list = (attribute_name >> *(',' >> attribute_name)) - ')';
 
     // typed-attribute-list := attribute-name type { , attribute-name type } 
-    typed_attribute_list = attribute_name >> type >>
-                           *(',' >> attribute_name >> type) - ')';
+    typed_attribute_list = (attribute_name >> type >>
+      *(',' >> attribute_name >> type)) - ')';
 
     // type := VARCHAR ( integer ) | INTEGER
     type = hold[(no_case[string("varchar")] >>
