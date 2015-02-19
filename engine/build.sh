@@ -11,7 +11,7 @@ else
 fi
 
 ENGINEDIR=`pwd`
-PROJECTROOTDIR="$ENGINEDIR/.."
+PROJECTROOTDIR=`dirname $ENGINEDIR`
 APPDIR="$PROJECTROOTDIR/app/"
 BOOSTDIR="$PROJECTROOTDIR/include/boost_1_57_0"
 SYMLINKS=( "$ENGINEDIR/include/boost" "$APPDIR/include/boost" )
