@@ -247,7 +247,17 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     // type := VARCHAR ( integer ) | INTEGER 
     typed_attribute_list = attribute_name >> type >> *(',' attribute_name) >> type);
 
-    type = ( ) | string("")
+    type = ( ) | string("");
+	type = ( ) | string("VARCHAR(%i)");
+	type = ( ) | string("INTEGER");
+	type = ( ) | string("SMALLINT");
+	type = ( ) | string("BIGINT");
+	type = ( ) | string("DECIMAL");
+	type = ( ) | string("NUMERIC");
+	type = ( ) | string("DOUBLE");
+	type = ( ) | string("DOUBLEPRECISION");
+	type = ( ) | string("FLOAT");
+	type = ( ) | string("REAL");
     
 
     // atomic-expr := relation-name | ( expr )
