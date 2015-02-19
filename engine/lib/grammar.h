@@ -24,41 +24,69 @@
 
 
 struct Query;
-struct Select;
+//struct Select;
 struct Command;
 struct Program;
 
 // query := relation-name <- expr ;
 struct Query {
+  Query(std::string rname, std::vector<std::string> expr): relation_name(rname), expression(expr){};
+  Query(std::vector<std::string> expr): relation_name(), expression(expr){};
+  Query(std::string rname): relation_name(rname), expression(){};
+  Query(): relation_name(), expression(){};
+  
   std::string relation_name;
-  std::string expression;
+  std::vector<std::string> expression;
 
   friend std::ostream& operator<<(std::ostream& os, Query const& ss) {
-    return os << ss.relation_name << "|" << ss.expression << ";";
+    os << ss.relation_name << "||";
+    for (std::string expr : ss.expression) {
+      os << expr << "|";
+    }
+    return os;
   }
 };
 
 BOOST_FUSION_ADAPT_STRUCT(Query,
                           (std::string, relation_name)
-                          (std::string, expression))
+                          (std::vector<std::string>, expression))
 
+// condition := conjunction { || conjunction }
+//struct Condition {
+//  
+//}
+
+// conjunction := comparison { && comparison }
+// comparison := operand op operand | ( condition )
+// op := == | != | < | > | <= | >=
+// operand := attribute-name | literal
+// attribute-name := identifier
+// literal := intentionally left unspecified (strings, numbers, etc.)
+// expr := atomic-expr | selection | projection | renaming | union | difference | product
+// atomic-expr := relation-name | ( expr )
 // selection := select ( condition ) atomic-expr
-struct Select {
-  std::vector<std::string> columns;
-  std::vector<std::string> fromtables;
-  std::vector<std::string> whereclause;
-
-  friend std::ostream& operator<<(std::ostream& os, Select const& ss) {
-    return os << "SELECT [" << ss.columns.size() << " columns] FROM ["
-              << ss.fromtables.size() << " tables] WHERE ["
-              << ss.whereclause.size() << " clauses]";
-  }
-};
-
-BOOST_FUSION_ADAPT_STRUCT(Select,
-                          (std::vector<std::string>, columns)
-                          (std::vector<std::string>, fromtables)
-                          (std::vector<std::string>, whereclause))
+//struct Select {
+//  std::vector<std::string> condition;
+//  std::vector<std::string> atomic_expression;
+//
+//  // not finished
+//  friend std::ostream& operator<<(std::ostream& os, Select const& ss) {
+//    os << "SELECT|";
+//    os << "("
+//    for (std::string cond : ss.condition) {
+//      os << cond << "|";
+//    }
+//    os << ")"
+//    return os << "SELECT " << ss.columns.size() << " columns] FROM ["
+//              << ss.fromtables.size() << " tables] WHERE ["
+//              << ss.whereclause.size() << " clauses]";
+//  }
+//};
+//
+//BOOST_FUSION_ADAPT_STRUCT(Select,
+//                          (std::vector<std::string>, columns)
+//                          (std::vector<std::string>, fromtables)
+//                          (std::vector<std::string>, whereclause))
 
 // command := ( open-cmd | close-cmd | write-cmd | exit-cmd | show-cmd |
 // create-cmd | update-cmd | insert-cmd | delete-cmd ) ;
@@ -82,22 +110,26 @@ BOOST_FUSION_ADAPT_STRUCT(Select,
 // type := VARCHAR ( integer ) | INTEGER
 // integer := digit { digit }
 struct Command {
-  Command(std::string c, std::string a): command(c), argument(a){};
+  Command(std::string c, std::vector<std::string> a): command(c), argument(a){};
   Command(std::string c): command(c), argument(){};
-  //Command(std::string a): command(), argument(a){};
+  Command(std::vector<std::string> a): command(), argument(a){};
   Command(): command(), argument(){};
   
   std::string command;
-  std::string argument;
+  std::vector<std::string> argument;
 
   friend std::ostream& operator<<(std::ostream& os, Command const& ss) {
-    return os << ss.command << "|" << ss.argument << ";";
+    os << ss.command << "||";
+    for (std::string arg : ss.argument) {
+      os << arg << "|";
+    }
+    return os;
   }
 };
 
 BOOST_FUSION_ADAPT_STRUCT(Command,
                           (std::string, command)
-                          (std::string, argument))
+                          (std::vector<std::string>, argument))
 
 // program := { ( query | command ) }
 struct Program {
@@ -153,10 +185,10 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     // create-cmd | update-cmd | insert-cmd | delete-cmd ) ;
     cmd_name = lexeme[+(upper)];
     argument = lexeme[*(char_ - ';')];
-    io_cmd = cmd_name.alias(); // open, close, write and exit
+    io_cmd = cmd_name >> relation_name; // open, close, write and exit
 
     // show-cmd := SHOW atomic-expr 
-    show_cmd = no_case["SHOW"] >> atomic_expression;
+    show_cmd = no_case["show"] >> atomic_expression;
 
     // create-cmd := CREATE TABLE relation-name ( typed-attribute-list ) PRIMARY KEY
     // ( attribute-list )
@@ -173,43 +205,44 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
 
     // delete-cmd := DELETE FROM relation-name WHERE condition
     delete_cmd = no_case["delete"] >> ';';
-    cmd = io_cmd | show_cmd |
-      create_cmd | update_cmd | insert_cmd | delete_cmd;
-    command = cmd >> argument >> ';';
+    command = ( hold[io_cmd] | hold[show_cmd] | hold[create_cmd] | hold[update_cmd] |
+                hold[insert_cmd] | delete_cmd ) >> ';';
+    //command = cmd >> argument >> ';';
 
     // condition := conjunction { || conjunction }
-    condition = conjunction >> *("||" >> conjunction);
-
+    condition = conjunction >> *(string("||") >> conjunction);
     // conjunction := comparison { && comparison }
-    conjunction = comparison >> *("&&" >> comparison);
-    
+    conjunction = comparison >> *(string("&&") >> comparison);
     // comparison := operand op operand | ( condition )
-    comparison = (operand >> op >> operand) | '(' >> condition >> ')';
+    comparison = hold[(operand >> op >> operand)] | ( '(' >> condition >> ')' );
 
     // op := == | != | < | > | <= | >=
-    op = char_("==") | char_("!=") | char_("<") | char_(">") | char_("<=") | char_(">=");
-    
+    op = hold[string("==")] | hold[string("!=")] | hold[string("<")] |
+         hold[string(">")] | hold[string("<=")] | string(">=");
+
     // operand := attribute-name | literal
-    operand = attribute_name | literal;
+    operand = hold[attribute_name] | literal;
 
     // attribute-name := identifier
     attribute_name = identifier.alias();
 
     // literal := intentionally left unspecified (strings, numbers, etc.)
-    literal = lexeme[+alnum];
+    literal = lexeme[-char_("\"") >> +alnum >> -char_("\"")];
     
     // attribute-list := attribute-name { , attribute-name }
     attribute_list = attribute_name >> *(',' >> space >> attribute_name) - ')';
 
     // atomic-expr := relation-name | ( expr )
-    atomic_expression = relation_name | ( '(' >> expression >> ')' );
+    atomic_expression = hold[( '(' >> expression >> ')' )] | relation_name;
 
     // selection := select ( condition ) atomic-expr
-    selection = no_case["select"] >> '(' >> condition >> ')' >> atomic_expression;
+    selection = string("select") >> '(' >> condition >> ')' >> atomic_expression;
+
     // projection := project ( attribute-list ) atomic-expr
     projection = no_case["project"] >> '(' >> attribute_list >> ')' >> atomic_expression;
     // renaming := rename ( attribute-list ) atomic-expr
     renaming = no_case["rename"] >> '(' >> attribute_list >> ')' >> atomic_expression;
+
     // setunion := atomic-expr + atomic-expr
     setunion = atomic_expression >> char_('+') >> atomic_expression;
     // difference := atomic-expr - atomic-expr
@@ -219,12 +252,13 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
 
     // expr := atomic-expr | selection | projection | renaming | union | difference
     // | product
-    expression = selection | projection | renaming | setunion | difference |
-                 product | atomic_expression;
+    expression = hold[selection] | hold[projection] | hold[renaming] |
+                 hold[setunion] | hold[difference] | hold[product] |
+                 atomic_expression;
     // expression = lexeme[+alnum >> *(space >> +alnum)] - ';';
 
     // identifier := alpha { ( alpha | digit ) }
-    identifier = lexeme[alpha >> *char_("0-9a-zA-Z_") >> *char_("0-9a-zA-Z")];
+    identifier = lexeme[!char_("\"") >>*char_("a-zA-Z_") >> *char_("0-9a-zA-Z_")];
 
     // relation-name := identifier
     relation_name = identifier.alias();
@@ -233,7 +267,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     query = relation_name >> "<-" >> expression >> ';';
     
     // program := { ( query | command ) }
-    program = query | command;
+    program = hold[query] | command;
 
     BOOST_SPIRIT_DEBUG_NODE(program);
     BOOST_SPIRIT_DEBUG_NODE(command);
@@ -270,15 +304,31 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
 
  private:
   boost::spirit::qi::rule<It, Command(), Skipper> command;
+  boost::spirit::qi::rule<It, std::string(), Skipper> argument;
+
   boost::spirit::qi::rule<It, Query(), Skipper> query;
-  boost::spirit::qi::rule<It, std::string(), Skipper> relation_name, expression,
-      cmd_name, cmd, argument;
-  boost::spirit::qi::rule<It, std::string(), Skipper> atomic_expression,
-      selection, projection, renaming, setunion, difference, product;
-  boost::spirit::qi::rule<It, std::string(), Skipper> identifier, condition,
-    conjunction, comparison, op, operand, attribute_name, attribute_list, literal;
-  boost::spirit::qi::rule<It, std::string(), Skipper> io_cmd, show_cmd,
+  boost::spirit::qi::rule<It, std::string(), Skipper> relation_name;
+  boost::spirit::qi::rule<It, std::vector<std::string>(), Skipper> expression;
+
+  boost::spirit::qi::rule<It, std::vector<std::string>(), Skipper> atomic_expression;
+
+  boost::spirit::qi::rule<It, std::vector<std::string>(), Skipper> cmd;
+  boost::spirit::qi::rule<It, std::string(), Skipper> cmd_name;
+
+  boost::spirit::qi::rule<It, std::vector<std::string>(), Skipper> selection,
+      projection, renaming, setunion, difference, product;
+
+  boost::spirit::qi::rule<It, std::vector<std::string>(), Skipper> condition,
+      conjunction, comparison;
+
+  boost::spirit::qi::rule<It, std::string(), Skipper> identifier, op, operand,
+      attribute_name, attribute_list, literal;
+
+  boost::spirit::qi::rule<It, std::string(), Skipper> io_cmd;
+
+  boost::spirit::qi::rule<It, std::vector<std::string>(), Skipper> show_cmd,
       create_cmd, update_cmd, insert_cmd, delete_cmd;
+
   boost::spirit::qi::rule<It, Program(), Skipper> program;
 };
 
