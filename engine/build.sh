@@ -168,7 +168,7 @@ then
 fi
 
 echo "Removing old build directory"
-rm -rf build;
+rm -rf "$ENGINEDIR/build";
 
 echo "Creating build directory..."
 mkdir -p "$ENGINEDIR/build/release" "$ENGINEDIR/build/debug";
@@ -178,8 +178,8 @@ echo "Running cmake for Release with Tests"
 if [ "$UNAME" = "Darwin" ]
 then
     #if OS X
-    export CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto"
-    export CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto"
+    CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto" \
+    CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
     cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
 
     RESULT=$?
@@ -191,8 +191,8 @@ then
 elif [ "$UNAME" = "SunOS" ]
 then
     # if Solaris
-    export CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto"
-    export CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto"
+    CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto" \
+    CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
     cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
 
     RESULT=$?
@@ -208,8 +208,8 @@ echo "Running cmake for Debug with Tests"
 if [ "$UNAME" = "Darwin" ]
 then
     #if OS X
-    export CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto"
-    export CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto"
+    CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto" \
+    CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
     cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
 
     RESULT=$?
@@ -221,8 +221,8 @@ then
 elif [ "$UNAME" = "SunOS" ]
 then
     # if Solaris
-    export CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto"
-    export CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto"
+    CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto" \
+    CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
     cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
 
     RESULT=$?
