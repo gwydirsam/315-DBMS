@@ -25,6 +25,8 @@ DLDIR="/tmp/${USER}dl"
 
 CCACHEURL="http://samba.org/ftp/ccache/ccache-3.2.1.tar.bz2"
 
+LOGFILE="$ENGINEDIR/.buildshlog"
+
 # if unix.cse.tamu.edu check for boost and ccache
 if [ "$UNAME" = "SunOS" ]
 then
@@ -49,13 +51,13 @@ then
         echo "You don't have boost 1.57.0"
 
         # download if you don't have it
-        if [ ! -d "$DLDIR"]
+        if [ ! -d "$DLDIR" ]
         then
             # if dldir doesn't exist create it
             mkdir -p "$DLDIR"
             # download boost
             echo "Downloading Boost 1.57.0..."
-            wget -P "$DLDIR" "$BOOSTURL"
+            wget -P "$DLDIR" "$BOOSTURL" > "$LOGFILE" 2>&1
         else
             # dldir does exist
             # check if boost tar is already there
@@ -66,14 +68,14 @@ then
             else
                 # it's not... download
                 echo "Downloading Boost 1.57.0..."
-                wget -P "$DLDIR" "$BOOSTURL"
+                wget -P "$DLDIR" "$BOOSTURL" > "$LOGFILE" 2>&1
             fi
         fi
 
         # extract tar
         echo "Extracting in include...(this takes awhile)..."
         cd "$PROJECTROOTDIR/include/"
-        tar -xvjf "$DLDIR/$BOOSTTARFILENAME"
+        tar -xvjf "$DLDIR/$BOOSTTARFILENAME" > "$LOGFILE" 2>&1
         echo "Told you it took a long time!"
 
         # create symlinks
@@ -105,7 +107,7 @@ then
             mkdir -p "$DLDIR"
             # download ccache
             echo "Downloading CCache..."
-            wget -P "$DLDIR" "$CCACHEURL"
+            wget -P "$DLDIR" "$CCACHEURL" > "$LOGFILE" 2>&1
         else
             # dldir does exist
             # check if boost tar is already there
@@ -116,7 +118,7 @@ then
             else
                 # it's not... download
                 echo "Downloading CCache..."
-                wget -P "$DLDIR" "$CCACHEURL"
+                wget -P "$DLDIR" "$CCACHEURL" > "$LOGFILE" 2>&1
             fi
         fi
 
@@ -130,13 +132,13 @@ then
         # extract tar
         echo "Extracting CCache Tar..."
         cd "$HOME/.tmp/build"
-        tar -xvjf "$DLDIR/`basename $CCACHEURL`"
+        tar -xvjf "$DLDIR/`basename $CCACHEURL`" > "$LOGFILE" 2>&1
 
         # build
         echo "Building CCache..."
         cd "$HOME/.tmp/build/`basename $CCACHEURL .tar.bz2`"
-        ./configure --prefix="$HOME/usr"
-        make
+        ./configure --prefix="$HOME/usr" > "$LOGFILE" 2>&1
+        make > "$LOGFILE" 2>&1
         echo "CCache Build Done. Installing to ~/usr/bin/ccache/"
         # install manpage
         cp ccache.1 "$HOME/usr/bin/share/man/man1/."
@@ -144,7 +146,7 @@ then
 
         # setup symlinks
         cd "$HOME/usr/bin/ccache/"
-        ln -s ccache /usr/gcc
+        ln -s ccache gcc
         ln -s ccache g++
         ln -s ccache cc
         ln -s ccache c++
