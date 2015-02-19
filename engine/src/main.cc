@@ -86,6 +86,18 @@ int main(int argc, char *argv[]) {
   doParse(input11, boost::spirit::qi::space);
   draw_line();
 
+  const std::string input12 = "INSERT INTO species VALUES FROM RELATION project (kind) animals;";
+  std::cout << input12 << std::endl;
+  doParse(input12, boost::spirit::qi::space);
+  draw_line();
+
+
+  const std::string input13 = "CREATE TABLE species (kind VARCHAR(10)) PRIMARY KEY (kind);";
+  std::cout << input13 << std::endl;
+  doParse(input13, boost::spirit::qi::space);
+  draw_line();
+
+
 
   // doParse(input2, boost::spirit::qi::space);
 

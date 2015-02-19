@@ -252,50 +252,51 @@ touch "$ENGINEDIR/.buildshran"
 #echo "Removing old build directory"
 #rm -rf "$ENGINEDIR/build";
 
-# If build exists, run make clean else create directories
-if [ -d "$ENGINEDIR/build/debug" ]
-then
-    echo "Running make clean in build/debug"
-    cd "$ENGINEDIR/build/debug"
-    make clean
-else
-    cd "$ENGINEDIR"
-    echo "Creating build/debug directory..."
-    mkdir -p "build/debug";
-fi
-if [ -d "$ENGINEDIR/build/release" ]
-then
-    echo "Running Make Clean in build/release"
-    cd "$ENGINEDIR/build/release"
-    make clean
-else
-    cd "$ENGINEDIR"
-    echo "Creating build/release directory..."
-    mkdir -p "build/release";
-fi
-
-
-cd "$PROJECTROOTDIR/engine/build/release";
 echo "Running cmake for Release with Tests"
 if [ "$UNAME" = "Darwin" ]
 then
-    #if OS X
-    CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto" \
-      CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
-      cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
-
-    RESULT=$?
-    if [ $RESULT -ne 0 ]
-    then 
-        echo "Release Tests Build Failed"
-        exit 1
+    if [ -d "$ENGINEDIR/build/release" ]
+    then
+        echo "Running Make Clean in build/release"
+        cd "$ENGINEDIR/build/release"
+        make clean
+        make -j4
+        RESULT=$?
+        if [ $RESULT -ne 0 ]
+        then 
+            echo "Release Tests Build Failed"
+            exit 1
+        fi
+    else
+        cd "$ENGINEDIR"
+        echo "Creating build/release directory..."
+        mkdir -p "build/release";
+        CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto" \
+          CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
+          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
+        RESULT=$?
+        if [ $RESULT -ne 0 ]
+        then 
+            echo "Release Tests Build Failed"
+            exit 1
+        fi
     fi
 elif [ "$UNAME" = "SunOS" ]
 then
-    # if Solaris
-    CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto" \
-      CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
-      cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
+    if [ -d "$ENGINEDIR/build/release" ]
+    then
+        echo "Running Make Clean in build/release"
+        cd "$ENGINEDIR/build/release"
+        make clean
+        make -j4
+    else
+        cd "$ENGINEDIR"
+        echo "Creating build/release directory..."
+        mkdir -p "build/release";
+        CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto" \
+          CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
+          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
+    fi
 
     RESULT=$?
     if [ $RESULT -ne 0 ]
@@ -305,33 +306,66 @@ then
     fi
 fi
 
-cd "$PROJECTROOTDIR/engine/build/debug";
 echo "Running cmake for Debug with Tests"
 if [ "$UNAME" = "Darwin" ]
 then
-    #if OS X
-    CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto" \
-      CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
-      cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+    if [ -d "$ENGINEDIR/build/debug" ]
+    then
+        echo "Running make clean in build/debug"
+        cd "$ENGINEDIR/build/debug"
+        make clean
+        make -j4
 
-    RESULT=$?
-    if [ $RESULT -ne 0 ]
-    then 
-        echo "Release Tests Build Failed"
-        exit 1
+        RESULT=$?
+        if [ $RESULT -ne 0 ]
+        then 
+            echo "Release Tests Build Failed"
+            exit 1
+        fi
+    else
+        cd "$ENGINEDIR"
+        echo "Creating build/debug directory..."
+        mkdir -p "build/debug";
+        CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto" \
+          CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
+          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+
+        RESULT=$?
+        if [ $RESULT -ne 0 ]
+        then 
+            echo "Release Tests Build Failed"
+            exit 1
+        fi
     fi
 elif [ "$UNAME" = "SunOS" ]
 then
-    # if Solaris
-    CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto" \
-      CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
-      cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+    if [ -d "$ENGINEDIR/build/debug" ]
+    then
+        echo "Running make clean in build/debug"
+        cd "$ENGINEDIR/build/debug"
+        make clean
+        make -j4
 
-    RESULT=$?
-    if [ $RESULT -ne 0 ]
-    then 
-        echo "Debug Tests Build Failed"
-        exit 1
+        RESULT=$?
+        if [ $RESULT -ne 0 ]
+        then 
+            echo "Debug Tests Build Failed"
+            exit 1
+        fi
+    else
+        cd "$ENGINEDIR"
+        echo "Creating build/debug directory..."
+        mkdir -p "build/debug";
+        CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto" \
+          CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
+          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+
+        RESULT=$?
+        if [ $RESULT -ne 0 ]
+        then 
+            echo "Debug Tests Build Failed"
+            exit 1
+        fi
     fi
 fi
 exit 0

@@ -207,10 +207,12 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
 				>> no_case["where"] >> condition >> ';';
 
     // insert-cmd := INSERT INTO relation-name VALUES FROM ( literal { , literal } )
-    // |
-    //    INSERT INTO relation-name VALUES FROM RELATION expr
-    insert_cmd = no_case["insert into"] >> relation_name >> no_case["values from"] 
-				>> string("(") >> literal >> *(',' >> space >> literal) >> string(")") >> ';';
+    // | INSERT INTO relation-name VALUES FROM RELATION expr
+    insert_cmd = no_case["insert into"] >> relation_name >>
+      hold[(no_case["values from"] >> !no_case["relation"] >> string("(") >> literal >>
+                      *(',' >> space >> literal) >> string(")"))]
+      | (no_case["values from relation"] >> expression)
+                                        >> ';';
 
     // delete-cmd := DELETE FROM relation-name WHERE condition
     delete_cmd = no_case["delete from"] >> relation_name >> no_case["where"] >> condition >> ';';
@@ -244,21 +246,22 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     attribute_list = attribute_name >> *(',' >> space >> attribute_name) - ')';
 
     // typed-attribute-list := attribute-name type { , attribute-name type } 
-    // type := VARCHAR ( integer ) | INTEGER 
-    typed_attribute_list = attribute_name >> type >> *(',' >> space >> attribute_name >> type) - ')';
+    typed_attribute_list = attribute_name >> type >>
+                           *(',' >> attribute_name >> type) - ')';
 
-    type = ( ) | string("");
-	type = ( ) | string("VARCHAR(%i)");
-	type = ( ) | string("INTEGER");
-	type = ( ) | string("SMALLINT");
-	type = ( ) | string("BIGINT");
-	type = ( ) | string("DECIMAL");
-	type = ( ) | string("NUMERIC");
-	type = ( ) | string("DOUBLE");
-	type = ( ) | string("DOUBLEPRECISION");
-	type = ( ) | string("FLOAT");
-	type = ( ) | string("REAL");
-    
+    // type := VARCHAR ( integer ) | INTEGER
+    type = hold[(no_case[string("varchar")] >>
+                 string("(") >> +digit >> string(")"))] | no_case[string("integer")];
+    // type = ( ) | string("VARCHAR(%i)");
+    // type = ( ) | string("INTEGER");
+    // type = ( ) | string("SMALLINT");
+    // type = ( ) | string("BIGINT");
+    // type = ( ) | string("DECIMAL");
+    // type = ( ) | string("NUMERIC");
+    // type = ( ) | string("DOUBLE");
+    // type = ( ) | string("DOUBLEPRECISION");
+    // type = ( ) | string("FLOAT");
+    // type = ( ) | string("REAL");
 
     // atomic-expr := relation-name | ( expr )
     atomic_expression =
@@ -324,6 +327,8 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     BOOST_SPIRIT_DEBUG_NODE(operand);
     BOOST_SPIRIT_DEBUG_NODE(attribute_name);
     BOOST_SPIRIT_DEBUG_NODE(attribute_list);
+    BOOST_SPIRIT_DEBUG_NODE(typed_attribute_list);
+    BOOST_SPIRIT_DEBUG_NODE(type);
     BOOST_SPIRIT_DEBUG_NODE(literal);
     BOOST_SPIRIT_DEBUG_NODE(io_cmd);
     BOOST_SPIRIT_DEBUG_NODE(show_cmd);
@@ -354,7 +359,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
       conjunction, comparison;
 
   boost::spirit::qi::rule<It, std::string(), Skipper> identifier, op, operand,
-      attribute_name, attribute_list, literal;
+    attribute_name, attribute_list, typed_attribute_list, type, literal;
 
   boost::spirit::qi::rule<It, std::string(), Skipper> io_cmd;
 
