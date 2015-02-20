@@ -256,6 +256,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
 				| no_case[string("integer")]
 				| no_case[string("smallint")] 
 				| no_case[string("bigint")]
+			//	| no_case[string("boolean")]
 			//	| no_case[string("decimal")] 
 			//	| no_case[string("numeric")]
 				| no_case[string("float")] >> string("(") >> +digit >> string(")"))
