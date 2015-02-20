@@ -246,21 +246,24 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
       *(',' >> attribute_name >> type)) - ')';
 
     // type := VARCHAR ( integer ) | INTEGER
-    type = hold[no_case[string("varchar")] >> string("(") >> +digit >> string(")"))] 
-				| hold[no_case[string("character varying")] >> string("(") >> +digit >> string(")"))]
-				| hold[no_case[string("character")] >> string("(") >> +digit >> string(")"))]
-				| hold[no_case[string("varbinary")] >> string("(") >> +digit >> string(")"))]
-				| hold[no_case[string("binary varying")] >> string("(") >> +digit >> string(")"))]
-				| hold[no_case[string("binary")] >> string("(") >> +digit >> string(")"))]
-				| hold[no_case[string("integer")] >> string("(") >> +digit >> string(")"))]
+    type = hold[no_case[string("varchar")] >> string("(") >> +digit >> string(")")] 
+				| hold[no_case[string("character varying")] >> string("(") >> +digit >> string(")")]
+				| hold[no_case[string("character")] >> string("(") >> +digit >> string(")")]
+				| hold[no_case[string("varbinary")] >> string("(") >> +digit >> string(")")]
+				| hold[no_case[string("binary varying")] >> string("(") >> +digit >> string(")")]
+				| hold[no_case[string("binary")] >> string("(") >> +digit >> string(")")]
+				| hold[no_case[string("integer")] >> string("(") >> +digit >> string(")")]
 				| hold[no_case[string("integer")]]
 				| hold[no_case[string("smallint")]] 
 				| hold[no_case[string("bigint")]]
+				| hold[no_case[string("float")] >> string("(") >> +digit >> string(")")]
+				| hold[no_case[string("float")]]
+				| hold[no_case[string("double")]] 
+				| hold[no_case[string("double precision")]]
+				| no_case[string("real")];
 			//	| hold[no_case[string("boolean")]]
 			//	| hold[no_case[string("decimal")]]
 			//	| hold[no_case[string("numeric")]]
-				| hold[no_case[string("float")] >> string("(") >> +digit >> string(")"))]
-				| hold[no_case[string("float")]]
 			//	| hold[no_case[string("date")]]
 			//	| hold[no_case[string("time")]]
 			//	| hold[no_case[string("timestamp")]]
@@ -268,9 +271,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
 			//	| hold[no_case[string("array")]]
 			//	| hold[no_case[string("multiset")]]
 			//	| hold[no_case[string("xml")]] 				
-				| hold[no_case[string("double")]] 
-				| hold[no_case[string("double precision")]]
-				| no_case[string("real")];
+				
 
     // atomic-expr := relation-name | ( expr )
     atomic_expression =
