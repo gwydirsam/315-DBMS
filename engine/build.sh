@@ -30,6 +30,16 @@ GTESTSYMLINKS=( "$ENGINEDIR/include/gtest" "$APPDIR/include/gtest" )
 
 LOGFILE="$ENGINEDIR/.buildshlog"
 
+echo "Checking if you're on unix.cse.tamu.edu..."
+# or my computer! tee hee
+if ! [[ "$HOSTNAME" = "sun" || "$HOSTNAME" = "Tron" ]]
+then
+    echo "You're not on unix.cse.tamu.edu. This program should only be built on unix.cse.tamu.edu"
+    exit 1
+else
+    echo "You are! Well done."
+fi
+
 echo "Checking if you have gtest"
 if [ -d "$GTESTDIR" ]
 then
