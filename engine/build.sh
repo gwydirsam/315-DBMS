@@ -67,7 +67,7 @@ else
         mkdir -p "$DLDIR"
         # download gtest
         echo "Downloading gtest 1.7.0..."
-        wget -P "$DLDIR" "$GTESTURL" >> "$LOGFILE" 2>&1
+        wget --no-check-certificate -P "$DLDIR" "$GTESTURL" #>> "$LOGFILE" 2>&1
     else
         # dldir does exist
         # check if gtest zip is already there
@@ -78,14 +78,14 @@ else
         else
             # it's not... download
             echo "Downloading gest 1.7.0..."
-            wget -P "$DLDIR" "$GTESTURL" >> "$LOGFILE" 2>&1
+            wget --no-check-certificate -P "$DLDIR" "$GTESTURL" #>> "$LOGFILE" 2>&1
         fi
     fi
 
     # extract zip
     echo "Extracting in include..."
     cd "$PROJECTROOTDIR/include/"
-    unzip "$DLDIR/`basename $GTESTURL`" >> "$LOGFILE" 2>&1
+    unzip "$DLDIR/`basename $GTESTURL`" #>> "$LOGFILE" 2>&1
 
     # create symlinks
     echo "Creating Symlinks..."
@@ -136,7 +136,7 @@ then
             mkdir -p "$DLDIR"
             # download boost
             echo "Downloading Boost 1.57.0..."
-            wget -P "$DLDIR" "$BOOSTURL" >> "$LOGFILE" 2>&1
+            wget --no-check-certificate -P "$DLDIR" "$BOOSTURL" #>> "$LOGFILE" 2>&1
         else
             # dldir does exist
             # check if boost tar is already there
@@ -147,14 +147,14 @@ then
             else
                 # it's not... download
                 echo "Downloading Boost 1.57.0..."
-                wget -P "$DLDIR" "$BOOSTURL" >> "$LOGFILE" 2>&1
+                wget --no-check-certificate -P "$DLDIR" "$BOOSTURL" #>> "$LOGFILE" 2>&1
             fi
         fi
 
         # extract tar
         echo "Extracting in include...(this takes awhile...like 5-10 minutes)..."
         cd "$PROJECTROOTDIR/include/"
-        tar -xvjf "$DLDIR/$BOOSTTARFILENAME" >> "$LOGFILE" 2>&1
+        tar -xvjf "$DLDIR/$BOOSTTARFILENAME" #>> "$LOGFILE" 2>&1
         echo "Told you it took a long time!"
 
         # create symlinks
@@ -187,7 +187,7 @@ then
             mkdir -p "$DLDIR"
             # download ccache
             echo "Downloading CCache..."
-            wget -P "$DLDIR" "$CCACHEURL" >> "$LOGFILE" 2>&1
+            wget --no-check-certificate -P "$DLDIR" "$CCACHEURL" #>> "$LOGFILE" 2>&1
         else
             # dldir does exist
             # check if boost tar is already there
@@ -198,7 +198,7 @@ then
             else
                 # it's not... download
                 echo "Downloading CCache..."
-                wget -P "$DLDIR" "$CCACHEURL" >> "$LOGFILE" 2>&1
+                wget --no-check-certificate -P "$DLDIR" "$CCACHEURL" #>> "$LOGFILE" 2>&1
             fi
         fi
 
@@ -212,13 +212,13 @@ then
         # extract tar
         echo "Extracting CCache Tar..."
         cd "$HOME/.tmp/build"
-        tar -xvjf "$DLDIR/`basename $CCACHEURL`" >> "$LOGFILE" 2>&1
+        tar -xvjf "$DLDIR/`basename $CCACHEURL`" #>> "$LOGFILE" 2>&1
 
         # build
         echo "Building CCache..."
         cd "$HOME/.tmp/build/`basename $CCACHEURL .tar.bz2`"
         CC="/opt/csw/bin/gcc" CXX="/opt/csw/bin/g++" \
-          ./configure --prefix="$HOME/usr" >> "$LOGFILE" 2>&1
+          ./configure --prefix="$HOME/usr" #>> "$LOGFILE" 2>&1
         RESULT=$?
         if [ $RESULT -ne 0 ]
         then 
@@ -226,7 +226,7 @@ then
             exit 1
         fi
 
-        make >> "$LOGFILE" 2>&1
+        make #>> "$LOGFILE" 2>&1
         RESULT=$?
         if [ $RESULT -ne 0 ]
         then 
@@ -242,8 +242,8 @@ then
 
         echo "Setting up CCache settings..."
         cd "$HOME/usr/bin/ccache/"
-        ccache -F 0 >> "$LOGFILE" 2>&1
-        ccache -M 0 >> "$LOGFILE" 2>&1
+        ccache -F 0 #>> "$LOGFILE" 2>&1
+        ccache -M 0 #>> "$LOGFILE" 2>&1
         # setup symlinks
         ln -s ccache gcc
         ln -s ccache g++
