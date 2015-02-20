@@ -246,30 +246,30 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
       *(',' >> attribute_name >> type)) - ')';
 
     // type := VARCHAR ( integer ) | INTEGER
-    type = hold[no_case[string("varchar")] >> string("(") >> +digit >> string(")")) 
-				| no_case[string("character varying")] >> string("(") >> +digit >> string(")"))
-				| no_case[string("character")] >> string("(") >> +digit >> string(")"))
-				| no_case[string("varbinary")] >> string("(") >> +digit >> string(")"))
-				| no_case[string("binary varying")] >> string("(") >> +digit >> string(")"))
-				| no_case[string("binary")] >> string("(") >> +digit >> string(")"))
-				| no_case[string("integer")] >> string("(") >> +digit >> string(")"))
-				| no_case[string("integer")]
-				| no_case[string("smallint")] 
-				| no_case[string("bigint")]
-			//	| no_case[string("boolean")]
-			//	| no_case[string("decimal")] 
-			//	| no_case[string("numeric")]
-				| no_case[string("float")] >> string("(") >> +digit >> string(")"))
-				| no_case[string("float")]
-			//	| no_case[string("date")]
-			//	| no_case[string("time")]
-			//	| no_case[string("timestamp")]
-			//	| no_case[string("interval")]
-			//	| no_case[string("array")]
-			//	| no_case[string("multiset")]
-			//	| no_case[string("xml")] 				
-				| no_case[string("double")] 
-				| no_case[string("double precision")]]
+    type = hold[no_case[string("varchar")] >> string("(") >> +digit >> string(")"))] 
+				| hold[no_case[string("character varying")] >> string("(") >> +digit >> string(")"))]
+				| hold[no_case[string("character")] >> string("(") >> +digit >> string(")"))]
+				| hold[no_case[string("varbinary")] >> string("(") >> +digit >> string(")"))]
+				| hold[no_case[string("binary varying")] >> string("(") >> +digit >> string(")"))]
+				| hold[no_case[string("binary")] >> string("(") >> +digit >> string(")"))]
+				| hold[no_case[string("integer")] >> string("(") >> +digit >> string(")"))]
+				| hold[no_case[string("integer")]]
+				| hold[no_case[string("smallint")]] 
+				| hold[no_case[string("bigint")]]
+			//	| hold[no_case[string("boolean")]]
+			//	| hold[no_case[string("decimal")]]
+			//	| hold[no_case[string("numeric")]]
+				| hold[no_case[string("float")] >> string("(") >> +digit >> string(")"))]
+				| hold[no_case[string("float")]]
+			//	| hold[no_case[string("date")]]
+			//	| hold[no_case[string("time")]]
+			//	| hold[no_case[string("timestamp")]]
+			//	| hold[no_case[string("interval")]]
+			//	| hold[no_case[string("array")]]
+			//	| hold[no_case[string("multiset")]]
+			//	| hold[no_case[string("xml")]] 				
+				| hold[no_case[string("double")]] 
+				| hold[no_case[string("double precision")]]
 				| no_case[string("real")];
 
     // atomic-expr := relation-name | ( expr )
