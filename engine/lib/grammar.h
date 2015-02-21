@@ -246,11 +246,8 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
       *(',' >> attribute_name >> type)) - ')';
 
     // type := VARCHAR ( integer ) | INTEGER
-    type = hold[no_case[string("varchar")] >> string("(") >> +digit >> string(")")] 
-				| hold[no_case[string("integer")] >> string("(") >> +digit >> string(")")]
-				| no_case[string("integer")] >> space >> +digit;
-			
-				
+    type = hold[(no_case[string("varchar")] >>
+                 string("(") >> +digit >> string(")"))] | no_case[string("integer")];
 
     // atomic-expr := relation-name | ( expr )
     atomic_expression =
