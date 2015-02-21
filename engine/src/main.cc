@@ -12,6 +12,7 @@
 #include "../lib/grammar.h"
 
 int main(int argc, char *argv[]) {
+  /*
   // test spaces everywhere
   const std::string input1 = " posts  <-   select (aname == name && akind != kind) (a * animals)  ;";
   std::cout << input1 << std::endl;
@@ -111,7 +112,26 @@ int main(int argc, char *argv[]) {
   std::cout << input16 << std::endl;
   doParse(input16, boost::spirit::qi::space);
   draw_line();
+*/
+  
+	std::string input;
+	std::cout << "Welcome to ParserTester";
+	while(true) {
+		std::cout << "\nType a phrase to be parsed: \n";
+		std::getline(std::cin,input);
+		auto f(std::begin(input)), l(std::end(input));
 
+		Grammar<decltype(f), boost::spirit::qi::space_type> p;
+		Program program;
+
+		using namespace boost::spirit::qi;
+		bool ok = phrase_parse(f, l, p, boost::spirit::qi::space, program);
+
+		if (ok) {
+			std::cout << "parse success" << std::endl;
+			std::cout << "Program: " << program << std::endl;
+		}
+	}
   // doParse(input2, boost::spirit::qi::space);
 
   // auto f(std::begin(input)), l(std::end(input));
