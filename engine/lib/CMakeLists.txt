@@ -2,7 +2,6 @@ set(SRCS
   engine.cc
   relation.cc
   utility.cc
-  parser.cc
 	)
 
 if(APPLE)
@@ -14,12 +13,16 @@ else()
   include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+set(ENGINE_LIBRARY "dbengine")
+
 add_library(${ENGINE_LIBRARY} SHARED ${SRCS})
 
 #use C++14
 set_property(TARGET ${ENGINE_LIBRARY} PROPERTY CXX_STANDARD 14)
 #C++14 required
-set_property(TARGET ${ENGINE_LIBRARY} PROPERTY CXX_STANDARD_REQUIRED ON)
+#set_property(TARGET ${ENGINE_LIBRARY} PROPERTY CXX_STANDARD_REQUIRED ON)
 
 #set_target_properties(${ENGINE_LIBRARY} PROPERTIES COMPILE_FLAGS "${CXXFLAGS_RELEASE}")
 #set_target_properties(${ENGINE_LIBRARY_DEBUG} PROPERTIES COMPILE_FLAGS "${CXXFLAGS_DEBUG}")
