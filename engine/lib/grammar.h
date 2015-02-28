@@ -24,17 +24,29 @@
 
 #include "grammar_objects.h"
 
-BOOST_FUSION_ADAPT_STRUCT(Query,
-                          (std::string, relation_name)
-                          (std::vector<std::string>, expression))
+BOOST_FUSION_ADAPT_STRUCT(Expression,
+                          (std::string, relation_name)(std::vector<std::string>,
+                                                       expression))
 
-BOOST_FUSION_ADAPT_STRUCT(Command,
-                          (std::string, command)
-                          (std::vector<std::string>, argument))
+// BOOST_FUSION_ADAPT_STRUCT(Query,
+//                           (std::string, relation_name)
+//                           (std::vector<std::string>, expression))
+BOOST_FUSION_ADAPT_STRUCT(Query,
+                          (std::string, relation_name)(Expression, expression))
+
+BOOST_FUSION_ADAPT_STRUCT(Argument,
+                          (std::string, relation_name)(std::vector<std::string>,
+                                                       entries))
+
+// BOOST_FUSION_ADAPT_STRUCT(Command,
+//                           (std::string, command)
+//                           (std::vector<std::string>, argument))
+BOOST_FUSION_ADAPT_STRUCT(Command, (std::string, command)(Argument, argument))
 
 BOOST_FUSION_ADAPT_STRUCT(Program, (Query, query)(Command, command))
 
-template <typename It = std::string::const_iterator, typename Skipper = boost::spirit::qi::space_type>
+template <typename It = std::string::const_iterator,
+          typename Skipper = boost::spirit::qi::space_type>
 class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
  public:
   Grammar() : Grammar::base_type(program) {
@@ -57,19 +69,23 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     // create-cmd := CREATE TABLE relation-name ( typed-attribute-list ) PRIMARY
     // KEY ( attribute-list )
     create_cmd = no_case[string("create table")];
-    create_arg = (relation_name >> string("(") >> typed_attribute_list >>
-                  string(")") >> no_case[string("primary key")] >>
-                  string("(") >> attribute_list >> string(")")) -
-                 ';';
+    create_arg =
+        (relation_name >> as<std::vector<std::string>>()
+                              [string("(") >> typed_attribute_list >>
+                               string(")") >> no_case[string("primary key")] >>
+                               string("(") >> attribute_list >> string(")")]) -
+        ';';
 
     // update-cmd := UPDATE relation-name SET attribute-name = literal { ,
     // attribute-name = literal } WHERE condition
     update_cmd = no_case[string("update")];
-    update_arg = (relation_name >> no_case[string("set")] >> attribute_name >>
-                  string("=") >> literal >>
-                  *(',' >> attribute_name >> string("=") >> literal) >>
-                  no_case[string("where")] >> condition) -
-                 ';';
+    update_arg =
+        (relation_name >>
+         as<std::vector<std::string>>()
+             [no_case[string("set")] >> attribute_name >> string("=") >>
+              literal >> *(',' >> attribute_name >> string("=") >> literal) >>
+              no_case[string("where")] >> condition]) -
+        ';';
 
     // insert-cmd := INSERT INTO relation-name VALUES FROM ( literal { , literal
     // } ) | INSERT INTO relation-name VALUES FROM RELATION expr
@@ -83,7 +99,10 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
 
     // delete-cmd := DELETE FROM relation-name WHERE condition
     delete_cmd = no_case[string("delete from")];
-    delete_arg = (relation_name >> no_case[string("where")] >> condition) - ';';
+    delete_arg = (relation_name >>
+                  as<std::vector<std::string>>()[no_case[string("where")] >>
+                                                 condition]) -
+                 ';';
 
     // command := ( open-cmd | close-cmd | write-cmd | exit-cmd | show-cmd |
     // create-cmd | update-cmd | insert-cmd | delete-cmd ) ;
@@ -112,7 +131,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     attribute_name = identifier.alias();
 
     // literal := intentionally left unspecified (strings, numbers, etc.)
-    literal = lexeme[-char_("\"") >> +alnum >> -char_("\"")];
+    literal = lexeme[as_string[-char_("\"") >> +alnum >> -char_("\"")]];
 
     // attribute-list := attribute-name { , attribute-name }
     attribute_list = (attribute_name >> *(',' >> attribute_name)) - ')';
@@ -131,35 +150,34 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
         hold[(string("(") >> expression >> string(")"))] | relation_name;
 
     // selection := select ( condition ) atomic-expr
-    selection = string("select") >> string("(") >> condition >> string(")") >>
+    selection = no_case[string("select")] >> string("(") >> condition >> string(")") >>
                 atomic_expression;
 
     // projection := project ( attribute-list ) atomic-expr
-    projection = no_case["project"] >> string("(") >> attribute_list >>
+    projection = no_case[string("project")] >> string("(") >> attribute_list >>
                  string(")") >> atomic_expression;
     // renaming := rename ( attribute-list ) atomic-expr
-    renaming = no_case["rename"] >> string("(") >> attribute_list >>
+    renaming = no_case[string("rename")] >> string("(") >> attribute_list >>
                string(")") >> atomic_expression;
 
     // setunion := atomic-expr + atomic-expr
-    setunion = atomic_expression >> char_('+') >> atomic_expression;
+    setunion = attr("+") >> atomic_expression >> '+' >> atomic_expression;
     // difference := atomic-expr - atomic-expr
-    difference = atomic_expression >> char_('-') >> atomic_expression;
+    difference = attr("-") >>
+        atomic_expression >> '-' >> atomic_expression;
     // product := atomic-expr * atomic-expr
-    product = atomic_expression >> char_('*') >> atomic_expression;
+    product = attr("*") >> atomic_expression >> '*' >> atomic_expression;
 
     // expr := atomic-expr | selection | projection | renaming | union |
-    // difference
-    // | product
+    // difference // | product
     expression =
         (hold[selection] | hold[projection] | hold[renaming] | hold[setunion] |
          hold[difference] | hold[product] | atomic_expression) -
         ';';
-    // expression = lexeme[+alnum >> *(space >> +alnum)] - ';';
 
     // identifier := alpha { ( alpha | digit ) }
-    identifier =
-        lexeme[!char_("\"") >> *char_("a-zA-Z_") >> *char_("0-9a-zA-Z_")];
+    identifier = lexeme[as_string[!char_("\"") >> *(char_("a-zA-Z_")) >>
+                                  *(char_("0-9a-zA-Z_"))]];
 
     // relation-name := identifier
     relation_name = identifier.alias();
@@ -175,7 +193,6 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     BOOST_SPIRIT_DEBUG_NODE(query);
     BOOST_SPIRIT_DEBUG_NODE(relation_name);
     BOOST_SPIRIT_DEBUG_NODE(expression);
-    BOOST_SPIRIT_DEBUG_NODE(cmd);
     BOOST_SPIRIT_DEBUG_NODE(atomic_expression);
     BOOST_SPIRIT_DEBUG_NODE(selection);
     BOOST_SPIRIT_DEBUG_NODE(projection);
@@ -214,8 +231,8 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
   boost::spirit::qi::rule<It, std::string(), Skipper> io_cmd, exit_cmd,
       show_cmd, create_cmd, update_cmd, insert_cmd, delete_cmd;
 
-  boost::spirit::qi::rule<It, std::vector<std::string>(), Skipper> io_arg,
-      show_arg, create_arg, update_arg, insert_arg, delete_arg;
+  boost::spirit::qi::rule<It, Argument(), Skipper> create_arg, update_arg,
+      delete_arg, io_arg, insert_arg, show_arg;
 
   boost::spirit::qi::rule<It, Query(), Skipper> query;
   boost::spirit::qi::rule<It, std::string(), Skipper> relation_name;
@@ -223,8 +240,6 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
 
   boost::spirit::qi::rule<It, std::vector<std::string>(), Skipper>
       atomic_expression;
-
-  boost::spirit::qi::rule<It, std::vector<std::string>(), Skipper> cmd;
 
   boost::spirit::qi::rule<It, std::vector<std::string>(), Skipper> selection,
       projection, renaming, setunion, difference, product;
@@ -240,34 +255,6 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
 
   boost::spirit::qi::rule<It, Program(), Skipper> program;
 };
-
-template <typename C, typename Skipper>
-bool doParse(const C& input, const Skipper& skipper) {
-  auto f(std::begin(input)), l(std::end(input));
-
-  Grammar<decltype(f), Skipper> p;
-  Program program;
-
-  try {
-    using namespace boost::spirit::qi;
-    bool ok = phrase_parse(f, l, p, skipper, program);
-    if (ok) {
-      std::cout << "parse success" << std::endl;
-      std::cout << "Program: " << program << std::endl;
-    } else
-      std::cerr << "parse failed: '" << std::string(f, l) << std::endl;
-
-    if (f != l)
-      std::cerr << "trailing unparsed: '" << std::string(f, l) << std::endl;
-    return ok;
-  } catch (const boost::spirit::qi::expectation_failure<decltype(f)>& e) {
-    std::string frag(e.first, e.last);
-    std::cerr << e.what() << "'" << frag << std::endl;
-  }
-
-  return false;
-}
-
 
 template <typename C>
 Program parse_string(const C& input) {
@@ -296,6 +283,5 @@ Program parse_string(const C& input) {
 
   return program;
 }
-
 
 #endif  // GRAMMAR_H_

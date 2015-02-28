@@ -74,11 +74,11 @@ class EngineTest : public ::testing::Test {
     eighth_col.insert_entry("kade");
     eighth_col.insert_entry("leonardo");
 
-    std::vector<Column<std::string> > columns0;
-    std::vector<Column<std::string> > columns1;
-    std::vector<Column<std::string> > columns2;
-    std::vector<Column<std::string> > columns3;
-    std::vector<Column<std::string> > columns4;
+    std::vector<Column<std::string>> columns0;
+    std::vector<Column<std::string>> columns1;
+    std::vector<Column<std::string>> columns2;
+    std::vector<Column<std::string>> columns3;
+    std::vector<Column<std::string>> columns4;
 
     columns0.push_back(first_col);
     columns0.push_back(second_col);
@@ -133,7 +133,7 @@ TEST_F(EngineTest, FindTables) {
 TEST_F(EngineTest, SelectTests) {
   EXPECT_EQ(db1.find_relation("Test0"), db1.select({}, "Test0"));
 
-  std::vector<Column<std::string> > testselectcolumns;
+  std::vector<Column<std::string>> testselectcolumns;
   Column<std::string> testselectcolumn("Money");
   testselectcolumn.insert_entry("Money2");
   testselectcolumns.push_back(testselectcolumn);
@@ -141,7 +141,7 @@ TEST_F(EngineTest, SelectTests) {
   Relation testselectwhere("Test1", testselectcolumns);
   EXPECT_EQ(testselectwhere, db1.select({"Money"}, "Test1", "Money", "Money2"));
 
-  std::vector<Column<std::string> > testselectcolumns2;
+  std::vector<Column<std::string>> testselectcolumns2;
   Column<std::string> testselectcolumn2("Money");
   testselectcolumn2.insert_entry("Money5");
   testselectcolumns2.push_back(testselectcolumn2);
@@ -151,7 +151,7 @@ TEST_F(EngineTest, SelectTests) {
 }
 
 TEST_F(EngineTest, ProjectTests) {
-  std::vector<Column<std::string> > testprojectcolumns;
+  std::vector<Column<std::string>> testprojectcolumns;
   Column<std::string> col("Scrooge");
   col.primary_key(true);
   col.insert_entry("bah");
@@ -167,7 +167,7 @@ TEST_F(EngineTest, ProjectTests) {
 }
 
 TEST_F(EngineTest, UnionTests) {
-  std::vector<Column<std::string> > testunioncolumns;
+  std::vector<Column<std::string>> testunioncolumns;
   Column<std::string> col1("Scrooge");
   col1.primary_key(true);
   col1.insert_entry("bah");
@@ -208,7 +208,7 @@ TEST_F(EngineTest, DifferenceTests) {
   difftest1.title("DifferenceTable");
   EXPECT_EQ(difftest1, db1.setdifference("Test0", "Test2"));
 
-  std::vector<Column<std::string> > testdiffcolumns;
+  std::vector<Column<std::string>> testdiffcolumns;
   Column<std::string> col2("Money");
   col2.insert_entry("Money3");
   col2.insert_entry("Money4");
@@ -221,7 +221,7 @@ TEST_F(EngineTest, DifferenceTests) {
 }
 
 TEST_F(EngineTest, CrossProductTests) {
-  std::vector<Column<std::string> > testcrosscolumns;
+  std::vector<Column<std::string>> testcrosscolumns;
   Column<std::string> col1("Money");
   col1.insert_entry("$100");
   col1.insert_entry("$100");
@@ -244,6 +244,15 @@ TEST_F(EngineTest, CrossProductTests) {
                            db1.select({"Money"}, "Test0", "Scrooge", "hum"),
                            db1.select({"Name"}, "Test4")));
 }
+
+class ParserTest : public ::testing::Test {
+ protected:
+  virtual void SetUp() { Engine db; }
+};
+
+  // TEST_F(ParserTests, SQLInsertTest) {
+  //   EXPECT_
+  // }
 
 }  // Namespace
 
