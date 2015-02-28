@@ -226,7 +226,8 @@ int Engine::execSQL(std::string input_string) {
 //     }
 //     if (f != l) {
 //       // errlog() this
-//       //std::cerr << "trailing unparsed: '" << std::string(f, l) << std::endl;
+//       //std::cerr << "trailing unparsed: '" << std::string(f, l) <<
+//       std::endl;
 //       return program;
 //     }
 //   } catch (const boost::spirit::qi::expectation_failure<decltype(f)>& e) {

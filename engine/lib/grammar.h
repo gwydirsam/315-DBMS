@@ -150,8 +150,8 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
         hold[(string("(") >> expression >> string(")"))] | relation_name;
 
     // selection := select ( condition ) atomic-expr
-    selection = no_case[string("select")] >> string("(") >> condition >> string(")") >>
-                atomic_expression;
+    selection = no_case[string("select")] >> string("(") >> condition >>
+                string(")") >> atomic_expression;
 
     // projection := project ( attribute-list ) atomic-expr
     projection = no_case[string("project")] >> string("(") >> attribute_list >>
@@ -163,8 +163,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     // setunion := atomic-expr + atomic-expr
     setunion = attr("+") >> atomic_expression >> '+' >> atomic_expression;
     // difference := atomic-expr - atomic-expr
-    difference = attr("-") >>
-        atomic_expression >> '-' >> atomic_expression;
+    difference = attr("-") >> atomic_expression >> '-' >> atomic_expression;
     // product := atomic-expr * atomic-expr
     product = attr("*") >> atomic_expression >> '*' >> atomic_expression;
 

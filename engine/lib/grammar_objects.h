@@ -46,7 +46,8 @@ struct Command {
 struct Expression {
   Expression(std::string rname, std::vector<std::string> expr)
       : relation_name(rname), expression(expr){};
-  Expression(std::vector<std::string> expr) : relation_name(), expression(expr){};
+  Expression(std::vector<std::string> expr)
+      : relation_name(), expression(expr){};
   Expression(std::string rname) : relation_name(rname), expression(){};
   Expression() : relation_name(), expression(){};
 

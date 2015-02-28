@@ -17,7 +17,7 @@ class Relation {
  public:
   // Constructors
   Relation(std::string title) : title_(title), columns_(){};
-  Relation(std::string title, std::vector<Column<std::string> > columns)
+  Relation(std::string title, std::vector<Column<std::string>> columns)
       : title_(title), columns_(columns){};
   // Default Constructor
   Relation() : title_("INVALID"), columns_(){};
@@ -27,13 +27,13 @@ class Relation {
 
   // Getters
   std::string& title() { return title_; }
-  std::vector<Column<std::string> >& columns() { return columns_; }
-  std::vector<Column<std::string> > primary_keys();
+  std::vector<Column<std::string>>& columns() { return columns_; }
+  std::vector<Column<std::string>> primary_keys();
 
   // Const Getters
   const std::string& title() const { return title_; }
-  const std::vector<Column<std::string> >& columns() const { return columns_; }
-  const std::vector<Column<std::string> > primary_keys() const;
+  const std::vector<Column<std::string>>& columns() const { return columns_; }
+  const std::vector<Column<std::string>> primary_keys() const;
 
   Column<std::string> get_column(int i) { return columns_.at(i); }
   std::vector<std::string> get_row(int i);
@@ -43,9 +43,7 @@ class Relation {
 
   // Setters
   void title(std::string title) { title_ = title; }
-  void columns(std::vector<Column<std::string> > columns) {
-    columns_ = columns;
-  }
+  void columns(std::vector<Column<std::string>> columns) { columns_ = columns; }
 
   // Printers
   // Print row seperated by tabs
@@ -57,7 +55,7 @@ class Relation {
   void print_row(int i, std::string delimiter) const;
 
   // Finders
-  std::vector<Column<std::string> >::iterator find_column(
+  std::vector<Column<std::string>>::iterator find_column(
       std::string column_name);
 
   int find_column_index(std::string column_name);
@@ -96,13 +94,12 @@ class Relation {
  private:
   // Data Structures
   std::string title_;
-  std::vector<Column<std::string> > columns_;
+  std::vector<Column<std::string>> columns_;
 };
 
 std::ostream& operator<<(std::ostream& os, const Relation& relation);
 std::ifstream& operator>>(std::ifstream& is, Relation& relation);
 std::ofstream& operator<<(std::ofstream& os, const Relation& relation);
 bool operator==(const Relation& lhs, const Relation& rhs);
-
 
 #endif  // RELATION_H_

@@ -6,7 +6,7 @@
 
 std::vector<Column<std::string>> Relation::primary_keys() {
   std::vector<Column<std::string>> primary_keys;
-  for (const Column<std::string>& column : columns_) {
+  for (const Column<std::string> &column : columns_) {
     if (column.primary_key()) {
       primary_keys.push_back(column);
     }
@@ -16,9 +16,10 @@ std::vector<Column<std::string>> Relation::primary_keys() {
 
 const std::vector<Column<std::string>> Relation::primary_keys() const {
   std::vector<Column<std::string>> primary_keys;
-  for (const Column<std::string>& column : columns_) {
+  for (const Column<std::string> &column : columns_) {
     if (column.primary_key()) {
       primary_keys.push_back(column);
+      std::cout << column.title() << std::endl;
     }
   }
   return primary_keys;
@@ -28,7 +29,7 @@ std::vector<std::string> Relation::get_row(int i) {
   std::vector<std::string> row;
 
   // Create row from each column
-  for (const Column<std::string>& column : columns_) {
+  for (const Column<std::string> &column : columns_) {
     row.push_back(column[i]);
   }
   return row;
@@ -38,20 +39,20 @@ const std::vector<std::string> Relation::get_row(int i) const {
   std::vector<std::string> row;
 
   // Create row from each column
-  for (const Column<std::string>& column : columns_) {
+  for (const Column<std::string> &column : columns_) {
     row.push_back(column[i]);
   }
   return row;
 }
 
 void Relation::print_row(int i, std::string delimiter) {
-  for (const std::string& entry : get_row(i)) {
+  for (const std::string &entry : get_row(i)) {
     std::cout << entry << delimiter;
   }
 }
 
 void Relation::print_row(int i, std::string delimiter) const {
-  for (const std::string& entry : get_row(i)) {
+  for (const std::string &entry : get_row(i)) {
     std::cout << entry << delimiter;
   }
 }
@@ -103,7 +104,7 @@ std::string Relation::string_column_titles() {
 
 std::vector<std::string> Relation::get_column_types() {
   std::vector<std::string> column_types;
-  for (const Column<std::string>& column : columns_) {
+  for (const Column<std::string> &column : columns_) {
     column_types.push_back(column.type());
   }
   return column_types;
@@ -118,21 +119,22 @@ int Relation::append_row(std::vector<std::string> row) {
     for (int i = 0; i < row.size(); ++i) {
       columns_[i].insert_entry(row[i]);
     }
+    return 0;
   }
 }
 
 void Relation::drop_row(int i) {
-  for (Column<std::string>& column : columns_) {
+  for (Column<std::string> &column : columns_) {
     column.erase(i);
   }
 }
 
-std::ostream& operator<<(std::ostream& os, const Relation& relation) {
+std::ostream &operator<<(std::ostream &os, const Relation &relation) {
   std::string delimiter = "\t\t";
 
   os << relation.title() << std::endl;
 
-  for (const Column<std::string>& column : relation.columns()) {
+  for (const Column<std::string> &column : relation.columns()) {
     std::string title;
     if (column.primary_key()) {
       title = "*" + column.title() + "*";
@@ -151,7 +153,7 @@ std::ostream& operator<<(std::ostream& os, const Relation& relation) {
   return os;
 }
 
-std::ifstream& operator>>(std::ifstream& is, Relation& relation) {
+std::ifstream &operator>>(std::ifstream &is, Relation &relation) {
   // Lines:
   // 0: relation.title()
   // 1: relation.num_rows()
@@ -163,7 +165,7 @@ std::ifstream& operator>>(std::ifstream& is, Relation& relation) {
   // 6-infinity: columns.entries()
 
   // delimiter is used to seperate columns
-  std::string delimiter = "\t";
+  // std::string delimiter = "\t";
 
   // Line 0: TableName
   std::string relation_title;
@@ -195,7 +197,7 @@ std::ifstream& operator>>(std::ifstream& is, Relation& relation) {
     is >> columns[i].title();
 
     // if column title is in primary_keys, then set it as a primary key
-    for (const std::string& key_name : primary_keys) {
+    for (const std::string &key_name : primary_keys) {
       if (columns[i].title() == key_name) {
         columns[i].primary_key(true);
       }
@@ -223,7 +225,7 @@ std::ifstream& operator>>(std::ifstream& is, Relation& relation) {
   return is;
 }
 
-std::ofstream& operator<<(std::ofstream& os, const Relation& relation) {
+std::ofstream &operator<<(std::ofstream &os, const Relation &relation) {
   // Lines:
   // 0: relation.title()
   // 1: relation.num_rows()
@@ -238,7 +240,7 @@ std::ofstream& operator<<(std::ofstream& os, const Relation& relation) {
   std::string delimiter = "\t";
 
   // Line 0: TableName
-  os << relation.title() << std::endl;
+  (std::basic_ostream<char> &)os << relation.title() << std::endl;
 
   // Line 1: Number of Rows
   os << relation.num_rows() << std::endl;
@@ -248,21 +250,21 @@ std::ofstream& operator<<(std::ofstream& os, const Relation& relation) {
   os << relation.primary_keys().size() << std::endl;
 
   // Line 4: Primary Keys
-  for (const Column<std::string>& column : relation.primary_keys()) {
-    os << column.title() << delimiter;
+  for (const Column<std::string> &column : relation.primary_keys()) {
+    (std::basic_ostream<char> &)os << column.title() << delimiter;
   }
   os << std::endl;
 
   // Line 5: Column Names
-  for (const std::string& title : relation.get_column_titles()) {
-    os << title << delimiter;
+  for (const std::string &title : relation.get_column_titles()) {
+    (std::basic_ostream<char> &)os << title << delimiter;
   }
   os << std::endl;
 
   // Line 6-infinity: entries
   for (int i = 0; i < relation.num_rows(); ++i) {
-    for (const std::string& entry : relation.get_row(i)) {
-      os << entry << delimiter;
+    for (const std::string &entry : relation.get_row(i)) {
+      (std::basic_ostream<char> &)os << entry << delimiter;
     }
     os << std::endl;
   }
@@ -270,7 +272,7 @@ std::ofstream& operator<<(std::ofstream& os, const Relation& relation) {
   return os;
 }
 
-bool operator==(const Relation& lhs, const Relation& rhs) {
+bool operator==(const Relation &lhs, const Relation &rhs) {
   bool equal = lhs.title() == rhs.title();
   for (int i = 0; i < lhs.num_cols(); ++i) {
     equal = equal && (lhs.columns()[i] == rhs.columns()[i]);
