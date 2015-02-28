@@ -10,6 +10,7 @@
 #include "sqltypes.h"
 #include "relation.h"
 #include "utility.h"
+#include "grammar.h"
 
 class Engine {
  public:
@@ -47,7 +48,7 @@ class Engine {
 
   // Create Table
   Relation createNewTable(std::string TableName,
-                          std::vector<Column<std::string> > columns);
+                          std::vector<Column<std::string>> columns);
 
   // Update Table
 
@@ -64,7 +65,7 @@ class Engine {
 
   // Exec SQL
   // return 0 on success
-  int execSQL(std::string DML);
+  int execSQL(std::string input_string);
 
   // Write table to filename TableName.db
   void writeTable(Relation relation);

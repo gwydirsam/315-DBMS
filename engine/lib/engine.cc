@@ -10,6 +10,8 @@
 #include "column.h"
 #include "relation.h"
 #include "utility.h"
+#include "grammar.h"
+#include "grammar_objects.h"
 
 Engine::~Engine() {
   errlog("Engine: Shutting Down Database Engine");
@@ -101,7 +103,6 @@ void Engine::set_table(std::string TableName, Relation Table) {
 }
 
 int Engine::openTable(std::string TableName) {
-  // Create filepath
   std::string directory = "tables/";
   std::string filename = TableName.append(".db");
   std::string filepath = directory + filename;
@@ -193,8 +194,47 @@ int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
   return r;
 }
 
-// TODO: finish
-int Engine::execSQL(std::string DML) { return -1; }
+int Engine::execSQL(std::string input_string) {
+  Program program = parse_string(input_string);
+  std::cout << program;
+  return -1;
+}
+
+// // Parse SQL
+// // return parsed Program
+// Program Engine::parseSQL(std::string input_string) {
+//   std::string errmsg = "Parsing: " + input_string;
+//   errlog(errmsg);
+
+//   auto f(std::begin(input_string)), l(std::end(input_string));
+
+//   Program program;
+
+//   try {
+//     bool ok = boost::spirit::qi::phrase_parse(
+//         f, l, grammar_, boost::spirit::qi::space, program);
+//     if (ok) {
+//       // std::string errmsg = "Parse Succeeded: " + program;
+//       // errlog(...);
+
+//       return program;
+//     } else {
+//       // errlog() this
+//       //std::cerr << "parse failed: '" << std::string(f, l) << std::endl;
+//       // return empty program?
+//       return program;
+//     }
+//     if (f != l) {
+//       // errlog() this
+//       //std::cerr << "trailing unparsed: '" << std::string(f, l) << std::endl;
+//       return program;
+//     }
+//   } catch (const boost::spirit::qi::expectation_failure<decltype(f)>& e) {
+//     // change to errlog()
+//     std::string frag(e.first, e.last);
+//     std::cerr << e.what() << "'" << frag << std::endl;
+//   }
+// }
 
 void Engine::writeTable(Relation relation) {
   // Create filepath
