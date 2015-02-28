@@ -1,6 +1,5 @@
 # Set Project_Name and Language
-set(PROJECT_NAME "dbengine")
-project(${PROJECT_NAME} CXX)
+project(dbengine CXX)
 
 # version 2.8.12 is on unix.cse.tamu.edu
 cmake_minimum_required(VERSION 2.8.12)
@@ -13,9 +12,15 @@ if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.buildshran")
   message(FATAL_ERROR "cmake will now exit")
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++1y")
+if(${CMAKE_COMPILER_IS_GNUCXX})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb -O0 -DDEBUG -Wall -Wextra")
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -stdlib=libc++")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -Wextra")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb -O0 -DDEBUG -Wall -Wextra")
+endif()
 
 # Unit testing with Google Test
 # to run tests use 'cmake -Dtest=ON'
@@ -40,12 +45,8 @@ if (test)
   include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 endif()
 
-# set names
-set(RELEASE_BINARY "main")
-set(RELEASE_BINARY_OUTNAME "${PROJECT_NAME}")
-set(UNITTEST_BINARY "${PROJECT_NAME}test")
-set(ENGINE_LIBRARY "${PROJECT_NAME}")
-
 # add directory for project source files and libraries
 add_subdirectory(${SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME})
+#add_subdirectory(${SOURCE_DIR})
 add_subdirectory(${LIB_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/lib)
+#add_subdirectory(${LIB_DIR})
