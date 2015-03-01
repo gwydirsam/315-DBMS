@@ -299,7 +299,12 @@ then
         cd "$ENGINEDIR/build/release"
         CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto" \
           CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
-          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
+          cmake -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
+          # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
+        # CC="/usr/local/opt/ccache/libexec/clang-3.5.1" \
+        #   CXX="/usr/local/opt/ccache/libexec/clang++-3.5.1" \
+        #   cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
+
         RESULT=$?
         if [ $RESULT -ne 0 ]
         then 
@@ -356,7 +361,11 @@ then
         cd "$ENGINEDIR/build/debug"
         CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto" \
           CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
-          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+          cmake -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+          # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+        # CC="/usr/local/opt/ccache/libexec/clang-3.5.1" \
+        #   CXX="/usr/local/opt/ccache/libexec/clang++-3.5.1" \
+        #   cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
 
         RESULT=$?
         if [ $RESULT -ne 0 ]
