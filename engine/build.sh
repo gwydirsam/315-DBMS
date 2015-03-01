@@ -327,7 +327,8 @@ then
         cd "$ENGINEDIR/build/release"
         CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto" \
           CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
-          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
+          cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
+          # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
     fi
 
     RESULT=$?
@@ -396,7 +397,8 @@ then
         cd "$ENGINEDIR/build/debug"
         CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto" \
           CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
-          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+          cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+          # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
 
         RESULT=$?
         if [ $RESULT -ne 0 ]
