@@ -197,6 +197,13 @@ int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
 int Engine::execSQL(std::string input_string) {
   Program program = parse_string(input_string);
   std::cout << program << std::endl;
+  
+  /*if(program.isquery) {
+   if(find_table_index(program.relation_name)) {
+     
+   }
+  }*/
+  
   return -1;
 }
 

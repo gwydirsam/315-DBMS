@@ -111,12 +111,12 @@ std::vector<std::string> Relation::get_column_types() {
 }
 
 int Relation::append_row(std::vector<std::string> row) {
-  if (row.size() != num_cols()) {
+  if ( (int) row.size() != num_cols()) {
     // cannot append row if it doesn't have same number of entries as relation
     // has columns
     return -1;
   } else {
-    for (int i = 0; i < row.size(); ++i) {
+    for (unsigned int i = 0; i < row.size(); ++i) {
       columns_[i].insert_entry(row[i]);
     }
     return 0;
@@ -185,7 +185,7 @@ std::ifstream &operator>>(std::ifstream &is, Relation &relation) {
 
   // Line 4: Primary Keys
   std::vector<std::string> primary_keys(num_primary_keys);
-  for (unsigned int i = 0; i < num_primary_keys; ++i) {
+  for (int i = 0; i < num_primary_keys; ++i) {
     is >> primary_keys[i];
     std::string errmsg = "OpenTable: Primary Keys: " + primary_keys[i];
     errlog(errmsg);
