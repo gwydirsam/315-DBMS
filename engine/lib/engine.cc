@@ -207,43 +207,6 @@ int Engine::execSQL(std::string input_string) {
   return -1;
 }
 
-// // Parse SQL
-// // return parsed Program
-// Program Engine::parseSQL(std::string input_string) {
-//   std::string errmsg = "Parsing: " + input_string;
-//   errlog(errmsg);
-
-//   auto f(std::begin(input_string)), l(std::end(input_string));
-
-//   Program program;
-
-//   try {
-//     bool ok = boost::spirit::qi::phrase_parse(
-//         f, l, grammar_, boost::spirit::qi::space, program);
-//     if (ok) {
-//       // std::string errmsg = "Parse Succeeded: " + program;
-//       // errlog(...);
-
-//       return program;
-//     } else {
-//       // errlog() this
-//       //std::cerr << "parse failed: '" << std::string(f, l) << std::endl;
-//       // return empty program?
-//       return program;
-//     }
-//     if (f != l) {
-//       // errlog() this
-//       //std::cerr << "trailing unparsed: '" << std::string(f, l) <<
-//       std::endl;
-//       return program;
-//     }
-//   } catch (const boost::spirit::qi::expectation_failure<decltype(f)>& e) {
-//     // change to errlog()
-//     std::string frag(e.first, e.last);
-//     std::cerr << e.what() << "'" << frag << std::endl;
-//   }
-// }
-
 void Engine::writeTable(Relation relation) {
   // Create filepath
   std::string directory = "tables/";
