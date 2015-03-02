@@ -230,6 +230,11 @@ int Engine::closeTable(std::string TableName) {
   return d;
 }
 
+Relation Engine::rename_table(Relation table, std::string newname) {
+  table.title(newname);
+  return table;
+}
+
 int Engine::rename_table(std::string TableName, std::string newname) {
   int i = find_table_index(TableName);
   open_tables_.at(i).title(newname);
@@ -270,6 +275,30 @@ Relation Engine::select(std::vector<std::string> ColumnNames,
 }
 
 Relation Engine::select(std::vector<std::string> ColumnNames,
+                        Relation relation) {
+  Relation table = relation;
+  Relation selectTable;
+  if (ColumnNames.size() == 0) {
+    // table is whole table from relation
+    selectTable = table;
+  } else {
+    std::vector<int> column_indexes;
+    // Select ColumnNames from relation
+    for (const std::string& column_name : ColumnNames) {
+      // Get indexes of columns requested
+      column_indexes.push_back(table.find_column_index(column_name));
+    }
+    // Build new relation from column_indexes
+    std::vector<Column<std::string>> selectcolumns;
+    for (int i = 0; i < (int)column_indexes.size(); ++i) {
+      selectcolumns.push_back(table.get_column(column_indexes[i]));
+    }
+    selectTable = Relation(table.title(), selectcolumns);
+  }
+  return selectTable;
+}
+
+Relation Engine::select(std::vector<std::string> ColumnNames,
                         std::string TableName, std::string WhereColumn,
                         std::string WhereEqual) {
   Relation table = find_relation(TableName);
@@ -303,6 +332,64 @@ Relation Engine::select(std::vector<std::string> ColumnNames,
     }
   }
   return selectTable;
+}
+
+Relation Engine::select(std::vector<std::string> ColumnNames,
+                        Relation relation, std::string WhereColumn,
+                        std::string WhereEqual) {
+  Relation table = relation;
+  Relation selectTable;
+
+  if ((int)ColumnNames.size() == 0) {
+    // table is whole table from relation
+    selectTable = table;
+  } else {
+    std::vector<int> column_indexes;
+    // Select ColumnNames from relation
+    for (const std::string& column_name : ColumnNames) {
+      // Get indexes of columns requested
+      column_indexes.push_back(table.find_column_index(column_name));
+    }
+    // Build new relation from column_indexes
+    std::vector<Column<std::string>> selectcolumns;
+    for (int i = 0; i < (int)column_indexes.size(); ++i) {
+      selectcolumns.push_back(table.get_column(column_indexes[i]));
+    }
+    selectTable = Relation(table.title(), selectcolumns);
+  }
+  // Now process where clause
+  for (int i = (selectTable.num_rows() - 1); i >= 0; --i) {
+    std::vector<std::string> current_row = table.get_row(i);
+    // if where clause fails, drop row
+    // std::cout << current_row[selectTable.find_column_index(WhereColumn)] <<
+    // std::endl;
+    if (current_row[table.find_column_index(WhereColumn)] != WhereEqual) {
+      selectTable.drop_row(i);
+    }
+  }
+  return selectTable;
+}
+
+Relation Engine::project(std::vector<std::string> ColumnNames,
+                         Relation relation) {
+  Relation table = relation;
+  if (ColumnNames.size() == 0) {
+    // Return Empty Relation
+    return Relation(table.title());
+  } else {
+    std::vector<int> column_indexes;
+    // Select ColumnNames from TableName
+    for (const std::string& column_name : ColumnNames) {
+      // Get indexes of columns requested
+      column_indexes.push_back(table.find_column_index(column_name));
+    }
+    // Build new relation from column_indexes
+    std::vector<Column<std::string>> selectcolumns;
+    for (int i = 0; i < (int)column_indexes.size(); ++i) {
+      selectcolumns.push_back(table.get_column(column_indexes[i]));
+    }
+    return Relation(table.title(), selectcolumns);
+  }
 }
 
 Relation Engine::project(std::vector<std::string> ColumnNames,

@@ -79,6 +79,7 @@ class Engine {
   // Queries
 
   // Rename
+  Relation rename_table(Relation table, std::string newname);
   // Return 0 on success, non-zero on failure
   int rename_table(std::string TableName, std::string newname);
   int rename_column(std::string TableName, std::string Column,
@@ -92,12 +93,17 @@ class Engine {
   // where is passed as a lambda function returning a bool and taking a column
   // name and a value
   Relation select(std::vector<std::string> ColumnNames, std::string TableName);
+  Relation select(std::vector<std::string> ColumnNames, Relation relation);
   Relation select(std::vector<std::string> ColumnNames, std::string TableName,
                   std::string WhereColumn, std::string WhereEqual);
+  Relation select(std::vector<std::string> ColumnNames, Relation relation,
+                  std::string WhereColumn, std::string WhereEqual);
+  
 
   // Project
   // return vector of tuples from tablename with only Attributes attributes
   Relation project(std::vector<std::string> ColumnNames, std::string TableName);
+  Relation project(std::vector<std::string> ColumnNames, Relation relation);
 
   // Set Union
   // return true if union compatible

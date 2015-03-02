@@ -36,27 +36,40 @@ int Parser::execSQL(std::string input_string) {
 	Expression e = q.expression;
 	
 	if(e.query == "select") {
-	
+	// TODO also what about other select
+	  Relation r1 = views_.at.(  find_view_index( e.subexpressions.at() ) );
+	  Relation r2 = views_.at.(  find_view_index( e.subexpressions.at() ) );
+	  Relation select = Engine::select(r1, r2);
 	}
 	
 	else if(e.query == "project") {
-	
+	// TODO
+	  Relation r1 = views_.at.(  find_view_index( e.subexpressions.at() ) );
+	  Relation r2 = views_.at.(  find_view_index( e.subexpressions.at() ) );
+	  Relation project = Engine::(r1, r2);
 	}
 	
 	else if(e.query == "rename") {
-	
+	 std::string newname = e.argument.at();
+	 Relation rename = Engine::rename_table(r, newname);
 	}
 	
 	else if(e.query == "union") {
-	
+	  Relation r1 = views_.at.(  find_view_index( e.subexpressions.at() ) );
+	  Relation r2 = views_.at.(  find_view_index( e.subexpressions.at() ) );
+	  Relation union = Engine::setunion(r1, r2);
 	}
 	
 	else if(e.query == "difference") {
-	
+	  Relation r1 = views_.at.(  find_view_index( e.subexpressions.at() ) );
+	  Relation r2 = views_.at.(  find_view_index( e.subexpressions.at() ) );
+	  Relation difference = Engine::setdifference(r1, r2);
 	}
 	
 	else if(e.query == "product") {
-	
+	  Relation r1 = views_.at.(  find_view_index( e.subexpressions.at() ) );
+	  Relation r2 = views_.at.(  find_view_index( e.subexpressions.at() ) );
+	  Relation crossproduct = Engine::setcrossproduct(r1, r2);
 	}
 	// atomic expression
 	else {
