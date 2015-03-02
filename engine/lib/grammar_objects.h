@@ -55,10 +55,11 @@ struct Condition {
 
   friend std::ostream& operator<<(std::ostream& os, Condition const& ss) {
     os << "(" << ss.operation;
-    os << "(";
+    os << " (";
     BOOST_FOREACH (SubCondition const& subcon, ss.subconditions) {
       os << subcon << " ";
     }
+    os << ") ";
     os << ")";
     return os;
   }
@@ -81,10 +82,11 @@ struct subcondition_printer : boost::static_visitor<void> {
   void print(std::string const& operation,
              std::vector<SubCondition> const& subcons) const {
     _os << "(" << operation;
-    _os << "(";
+    _os << " (";
     BOOST_FOREACH (SubCondition const& subcon, subcons) {
       boost::apply_visitor(subcondition_printer(_os), subcon);
     }
+    _os << ") ";
     _os << ")";
   }
 };
@@ -200,6 +202,21 @@ struct subexpression_printer : boost::static_visitor<void> {
     _os << "}";
   }
 };
+
+template<typename T>
+struct expression_accessor : boost::static_visitor<T> {
+  expression_accessor(){}
+
+  T operator()(T const& t) const { return t; }
+};
+
+template<typename T>
+struct program_accessor : boost::static_visitor<T> {
+  program_accessor(){}
+
+  T operator()(T const& t) const { return t; }
+};
+
 
 struct Command {
   Command(std::string c, std::string r_name)
