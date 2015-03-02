@@ -212,13 +212,15 @@
 //                           expression_name)(std::vector<std::string>,
 //                                                        expression))
 
+// struct Condition;
+
+// typedef boost::variant<std::string, std::vector<std::string>,
+//                        boost::recursive_wrapper<Expression>> SubCondition;
+
 struct Expression;
 
 typedef boost::variant<std::string, std::vector<std::string>,
                        boost::recursive_wrapper<Expression>> SubExpression;
-
-typedef Expression Condition;
-typedef SubExpression SubCondition;
 
 struct subexpression_printer;
 struct expression_printer;
@@ -235,33 +237,35 @@ struct Expression {
   //   subexpressions.push_back(subexp1);
   //   subexpressions.push_back(subexp2);
   // }
-  Expression(SubExpression subexp)
-    : query(), argument(){subexpressions.push_back(subexp);}
+  Expression(SubExpression subexp) : query(), argument() {
+    subexpressions.push_back(subexp);
+  }
   Expression(SubExpression subexp1, SubExpression subexp2)
-    : query(), argument(){
+      : query(), argument() {
     subexpressions.push_back(subexp1);
     subexpressions.push_back(subexp2);
   }
   Expression(std::string q, SubExpression subexp1, SubExpression subexp2)
-    : query(q), argument(){
+      : query(q), argument() {
     subexpressions.push_back(subexp1);
     subexpressions.push_back(subexp2);
   }
-  Expression(std::string q, std::vector<std::string> args,
-             SubExpression subexp)
-    : query(q), argument(args){subexpressions.push_back(subexp);}
+  Expression(std::string q, std::vector<std::string> args, SubExpression subexp)
+      : query(q), argument(args) {
+    subexpressions.push_back(subexp);
+  }
   Expression(std::string q, std::vector<std::string> args,
              std::vector<SubExpression> subexps)
-    : query(q), argument(args), subexpressions(subexps){};
+      : query(q), argument(args), subexpressions(subexps){};
   Expression(std::string q, std::vector<SubExpression> subexps)
-    : query(q), argument(), subexpressions(subexps){};
+      : query(q), argument(), subexpressions(subexps){};
   Expression(std::string q, std::vector<std::string> args)
-    : query(q), argument(args), subexpressions(){};
+      : query(q), argument(args), subexpressions(){};
   Expression(std::string q) : query(q), argument(), subexpressions(){};
   Expression(std::vector<SubExpression> subexps)
-    : query(), argument(), subexpressions(subexps){};
+      : query(), argument(), subexpressions(subexps){};
   Expression(std::vector<std::string> args)
-    : query(), argument(args), subexpressions(){};
+      : query(), argument(args), subexpressions(){};
   Expression() : query(), argument(), subexpressions(){};
 
   std::string query;                          // select, project, ...,
@@ -280,7 +284,7 @@ struct Expression {
     BOOST_FOREACH (SubExpression const& sexp, e.subexpressions) {
       os << sexp << " ";
     }
-    os << "] ";
+    os << "]";
     os << "}";
     return os;
   }
@@ -315,7 +319,7 @@ struct subexpression_printer : boost::static_visitor<void> {
     BOOST_FOREACH (SubExpression const& sexp, subexps) {
       boost::apply_visitor(subexpression_printer(_os), sexp);
     }
-    _os << "] ";
+    _os << "]";
     _os << "}";
   }
 };
@@ -325,11 +329,10 @@ std::ostream& operator<<(std::ostream& os, SubExpression const& se) {
   return os;
 }
 
-
 struct Argument {
   Argument(Expression exp);
   Argument(std::string rname, std::vector<std::string> args)
-    : relation_name(rname), entries(args){};
+      : relation_name(rname), entries(args){};
   Argument(std::vector<std::string> args) : relation_name(), entries(args){};
   Argument(std::string rname) : relation_name(rname), entries(){};
   Argument() : relation_name(), entries(){};
@@ -352,27 +355,157 @@ BOOST_FUSION_ADAPT_STRUCT(Argument,
                           (std::string, relation_name)(std::vector<std::string>,
                                                        entries))
 
-struct Command {
-  Command(std::string c, Argument a) : command(c), argument(a){};
-  Command(std::string c) : command(c), argument(){};
-  Command(Argument a) : command(), argument(a){};
-  Command() : command(), argument(){};
+// struct Command {
+//   Command(std::string c, Argument a) : command(c), argument(a){};
+//   Command(std::string c) : command(c), argument(){};
+//   Command(Argument a) : command(), argument(a){};
+//   Command() : command(), argument(){};
 
-  std::string command;
-  Argument argument;
+//   std::string command; // open_cmd, close_cmd, write_cmd...
+//   std::string relation_name;
+//   Argument argument; /// won't be used after conversion
+
+//   Expression expression; // atomic_expression or expression
+//   std::vector<std::string> typed_attribute_list; // typed-attribute-list
+//   std::vector<std::string> attribute_list; // attribute-list
+//   std::vector<std::string> attribute_value_list;  // attribute-name = literal
+//   {
+//                                                   // , attribute-name =
+//                                                   literal
+//                                                   // }
+//   //Condition condition; // not used until Condition is implented, currently
+//   put in argument
+//   std::vector<std::string> literal_list;  // ( literal { , literal } )
+
+//   friend std::ostream& operator<<(std::ostream& os, Command const& ss) {
+//     os << ss.command << "||";
+//     os << ss.argument;
+//     return os;
+//   }
+// };
+
+// BOOST_FUSION_ADAPT_STRUCT(Command,
+//                           (std::string, command)
+//                           (Argument, argument)
+//                           (std::string, relation_name)
+//                           (Expression, expression)
+//                           (std::vector<std::string>, typed_attribute_list)
+//                           (std::vector<std::string>, attribute_list)
+//                           (std::vector<std::string>, attribute_value_list)
+//                           (std::vector<std::string>, literal_list))
+
+struct Command {
+  Command(std::string c, std::string r_name)
+      : command(c),
+        relation_name(r_name),
+        argument(),
+        expression(),
+        typed_attribute_list(),
+        attribute_list(),
+        attribute_value_list(),
+        literal_list(){};
+  Command(std::string c, std::string r_name,
+          std::vector<std::string> t_att_list,
+          std::vector<std::string> att_list)
+      : command(c),
+        relation_name(r_name),
+        argument(),
+        expression(),
+        typed_attribute_list(t_att_list),
+        attribute_list(att_list),
+        attribute_value_list(),
+        literal_list(){};
+  Command(std::string c, std::string r_name,
+          std::vector<std::string> att_v_list,
+          Argument cond) // replace with condition later
+      : command(c),
+        relation_name(r_name),
+        argument(cond),
+        expression(),
+        typed_attribute_list(),
+        attribute_list(),
+        attribute_value_list(att_v_list),
+        literal_list(){};
+  Command(std::string c, SubExpression exp)
+      : command(c),
+        relation_name(),
+        argument(),
+        expression(exp),
+        typed_attribute_list(),
+        attribute_list(),
+        attribute_value_list(),
+        literal_list(){};
+  Command(std::string c)
+      : command(c),
+        relation_name(),
+        argument(),
+        expression(),
+        typed_attribute_list(),
+        attribute_list(),
+        attribute_value_list(),
+        literal_list(){};
+  Command()
+      : command(),
+        relation_name(),
+        argument(),
+        expression(),
+        typed_attribute_list(),
+        attribute_list(),
+        attribute_value_list(),
+        literal_list(){};
+
+  std::string command;  // open_cmd, close_cmd, write_cmd...
+  std::string relation_name;
+
+  Argument argument;      /// won't be used after conversion
+  Expression expression;  // atomic_expression or expression
+  std::vector<std::string> typed_attribute_list;  // typed-attribute-list
+  std::vector<std::string> attribute_list;        // attribute-list
+  std::vector<std::string> attribute_value_list;  // attribute-name = literal {
+                                                  // , attribute-name = literal
+                                                  // }
+  // Condition condition; // not used until Condition is implented, currently
+  // put in argument
+  std::vector<std::string> literal_list;  // ( literal { , literal } )
 
   friend std::ostream& operator<<(std::ostream& os, Command const& ss) {
     os << ss.command << "||";
+    os << ss.relation_name;
+    os << "( ";
+    for (std::string entry : ss.typed_attribute_list) {
+      os << entry << ", ";
+    }
+    os << ") ";
+    os << "( ";
+    for (std::string entry : ss.attribute_list) {
+      os << entry << " ";
+    }
+    os << ") ";
+    os << "( ";
+    for (std::string entry : ss.attribute_value_list) {
+      os << entry << " ";
+    }
+    os << ") ";
+    os << "( ";
     os << ss.argument;
+    os << ") ";
+    os << ss.expression;
     return os;
   }
 };
 
-BOOST_FUSION_ADAPT_STRUCT(Command, (std::string, command)(Argument, argument))
+BOOST_FUSION_ADAPT_STRUCT(
+    Command,
+    (std::string, command)(Argument, argument)(std::string, relation_name)(
+        Expression, expression)(std::vector<std::string>, typed_attribute_list)(
+        std::vector<std::string>,
+        attribute_list)(std::vector<std::string>,
+                        attribute_value_list)(std::vector<std::string>,
+                                              literal_list))
 
 struct Query {
   Query(std::string rname, Expression expr)
-    : relation_name(rname), expression(expr){};
+      : relation_name(rname), expression(expr){};
   Query(Expression expr) : relation_name(), expression(expr){};
   Query(std::string rname) : relation_name(rname), expression(){};
   Query() : relation_name(), expression(){};
