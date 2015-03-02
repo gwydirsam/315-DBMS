@@ -250,6 +250,13 @@ int Engine::rename_column(std::string TableName, std::string ColumnName,
   return 0;
 }
 
+Relation Engine::rename_column(Relation relation, std::string ColumnName,
+                          std::string newname) {
+      relation.rename_column(ColumnName, newname);
+  // Success
+  return relation;
+}
+
 Relation Engine::select(std::vector<std::string> ColumnNames,
                         std::string TableName) {
   Relation table = find_relation(TableName);

@@ -84,6 +84,8 @@ class Engine {
   int rename_table(std::string TableName, std::string newname);
   int rename_column(std::string TableName, std::string Column,
                     std::string newname);
+  int rename_column(Relation relation, std::string Column,
+                    std::string newname);
 
   // Select
   // Select in TableName where Function takes a tuple and returns a bool,
