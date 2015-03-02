@@ -1,48 +1,51 @@
-set(SRCS
-	)
-
+# only main.cc
 set(MAIN_SRC main.cc)
 
+# only test_main.cc
 set(UNITTEST_SRCS
-  test_main.cc)
+  )
 
-set(DEBUG_OBJECT_LIBRARY "debug_objects")
-set(DEBUG_BINARY "${PROJECT_NAME}d")
-set(RELEASE_BINARY "${PROJECT_NAME}")
-set(UNITTEST_BINARY "${PROJECT_NAME}unittest")
+# rest of cc's
+set(SRCS
+  )
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${gtest_INCLUDE_DIR})
+if(APPLE)
+  find_package(Boost 1.57.0)
+  if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS})
+  endif()
+else()
+  include_directories(${Boost_INCLUDE_DIRS})
+endif()
 
-add_library(${DEBUG_OBJECT_LIBRARY} OBJECT ${SRCS})
-add_executable(${DEBUG_BINARY}
-	${MAIN_SRC}
-	$<TARGET_OBJECTS:${DEBUG_OBJECT_LIBRARY}>)
+set(RELEASE_BINARY "main")
+set(RELEASE_BINARY_OUTNAME "${PROJECT_NAME}")
+set(UNITTEST_BINARY "${PROJECT_NAME}test")
+set(ENGINE_LIBRARY "${PROJECT_NAME}")
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
 add_executable(${RELEASE_BINARY} ${MAIN_SRC} ${SRCS})
 
-set_property(SOURCE ${SRCS} PROPERTY COMPILE_FLAGS "${CXXFLAGS_DEBUG}")
-set_target_properties(${DEBUG_BINARY} PROPERTIES COMPILE_FLAGS "${CXXFLAGS_DEBUG}")
-set_target_properties(${RELEASE_BINARY} PROPERTIES COMPILE_FLAGS "${CXXFLAGS_RELEASE}")
-target_link_libraries(${DEBUG_BINARY})
-target_link_libraries(${RELEASE_BINARY})
+#use C++14
+set_property(TARGET ${RELEASE_BINARY} PROPERTY CXX_STANDARD 14)
+#C++14 required
+#set_property(TARGET ${RELEASE_BINARY} PROPERTY CXX_STANDARD_REQUIRED ON)
+
+set_target_properties(${RELEASE_BINARY} PROPERTIES OUTPUT_NAME "${RELEASE_BINARY_OUTNAME}")
+
+# target_link_libraries(${RELEASE_BINARY} ${ENGINE_LIBRARY})
+target_link_libraries(${RELEASE_BINARY} ${ENGINE_LIBRARY})
 
 # Testing
 if (test)
-  # add gtest
-  add_subdirectory(${INCLUDES_DIR}/gtest)
-
   enable_testing()
 
-  # Include the gtest library. gtest_SOURCE_DIR is available due to
-  # 'project(gtest)' above.
-  include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-
   # Unit Tests
-	add_executable(${UNITTEST_BINARY}
-		${UNITTEST_SRCS}
-		$<TARGET_OBJECTS:${DEBUG_OBJECT_LIBRARY}>)
+	add_executable(${UNITTEST_BINARY} ${UNITTEST_SRCS})
 
   # Standard linking to gtest stuff.
-	set_target_properties(${UNITTEST_BINARY} PROPERTIES COMPILE_FLAGS "${CXXFLAGS_DEBUG}")
+	# target_link_libraries(${UNITTEST_BINARY} ${ENGINE_LIBRARY} gtest gtest_main)
 	target_link_libraries(${UNITTEST_BINARY} gtest gtest_main)
 
   # This is so you can do 'make test' to see all your tests run, instead of
@@ -53,3 +56,4 @@ if (test)
   # test executable.
   add_test(that-other-test-I-made ${UNITTEST_BINARY})
 endif()
+
