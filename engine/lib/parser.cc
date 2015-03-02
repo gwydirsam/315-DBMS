@@ -8,6 +8,8 @@
 
 #include "parser.h"
 #include "relation.h"
+#include "grammar.h"
+#include "grammar_objects.h"
 
 // Receives command and returns a string of that command.
 std::string Parser::receive_command(std::string command) { return "s";}

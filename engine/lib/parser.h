@@ -10,6 +10,8 @@
 
 #include "utility.h"
 #include "relation.h"
+#include "grammar.h"
+#include "grammar_objects.h"
 
 class Parser {
  public:
