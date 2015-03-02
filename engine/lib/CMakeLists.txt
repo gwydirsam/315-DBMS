@@ -2,6 +2,7 @@ set(SRCS
   engine.cc
   relation.cc
   utility.cc
+  parser.cc
 	)
 
 if(APPLE)
