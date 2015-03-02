@@ -105,7 +105,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
          as<std::vector<std::string>>()[((attribute_name >> "=" >> literal) >>
           *(',' >> attribute_name >> "=" >> literal))] >>
          no_case["where"] >>
-         as<Argument>()[condition])[_val = boost::phoenix::construct<Command>(_1, _2, _3, _4)];
+         conditions)[_val = boost::phoenix::construct<Command>(_1, _2, _3, _4)];
 
     // insert-cmd := INSERT INTO relation-name VALUES FROM ( literal { , literal
     // } ) | INSERT INTO relation-name VALUES FROM RELATION expr
@@ -129,7 +129,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
 
     // delete-cmd := DELETE FROM relation-name WHERE condition
     delete_cmd = (no_case[string("delete from")] >> relation_name >>
-                  no_case["where"] >> as<Argument>()[condition])[_val = boost::phoenix::construct<Command>(_1,_2,_3)];
+                  no_case["where"] >> conditions)[_val = boost::phoenix::construct<Command>(_1,_2,_3)];
 
     // command := ( open-cmd | close-cmd | write-cmd | exit-cmd | show-cmd |
     // create-cmd | update-cmd | insert-cmd | delete-cmd ) ;
@@ -210,7 +210,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     //             string(")") >> atomic_expression;
     // selection := select ( condition ) atomic-expr
     selection =
-        (no_case[string("select")] >> ("(" >> condition >> ")") >>
+        (no_case[string("select")] >> ("(" >> conditions >> ")") >>
          atomic_expressions)[_val = boost::phoenix::construct<Expression>(
                                  _1, _2, _3)];
 
@@ -323,7 +323,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
       conjunction, comparison;
 
   boost::spirit::qi::rule<It, Condition(), Skipper> conditions;
-  boost::spirit::qi::rule<It, Condition(), Skipper> conjunctions,
+  boost::spirit::qi::rule<It, SubCondition(), Skipper> conjunctions,
       comparisons;
 
   // boost::spirit::qi::rule<It, Condition(), Skipper> conditions;

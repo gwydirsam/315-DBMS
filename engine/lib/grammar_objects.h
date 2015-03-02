@@ -91,7 +91,7 @@ struct subcondition_printer : boost::static_visitor<void> {
 
 struct Expression;
 
-typedef boost::variant<std::string, std::vector<std::string>,
+typedef boost::variant<std::string, Condition, std::vector<std::string>,
                        boost::recursive_wrapper<Expression>> SubExpression;
 
 struct subexpression_printer;
@@ -109,39 +109,40 @@ struct Expression {
   //   subexpressions.push_back(subexp1);
   //   subexpressions.push_back(subexp2);
   // }
-  Expression(SubExpression subexp) : query(), argument() {
+  Expression(SubExpression subexp) : query(), condition(), argument() {
     subexpressions.push_back(subexp);
   }
   Expression(SubExpression subexp1, SubExpression subexp2)
-      : query(), argument() {
+    : query(), condition(), argument() {
     subexpressions.push_back(subexp1);
     subexpressions.push_back(subexp2);
   }
   Expression(std::string q, SubExpression subexp1, SubExpression subexp2)
-      : query(q), argument() {
+    : query(q), condition(), argument() {
     subexpressions.push_back(subexp1);
     subexpressions.push_back(subexp2);
   }
   Expression(std::string q, std::vector<std::string> args, SubExpression subexp)
-      : query(q), argument(args) {
+    : query(q), condition(), argument(args) {
     subexpressions.push_back(subexp);
   }
   Expression(std::string q, std::vector<std::string> args,
              std::vector<SubExpression> subexps)
-      : query(q), argument(args), subexpressions(subexps){};
+    : query(q), condition(), argument(args), subexpressions(subexps){};
   Expression(std::string q, std::vector<SubExpression> subexps)
-      : query(q), argument(), subexpressions(subexps){};
+    : query(q), condition(), argument(), subexpressions(subexps){};
   Expression(std::string q, std::vector<std::string> args)
-      : query(q), argument(args), subexpressions(){};
-  Expression(std::string q) : query(q), argument(), subexpressions(){};
+    : query(q), condition(), argument(args), subexpressions(){};
+  Expression(std::string q) : query(q), condition(), argument(), subexpressions(){};
   Expression(std::vector<SubExpression> subexps)
-      : query(), argument(), subexpressions(subexps){};
+    : query(), condition(), argument(), subexpressions(subexps){};
   Expression(std::vector<std::string> args)
-      : query(), argument(args), subexpressions(){};
-  Expression() : query(), argument(), subexpressions(){};
+    : query(), condition(), argument(args), subexpressions(){};
+  Expression() : query(), condition(), argument(), subexpressions(){};
 
   std::string query;                          // select, project, ...,
-  std::vector<std::string> argument;          // attribute_list condition
+  Condition condition; // condition
+  std::vector<std::string> argument;          // attribute_list
   std::vector<SubExpression> subexpressions;  // atomic_expression
 
   friend std::ostream& operator<<(std::ostream& os, Expression const& e) {
@@ -151,6 +152,9 @@ struct Expression {
     for (std::string arg : e.argument) {
       os << arg << " ";
     }
+    os << ") ";
+    os << " ( ";
+    os << e.condition << " ";
     os << ") ";
     os << "[ ";
     BOOST_FOREACH (SubExpression const& sexp, e.subexpressions) {
@@ -164,7 +168,7 @@ struct Expression {
 
 BOOST_FUSION_ADAPT_STRUCT(Expression,
                           (std::string,
-                           query)(std::vector<std::string>,
+                           query)(Condition, condition)(std::vector<std::string>,
                                   argument)(std::vector<SubExpression>,
                                             subexpressions))
 
@@ -174,11 +178,16 @@ struct subexpression_printer : boost::static_visitor<void> {
 
   void operator()(std::string const& q) const { _os << q << " "; }
 
-  void operator()(Expression const& e) const {
-    print(e.query, e.argument, e.subexpressions);
+  void operator()(Condition const& c) const {
+    _os << c;
   }
 
-  void print(std::string const& query, std::vector<std::string> const& args,
+  void operator()(Expression const& e) const {
+    print(e.query, e.condition, e.argument, e.subexpressions);
+  }
+
+  void print(std::string const& query, Condition const& cond,
+             std::vector<std::string> const& args,
              std::vector<SubExpression> const& subexps) const {
     _os << "{";
     _os << query;
@@ -186,6 +195,9 @@ struct subexpression_printer : boost::static_visitor<void> {
     for (std::string arg : args) {
       _os << arg << " ";
     }
+    _os << ") ";
+    _os << " ( ";
+    _os << cond;
     _os << ") ";
     _os << "[ ";
     BOOST_FOREACH (SubExpression const& sexp, subexps) {
@@ -226,7 +238,7 @@ struct Command {
   Command(std::string c, std::string r_name)
       : command(c),
         relation_name(r_name),
-        argument(),
+        condition(),
         expression(),
         typed_attribute_list(),
         attribute_list(),
@@ -237,7 +249,7 @@ struct Command {
           std::vector<std::string> att_list)
       : command(c),
         relation_name(r_name),
-        argument(),
+        condition(),
         expression(),
         typed_attribute_list(t_att_list),
         attribute_list(att_list),
@@ -245,10 +257,10 @@ struct Command {
         literal_list(){};
   Command(std::string c, std::string r_name,
           std::vector<std::string> att_v_list,
-          Argument cond)  // replace with condition later
+          Condition cond)
       : command(c),
         relation_name(r_name),
-        argument(cond),
+        condition(cond),
         expression(),
         typed_attribute_list(),
         attribute_list(),
@@ -257,7 +269,7 @@ struct Command {
   Command(std::string c, std::string r_name, std::vector<std::string> lit_list)
       : command(c),
         relation_name(r_name),
-        argument(),
+        condition(),
         expression(),
         typed_attribute_list(),
         attribute_list(),
@@ -266,17 +278,17 @@ struct Command {
   Command(std::string c, std::string r_name, Expression exp)
       : command(c),
         relation_name(r_name),
-        argument(),
+        condition(),
         expression(exp),
         typed_attribute_list(),
         attribute_list(),
         attribute_value_list(),
         literal_list(){};
   Command(std::string c, std::string r_name,
-          Argument cond)  // replace with condition later
+          Condition cond)
       : command(c),
         relation_name(r_name),
-        argument(cond),
+        condition(cond),
         expression(),
         typed_attribute_list(),
         attribute_list(),
@@ -285,7 +297,7 @@ struct Command {
   Command(std::string c, SubExpression exp)
       : command(c),
         relation_name(),
-        argument(),
+        condition(),
         expression(exp),
         typed_attribute_list(),
         attribute_list(),
@@ -294,7 +306,7 @@ struct Command {
   Command(std::string c)
       : command(c),
         relation_name(),
-        argument(),
+        condition(),
         expression(),
         typed_attribute_list(),
         attribute_list(),
@@ -303,7 +315,7 @@ struct Command {
   Command()
       : command(),
         relation_name(),
-        argument(),
+        condition(),
         expression(),
         typed_attribute_list(),
         attribute_list(),
@@ -313,14 +325,14 @@ struct Command {
   std::string command;  // open_cmd, close_cmd, write_cmd...
   std::string relation_name;
 
-  Argument argument;      /// won't be used after conversion
+  Condition condition; // not used until Condition is implented, currently
+  //Argument argument;      /// won't be used after conversion
   Expression expression;  // atomic_expression or expression
   std::vector<std::string> typed_attribute_list;  // typed-attribute-list
   std::vector<std::string> attribute_list;        // attribute-list
   std::vector<std::string> attribute_value_list;  // attribute-name = literal {
                                                   // , attribute-name = literal
                                                   // }
-  // Condition condition; // not used until Condition is implented, currently
   // put in argument
   std::vector<std::string> literal_list;  // ( literal { , literal } )
 
@@ -343,7 +355,7 @@ struct Command {
     }
     os << ") ";
     os << "( ";
-    os << ss.argument;
+    os << ss.condition;
     os << ") ";
     os << "( ";
     for (std::string entry : ss.literal_list) {
@@ -357,7 +369,7 @@ struct Command {
 
 BOOST_FUSION_ADAPT_STRUCT(
     Command,
-    (std::string, command)(Argument, argument)(std::string, relation_name)(
+    (std::string, command)(Condition, condition)(std::string, relation_name)(
         Expression, expression)(std::vector<std::string>, typed_attribute_list)(
         std::vector<std::string>,
         attribute_list)(std::vector<std::string>,
