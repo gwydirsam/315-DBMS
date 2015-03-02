@@ -28,40 +28,66 @@
 
 #include <boost/foreach.hpp>
 
-// struct Condition;
+struct Condition;
 
-// typedef boost::variant<
-//   std::string,
-//   boost::recursive_wrapper<Condition>,
-//   boost::recursive_wrapper<Condition>
-//   > SubCondition;
+typedef boost::variant<std::string, boost::recursive_wrapper<Condition>>
+    SubCondition;
 
-// struct Condition {
-//   Condition(std::string op, SubCondition l, SubCondition r)
-//     : operation(op), lhs(l), rhs(r){};
-//   Condition(std::string op) : operation(op), lhs(), rhs(){};
-//   Condition() : operation(), lhs(), rhs(){};
+struct subcondition_printer;
+struct condition_printer;
+std::ostream& operator<<(std::ostream& os, SubCondition const& sc);
 
-//   std::string operation;
-//   SubCondition lhs;
-//   SubCondition rhs;
+struct Condition {
+  Condition(std::string op, SubCondition subcon1, SubCondition subcon2)
+      : operation(op) {
+    subconditions.push_back(subcon1);
+    subconditions.push_back(subcon2);
+  }
+  Condition(std::string op, std::vector<SubCondition> subcons)
+      : operation(op), subconditions(subcons){};
+  Condition(std::vector<SubCondition> subcons)
+      : operation(), subconditions(subcons){};
+  Condition(std::string op) : operation(op), subconditions(){};
+  Condition() : operation(), subconditions(){};
 
-//   friend std::ostream& operator<<(std::ostream& os, Condition const& ss) {
-//     os << "(" << ss.lhs << ss.operation << ss.rhs << ")";
-//     return os;
-//   }
-// };
+  std::string operation;
+  std::vector<SubCondition> subconditions;
 
-// BOOST_FUSION_ADAPT_STRUCT(Condition,
-//                           (std::string, operation)
-//                           (SubCondition, lhs)
-//                           (SubCondition, rhs))
+  friend std::ostream& operator<<(std::ostream& os, Condition const& ss) {
+    os << "(" << ss.operation;
+    os << "(";
+    BOOST_FOREACH (SubCondition const& subcon, ss.subconditions) {
+      os << subcon << " ";
+    }
+    os << ")";
+    return os;
+  }
+};
 
+BOOST_FUSION_ADAPT_STRUCT(Condition,
+                          (std::string, operation)(std::vector<SubCondition>,
+                                                   subconditions))
 
-// struct Condition;
+struct subcondition_printer : boost::static_visitor<void> {
+  subcondition_printer(std::ostream& os) : _os(os) {}
+  std::ostream& _os;
 
-// typedef boost::variant<std::string, std::vector<std::string>,
-//                        boost::recursive_wrapper<Expression>> SubCondition;
+  void operator()(std::string const& op) const { _os << op << " "; }
+
+  void operator()(Condition const& c) const {
+    print(c.operation, c.subconditions);
+  }
+
+  void print(std::string const& operation,
+             std::vector<SubCondition> const& subcons) const {
+    _os << "(" << operation;
+    _os << "(";
+    BOOST_FOREACH (SubCondition const& subcon, subcons) {
+      boost::apply_visitor(subcondition_printer(_os), subcon);
+    }
+    _os << ")";
+  }
+};
 
 struct Expression;
 
@@ -219,7 +245,7 @@ struct Command {
         literal_list(){};
   Command(std::string c, std::string r_name,
           std::vector<std::string> att_v_list,
-          Argument cond) // replace with condition later
+          Argument cond)  // replace with condition later
       : command(c),
         relation_name(r_name),
         argument(cond),

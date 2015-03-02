@@ -144,15 +144,15 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     comparison = hold[(operand >> op >> operand)] |
                  (string("(") >> condition >> string(")"));
 
-    // // condition := conjunction { || conjunction }
-    // conditions = (conjunctions >> *("||" >> conjunctions))[_val =
-    // boost::phoenix::construct<Condition>("OR", _1, _2)];
-    // // conjunction := comparison { && comparison }
-    // conjunctions = (comparisons >> *("&&" >> comparisons))[_val =
-    // boost::phoenix::construct<Condition>("AND", _1, _2)];
-    // // comparison := operand op operand | ( condition )
-    // comparisons = (hold[(operand >> op >> operand)]) |
-    //              ("(" >> conditions >> ")");
+    // condition := conjunction { || conjunction }
+    conditions = (conjunctions >> *("||" >> conjunctions))[_val =
+    boost::phoenix::construct<Condition>("OR", _1, _2)];
+    // conjunction := comparison { && comparison }
+    conjunctions = (comparisons >> *("&&" >> comparisons))[_val =
+    boost::phoenix::construct<Condition>("AND", _1, _2)];
+    // comparison := operand op operand | ( condition )
+    comparisons = (!lit("(") >> (operand >> op >> operand))[_val = boost::phoenix::construct<Condition>(_2,_1,_3)] |
+      ("(" >> conditions >> ")")[_val = boost::phoenix::construct<Condition>(_1)];
 
     // condition = as<std::vector<std::string>>()[conditions];
     // conditions = subcondition >> +(op >> subcondition);
@@ -276,9 +276,9 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     BOOST_SPIRIT_DEBUG_NODE(condition);
     BOOST_SPIRIT_DEBUG_NODE(conjunction);
     BOOST_SPIRIT_DEBUG_NODE(comparison);
-    // BOOST_SPIRIT_DEBUG_NODE(conditions);
-    // BOOST_SPIRIT_DEBUG_NODE(conjunctions);
-    // BOOST_SPIRIT_DEBUG_NODE(comparisons);
+    BOOST_SPIRIT_DEBUG_NODE(conditions);
+    BOOST_SPIRIT_DEBUG_NODE(conjunctions);
+    BOOST_SPIRIT_DEBUG_NODE(comparisons);
     BOOST_SPIRIT_DEBUG_NODE(op);
     BOOST_SPIRIT_DEBUG_NODE(operand);
     BOOST_SPIRIT_DEBUG_NODE(attribute_name);
@@ -339,9 +339,9 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
   boost::spirit::qi::rule<It, std::vector<std::string>(), Skipper> condition,
       conjunction, comparison;
 
-  // boost::spirit::qi::rule<It, Condition(), Skipper> conditions;
-  // boost::spirit::qi::rule<It, SubCondition(), Skipper> conjunctions,
-  //     comparisons;
+  boost::spirit::qi::rule<It, Condition(), Skipper> conditions;
+  boost::spirit::qi::rule<It, Condition(), Skipper> conjunctions,
+      comparisons;
 
   // boost::spirit::qi::rule<It, Condition(), Skipper> conditions;
 
