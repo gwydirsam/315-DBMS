@@ -3,6 +3,7 @@ set(SRCS
   relation.cc
   utility.cc
   parser.cc
+  grammar_objects.cc
 	)
 
 if(APPLE)
