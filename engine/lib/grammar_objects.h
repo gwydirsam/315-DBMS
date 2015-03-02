@@ -126,6 +126,10 @@ struct Expression {
     : query(q), condition(), argument(args) {
     subexpressions.push_back(subexp);
   }
+  Expression(std::string q, Condition cond, SubExpression subexp)
+    : query(q), condition(cond), argument() {
+    subexpressions.push_back(subexp);
+  }
   Expression(std::string q, std::vector<std::string> args,
              std::vector<SubExpression> subexps)
     : query(q), condition(), argument(args), subexpressions(subexps){};
