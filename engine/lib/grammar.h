@@ -109,20 +109,27 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
 
     // insert-cmd := INSERT INTO relation-name VALUES FROM ( literal { , literal
     // } ) | INSERT INTO relation-name VALUES FROM RELATION expr
-    insert_cmd = no_case[string("insert into")];
-    insert_arg = (relation_name >>
-                  ((hold[(no_case[string("values from")] >>
-                          !no_case[string("relation")] >> string("(") >>
-                          literal >> *(',' >> literal) >> string(")"))]) |
-                   (no_case[string("values from relation")] >> expression))) -
-                 ';';
+    // insert_cmd = no_case[string("insert into")];
+    // insert_arg = (relation_name >>
+    //               ((hold[(no_case[string("values from")] >>
+    //                       !no_case[string("relation")] >> string("(") >>
+    //                       literal >> *(',' >> literal) >> string(")"))]) |
+    //                (no_case[string("values from relation")] >> expression))) -
+    //              ';';
+    insert_cmd =
+        (no_case[string("insert into")] >> (relation_name) >>
+         (no_case["values from"] >> !no_case["relation"] >> "(" >>
+               as<std::vector<std::string>>()[((literal) >> *(',' >> literal))]
+               >> ")"
+               ))[_val = boost::phoenix::construct<Command>(_1, _2, _3)]
+      |
+        (no_case[string("insert into")] >> (relation_name) >>
+         (no_case["values from relation"] >>
+          atomic_expressions))[_val = boost::phoenix::construct<Command>(_1, _2, _3)];
 
     // delete-cmd := DELETE FROM relation-name WHERE condition
-    delete_cmd = no_case[string("delete from")];
-    delete_arg = (relation_name >>
-                  as<std::vector<std::string>>()[no_case[string("where")] >>
-                                                 condition]) -
-                 ';';
+    delete_cmd = (no_case[string("delete from")] >> relation_name >>
+                  no_case["where"] >> as<Argument>()[condition])[_val = boost::phoenix::construct<Command>(_1,_2,_3)];
 
     // command := ( open-cmd | close-cmd | write-cmd | exit-cmd | show-cmd |
     // create-cmd | update-cmd | insert-cmd | delete-cmd ) ;
@@ -131,10 +138,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     //      hold[create_cmd >> create_arg] | hold[update_cmd >> update_arg] |
     //      hold[insert_cmd >> insert_arg] | delete_cmd >> delete_arg) >>
     //     ';';
-    command = (hold[insert_cmd >> insert_arg] | (delete_cmd >> delete_arg)) -
-              ';';
-
-    commands = (hold[io_cmd] | hold[exit_cmd] | hold[show_cmd] | hold[create_cmd] | update_cmd) - ';';
+    command = (hold[io_cmd] | hold[exit_cmd] | hold[show_cmd] | hold[create_cmd] | hold[update_cmd] | hold[insert_cmd] | delete_cmd) - ';';
 
     // condition := conjunction { || conjunction }
     condition = conjunction >> *(string("||") >> conjunction);
@@ -255,11 +259,10 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     query = (relation_name >> "<-" >> (hold[expressions] | expression)) - ';';
 
     // program := { ( query | command ) }
-    program = (hold[query] | hold[commands] | command) >> ';';
+    program = (hold[query] | command) >> ';';
 
     BOOST_SPIRIT_DEBUG_NODE(program);
     BOOST_SPIRIT_DEBUG_NODE(command);
-    BOOST_SPIRIT_DEBUG_NODE(commands);
     BOOST_SPIRIT_DEBUG_NODE(query);
     BOOST_SPIRIT_DEBUG_NODE(relation_name);
     BOOST_SPIRIT_DEBUG_NODE(expression);
@@ -287,40 +290,20 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     BOOST_SPIRIT_DEBUG_NODE(type);
     BOOST_SPIRIT_DEBUG_NODE(literal);
     BOOST_SPIRIT_DEBUG_NODE(io_cmd);
-    BOOST_SPIRIT_DEBUG_NODE(io_arg);
     BOOST_SPIRIT_DEBUG_NODE(exit_cmd);
     BOOST_SPIRIT_DEBUG_NODE(show_cmd);
-    // BOOST_SPIRIT_DEBUG_NODE(show_arg);
     BOOST_SPIRIT_DEBUG_NODE(create_cmd);
-    // BOOST_SPIRIT_DEBUG_NODE(create_arg);
     BOOST_SPIRIT_DEBUG_NODE(update_cmd);
-    // BOOST_SPIRIT_DEBUG_NODE(update_arg);
     BOOST_SPIRIT_DEBUG_NODE(insert_cmd);
-    BOOST_SPIRIT_DEBUG_NODE(insert_arg);
     BOOST_SPIRIT_DEBUG_NODE(delete_cmd);
-    BOOST_SPIRIT_DEBUG_NODE(delete_arg);
   }
 
  private:
   boost::spirit::qi::rule<It, Command(), Skipper> command;
-  // boost::spirit::qi::rule<It, std::string(), Skipper> io_cmd, exit_cmd,
-  //     show_cmd, create_cmd, update_cmd, insert_cmd, delete_cmd;
-  boost::spirit::qi::rule<It, std::string(), Skipper> insert_cmd,
-      delete_cmd;
-
-  boost::spirit::qi::rule<It, Command(), Skipper> commands;
-  boost::spirit::qi::rule<It, Command(), Skipper> io_cmd, exit_cmd, show_cmd, create_cmd, update_cmd;
-
-  // boost::spirit::qi::rule<It, Argument(), Skipper> create_arg, update_arg,
-  //     delete_arg, io_arg, insert_arg;
-  boost::spirit::qi::rule<It, Argument(), Skipper> delete_arg, io_arg,
-      insert_arg;
+  boost::spirit::qi::rule<It, Command(), Skipper> io_cmd, exit_cmd, show_cmd, create_cmd, update_cmd, insert_cmd, delete_cmd;
 
   boost::spirit::qi::rule<It, Query(), Skipper> query;
   boost::spirit::qi::rule<It, std::string(), Skipper> relation_name;
-
-  // boost::spirit::qi::rule<It, std::vector<std::string>(), Skipper>
-  // expression;
 
   boost::spirit::qi::rule<It, std::vector<std::string>(), Skipper> expression;
   boost::spirit::qi::rule<It, Expression(), Skipper> expressions;

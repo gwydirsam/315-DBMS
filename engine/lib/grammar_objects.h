@@ -417,7 +417,7 @@ struct Command {
         literal_list(){};
   Command(std::string c, std::string r_name,
           std::vector<std::string> att_v_list,
-          Argument cond) // replace with condition later
+          Argument cond)  // replace with condition later
       : command(c),
         relation_name(r_name),
         argument(cond),
@@ -425,6 +425,34 @@ struct Command {
         typed_attribute_list(),
         attribute_list(),
         attribute_value_list(att_v_list),
+        literal_list(){};
+  Command(std::string c, std::string r_name, std::vector<std::string> lit_list)
+      : command(c),
+        relation_name(r_name),
+        argument(),
+        expression(),
+        typed_attribute_list(),
+        attribute_list(),
+        attribute_value_list(),
+        literal_list(lit_list){};
+  Command(std::string c, std::string r_name, Expression exp)
+      : command(c),
+        relation_name(r_name),
+        argument(),
+        expression(exp),
+        typed_attribute_list(),
+        attribute_list(),
+        attribute_value_list(),
+        literal_list(){};
+  Command(std::string c, std::string r_name,
+          Argument cond)  // replace with condition later
+      : command(c),
+        relation_name(r_name),
+        argument(cond),
+        expression(),
+        typed_attribute_list(),
+        attribute_list(),
+        attribute_value_list(),
         literal_list(){};
   Command(std::string c, SubExpression exp)
       : command(c),
@@ -473,7 +501,7 @@ struct Command {
     os << ss.relation_name;
     os << "( ";
     for (std::string entry : ss.typed_attribute_list) {
-      os << entry << ", ";
+      os << entry << " ";
     }
     os << ") ";
     os << "( ";
@@ -488,6 +516,11 @@ struct Command {
     os << ") ";
     os << "( ";
     os << ss.argument;
+    os << ") ";
+    os << "( ";
+    for (std::string entry : ss.literal_list) {
+      os << entry << " ";
+    }
     os << ") ";
     os << ss.expression;
     return os;
