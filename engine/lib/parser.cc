@@ -83,8 +83,8 @@ int Parser::execSQL(std::string input_string) {
   //Command
   else {
 	
-    
-	Command c = boost::get<Command>(program);
+    Command c = boost::get<Command>(program);
+	
 	if(c.command == "open") {
       int i = find_view_index( c.relation_name );
 	  if(i != -1) {
@@ -119,7 +119,14 @@ int Parser::execSQL(std::string input_string) {
 	}
 	
 	else if(c.command == "create table") {
-		
+	
+	  Relation r(c.relation_name);
+	  std::vector<Column<std::string>> cols;
+	  //need to change this for other types aka typed_attribute_list
+	  for(int i =0; i < c.attribute_list.size(); i++) {
+		cols.push_back( Column(c.attribute_list.at(i)) );
+	 }
+	 r.columns(cols);
 		// TODO
 		if(primary key)
 
@@ -134,7 +141,7 @@ int Parser::execSQL(std::string input_string) {
 			insert_arg
 	  int i = find_view_index( c.relation_name );
 	  if(i != -1) {
-	    Engine::insertTuple( views_.at.(i) , c. );
+	    Engine::insertTuple( views_.at.(i) , c.literal_list);
 	  }
 	}
 	
