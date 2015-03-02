@@ -134,6 +134,30 @@ int Parser::execSQL(std::string input_string) {
 	
 	else if(c.command == "update") {
        //recurse columns find rows check condition then follow rules
+	   Condition con = c.condition;
+	   if(con.operation == "==") {
+	   
+	   }
+	   else if (con.operation == "!=") {
+	   
+	   }
+	   else if (con.operation == "<=") {
+	   
+	   }
+	   else if (con.operation == ">=") {
+	   
+	   }
+	   else if (con.operation == "<") {
+	   
+	   }
+	   else if (con.operation == ">") {
+	   
+	   }
+	   else {
+	     //Not an operand?!?!
+	   }
+	   //check column
+	   //check row
 	}
 	
 	else if(c.command == "insert into") {
