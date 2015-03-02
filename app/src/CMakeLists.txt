@@ -3,10 +3,13 @@ set(MAIN_SRC main.cc)
 
 # only test_main.cc
 set(UNITTEST_SRCS
+  test_main.cc
   )
 
 # rest of cc's
 set(SRCS
+  main_menu.cc
+  search_menu.cc
   )
 
 if(APPLE)
