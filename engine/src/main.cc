@@ -15,6 +15,7 @@ int main(int argc, char* argv[]) {
   Engine dbengine;
 
   dbengine.execSQL("INSERT INTO animals VALUES FROM (\"Joe\", \"cat\", 4);");
+  dbengine.execSQL("INSERT INTO species VALUES FROM RELATION (project (name, kind) animals);");
   dbengine.execSQL("WRITE table;");
   dbengine.execSQL("EXIT;");
   dbengine.execSQL("CREATE TABLE animals (name VARCHAR(20), kind VARCHAR(8), years INTEGER) PRIMARY KEY (name, kind);");
