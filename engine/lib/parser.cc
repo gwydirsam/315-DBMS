@@ -79,8 +79,77 @@ int Parser::execSQL(std::string input_string) {
 	}
 	
   }
-  //command
+  // TODO
+  //Command
   else {
+	
+    
+	Command c = boost::get<Command>(program);
+	if(c.command == "open") {
+      int i = find_view_index( c.relation_name );
+	  if(i != -1) {
+	    Engine::openTable( views_.at.(i).title() );
+	  }
+	}
+	
+	else if(c.command == "close") {
+      int i = find_view_index( c.relation_name );
+	  if(i != -1) {
+	    Engine::closeTable( views_.at.(i) );
+	  }
+	}
+	
+	else if(c.command == "write") {
+      int i = find_view_index( c.relation_name );
+	  if(i != -1) {
+	    Engine::writeTable( views_.at.(i) );
+	  }
+	}
+	
+	else if(c.command == "exit") {
+      Engine::exitDatabase();
+	  
+	}
+	
+	else if(c.command == "show") {
+      int i = find_view_index( c.relation_name );
+	  if(i != -1) {
+	    cout << views_.at.(i);
+	  }
+	}
+	
+	else if(c.command == "create table") {
+		
+		// TODO
+		if(primary key)
+
+	}
+	
+	else if(c.command == "update") {
+       //recurse columns find rows check condition then follow rules
+	}
+	
+	else if(c.command == "insert into") {
+			// TODO
+			insert_arg
+	  int i = find_view_index( c.relation_name );
+	  if(i != -1) {
+	    Engine::insertTuple( views_.at.(i) , c. );
+	  }
+	}
+	
+	else if(c.command == "delete from") {
+      int i = find_view_index( c.relation_name );
+	  if(i != -1) {
+	    Engine::dropTuple( views_.at.(i) , c. );
+	  }
+	}
+	
+	else {
+		// TODO Something
+	}
+	
+	
   }
   */
   return -1;

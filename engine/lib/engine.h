@@ -24,7 +24,7 @@ class Engine {
   // Find Table
   Relation& find_relation(std::string TableName);
   // Returns an iterator
-  // TODO: sould probably be private
+  // TODO: should probably be private
   std::vector<Relation>::iterator find_table(std::string TableName);
   // Returns the index of where the table is. Returns -1 if failed to find.
   int find_table_index(std::string TableName);
@@ -72,6 +72,7 @@ class Engine {
 
   // Delete table from open_tables_ and Write table to filename TableName.db
   int closeTable(std::string TableName);
+  int closeTable(Relation relation);
 
   // Exit
   void exitDatabase(){};

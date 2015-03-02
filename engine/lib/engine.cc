@@ -230,6 +230,13 @@ int Engine::closeTable(std::string TableName) {
   return d;
 }
 
+int Engine::closeTable(Relation relation) {
+  writeTable(relation);
+  int d = dropTable(relation);
+
+  return d;
+}
+
 Relation Engine::rename_table(Relation table, std::string newname) {
   table.title(newname);
   return table;
