@@ -196,14 +196,25 @@ int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
 
 int Engine::execSQL(std::string input_string) {
   Program program = parse_string(input_string);
+  std::cout << program << std::endl;
+  std::cout << std::endl;
 
-  // Print parsed program
-  std::cout << boost::apply_visitor(expression_accessor<Program>(), program)
-            << std::endl;
+  // // Print parsed program
+  // // std::cout <<
+  // boost::apply_visitor(expression_accessor(), program);
+  //           // << std::endl;
 
-  // // Print
-  // std::cout << boost::apply_visitor(expression_accessor<Command>(), program)
-  //           << std::endl;
+  // get std::vector
+  std::vector<std::string> args;
+
+  boost::apply_visitor(program_accessor(args), program);
+
+  for (std::string str : args) {
+    std::cout << str << " ";
+  }
+  std::cout << std::endl;
+  std::cout << std::endl;
+  std::cout << std::endl;
 
 
   return -1;

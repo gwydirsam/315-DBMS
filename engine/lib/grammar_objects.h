@@ -28,13 +28,13 @@
 
 #include <boost/foreach.hpp>
 
+#include "grammar_visitors.h"
+
 struct Condition;
 
 typedef boost::variant<std::string, boost::recursive_wrapper<Condition>>
     SubCondition;
 
-struct subcondition_printer;
-struct condition_printer;
 std::ostream& operator<<(std::ostream& os, SubCondition const& sc);
 
 struct Condition {
@@ -69,35 +69,11 @@ BOOST_FUSION_ADAPT_STRUCT(Condition,
                           (std::string, operation)(std::vector<SubCondition>,
                                                    subconditions))
 
-struct subcondition_printer : boost::static_visitor<void> {
-  subcondition_printer(std::ostream& os) : _os(os) {}
-  std::ostream& _os;
-
-  void operator()(std::string const& op) const { _os << op << " "; }
-
-  void operator()(Condition const& c) const {
-    print(c.operation, c.subconditions);
-  }
-
-  void print(std::string const& operation,
-             std::vector<SubCondition> const& subcons) const {
-    _os << "(" << operation;
-    _os << " (";
-    BOOST_FOREACH (SubCondition const& subcon, subcons) {
-      boost::apply_visitor(subcondition_printer(_os), subcon);
-    }
-    _os << ") ";
-    _os << ")";
-  }
-};
-
 struct Expression;
 
-typedef boost::variant<std::string, Condition, std::vector<std::string>,
-                       boost::recursive_wrapper<Expression>> SubExpression;
+typedef boost::variant<std::string, boost::recursive_wrapper<Expression>>
+    SubExpression;
 
-struct subexpression_printer;
-struct expression_printer;
 std::ostream& operator<<(std::ostream& os, SubExpression const& se);
 
 struct Expression {
@@ -168,55 +144,6 @@ BOOST_FUSION_ADAPT_STRUCT(Expression,
                               std::vector<std::string>,
                               argument)(std::vector<SubExpression>,
                                         subexpressions))
-
-struct subexpression_printer : boost::static_visitor<void> {
-  subexpression_printer(std::ostream& os) : _os(os) {}
-  std::ostream& _os;
-
-  void operator()(std::string const& q) const { _os << q << " "; }
-
-  void operator()(Condition const& c) const { _os << c; }
-
-  void operator()(Expression const& e) const {
-    print(e.query, e.condition, e.argument, e.subexpressions);
-  }
-
-  void print(std::string const& query, Condition const& cond,
-             std::vector<std::string> const& args,
-             std::vector<SubExpression> const& subexps) const {
-    _os << "{";
-    _os << query;
-    _os << " ( ";
-    for (std::string arg : args) {
-      _os << arg << " ";
-    }
-    _os << ") ";
-    _os << " ( ";
-    _os << cond;
-    _os << ") ";
-    _os << "[ ";
-    BOOST_FOREACH (SubExpression const& sexp, subexps) {
-      boost::apply_visitor(subexpression_printer(_os), sexp);
-    }
-    _os << "]";
-    _os << "}";
-  }
-};
-
-template<typename T>
-struct expression_accessor : boost::static_visitor<T> {
-  expression_accessor(){}
-
-  T operator()(T const& t) const { return t; }
-};
-
-template<typename T>
-struct program_accessor : boost::static_visitor<T> {
-  program_accessor(){}
-
-  T operator()(T const& t) const { return t; }
-};
-
 
 struct Command {
   Command(std::string c, std::string r_name)
@@ -307,8 +234,7 @@ struct Command {
   std::string command;  // open_cmd, close_cmd, write_cmd...
   std::string relation_name;
 
-  Condition condition;  // not used until Condition is implented, currently
-  // Argument argument;      /// won't be used after conversion
+  Condition condition;    //  condition
   Expression expression;  // atomic_expression or expression
   std::vector<std::string> typed_attribute_list;  // typed-attribute-list
   std::vector<std::string> attribute_list;        // attribute-list
@@ -379,5 +305,206 @@ BOOST_FUSION_ADAPT_STRUCT(Query,
                           (std::string, relation_name)(Expression, expression))
 
 typedef boost::variant<Query, Command> Program;
+
+struct subcondition_printer : boost::static_visitor<void> {
+  subcondition_printer(std::ostream& os) : _os(os) {}
+  std::ostream& _os;
+
+  void operator()(std::string const& op) const { _os << op << " "; }
+
+  void operator()(Condition const& c) const {
+    print(c.operation, c.subconditions);
+  }
+
+  void print(std::string const& operation,
+             std::vector<SubCondition> const& subcons) const {
+    _os << "(" << operation;
+    _os << " (";
+    BOOST_FOREACH (SubCondition const& subcon, subcons) {
+      boost::apply_visitor(subcondition_printer(_os), subcon);
+    }
+    _os << ") ";
+    _os << ")";
+  }
+};
+
+struct subexpression_printer : boost::static_visitor<void> {
+  subexpression_printer(std::ostream& os) : _os(os) {}
+  std::ostream& _os;
+
+  void operator()(std::string const& q) const { _os << q << " "; }
+
+  void operator()(Condition const& c) const { _os << c; }
+
+  void operator()(Expression const& e) const {
+    print(e.query, e.condition, e.argument, e.subexpressions);
+  }
+
+  void print(std::string const& query, Condition const& cond,
+             std::vector<std::string> const& args,
+             std::vector<SubExpression> const& subexps) const {
+    _os << "{";
+    _os << query;
+    _os << " ( ";
+    for (std::string arg : args) {
+      _os << arg << " ";
+    }
+    _os << ") ";
+    _os << " ( ";
+    _os << cond;
+    _os << ") ";
+    _os << "[ ";
+    BOOST_FOREACH (SubExpression const& sexp, subexps) {
+      boost::apply_visitor(subexpression_printer(_os), sexp);
+    }
+    _os << "]";
+    _os << "}";
+  }
+};
+
+// struct subexpression_printer : boost::static_visitor<void> {
+//   subexpression_printer(std::ostream& os) : _os(os) {}
+//   std::ostream& _os;
+
+//   void operator()(std::string const& q) const { _os << q << " "; }
+
+//   void operator()(Condition const& c) const { _os << c; }
+
+//   void operator()(Expression const& e) const {
+//     print(e.query, e.condition, e.argument, e.subexpressions);
+//   }
+
+//   void print(std::string const& query, Condition const& cond,
+//              std::vector<std::string> const& args,
+//              std::vector<SubExpression> const& subexps) const {
+//     _os << "{";
+//     _os << "[ ";
+//     BOOST_REVERSE_FOREACH (SubExpression const& sexp, subexps) {
+//       boost::apply_visitor(subexpression_printer(_os), sexp);
+//     }
+//     _os << "]";
+//     _os << query;
+//     _os << " ( ";
+//     for (std::string arg : args) {
+//       _os << arg << " ";
+//     }
+//     _os << ") ";
+//     _os << " ( ";
+//     _os << cond;
+//     _os << ") ";
+//     _os << "}";
+//   }
+// };
+
+struct subexpression_evaluator : boost::static_visitor<void> {
+  subexpression_evaluator(std::vector<std::string>& args) : args_(args) {}
+  std::vector<std::string>& args_;
+  // args_.emplace(std::begin(args_), q.relation_name);
+  // args_.emplace(std::begin(args_), q.expression.query);
+
+  void operator()(std::string const& q) const {
+    args_.emplace(std::begin(args_), q);
+  }
+
+  void operator()(Condition const& c) const {
+    args_.emplace(std::begin(args_), c.operation);
+    BOOST_FOREACH (SubCondition const& subcon, c.subconditions) {
+      boost::apply_visitor(*this, subcon);
+    }
+  }
+
+  // void operator()(std::vector<SubCondition> const& subcons) const {
+  //   BOOST_FOREACH (SubCondition const& subcon, subcons) {
+  //     boost::apply_visitor(*this, subcon);
+  //   }
+  // }
+
+  void operator()(Expression const& e) const {
+    // print(e.query, e.condition, e.argument, e.subexpressions);
+    // std::string query;                          // select, project, ...,
+    // Condition condition;                        // condition
+    // std::vector<std::string> argument;          // attribute_list
+    args_.emplace(std::begin(args_), e.query);
+    args_.emplace(std::begin(args_), e.condition.operation);
+    // std::vector<SubCondition> subconditions;
+    BOOST_FOREACH (SubCondition const& subcon, e.condition.subconditions) {
+      boost::apply_visitor(subexpression_evaluator(args_), subcon);
+    }
+    for (std::string arg : e.argument) {
+      args_.emplace(std::begin(args_), arg);
+    }
+    BOOST_FOREACH (SubExpression const& sexp, e.subexpressions) {
+      boost::apply_visitor(*this, sexp);
+    }
+  }
+
+  void operator()(std::vector<SubExpression> const& subexps) const {
+    BOOST_FOREACH (SubExpression const& sexp, subexps) {
+      boost::apply_visitor(*this, sexp);
+    }
+  }
+};
+
+struct program_accessor : boost::static_visitor<> {
+  program_accessor(std::vector<std::string>& args) : args_(args) {}
+  std::vector<std::string>& args_;
+
+  void operator()(Query const& q) const {
+    args_.emplace(std::begin(args_), q.relation_name);
+    args_.emplace(std::begin(args_), q.expression.query);
+    // Condition condition;                        // condition
+    // std::string operation;
+    args_.emplace(std::begin(args_), q.expression.condition.operation);
+    // std::vector<SubCondition> subconditions;
+    BOOST_FOREACH (SubCondition const& subcon,
+                   q.expression.condition.subconditions) {
+      boost::apply_visitor(subexpression_evaluator(args_), subcon);
+    }
+    // std::vector<std::string> argument;          // attribute_list
+    for (std::string arg : q.expression.argument) {
+      args_.emplace(std::begin(args_), arg);
+    }
+    // std::vector<SubExpression> subexpressions;  // atomic_expression
+    BOOST_FOREACH (SubExpression const& sexp, q.expression.subexpressions) {
+      boost::apply_visitor(subexpression_evaluator(args_), sexp);
+    }
+  }
+
+  void operator()(Command const& q) const {
+    // std::string command;  // open_cmd, close_cmd, write_cmd...
+    args_.emplace(std::begin(args_), q.command);
+    // std::string relation_name;
+    args_.emplace(std::begin(args_), q.relation_name);
+
+    // Expression expression;  // atomic_expression or expression
+    args_.emplace(std::begin(args_), q.expression.query);
+    BOOST_FOREACH (SubExpression const& sexp, q.expression.subexpressions) {
+      boost::apply_visitor(subexpression_evaluator(args_), sexp);
+    }
+
+    // std::vector<std::string> typed_attribute_list;  // typed-attribute-list
+    for (std::string arg : q.typed_attribute_list) {
+      args_.emplace(std::begin(args_), arg);
+    }
+    // std::vector<std::string> attribute_list;        // attribute-list
+    for (std::string arg : q.attribute_list) {
+      args_.emplace(std::begin(args_), arg);
+    }
+    // std::vector<std::string> attribute_value_list;  // attribute-name =
+    for (std::string arg : q.attribute_value_list) {
+      args_.emplace(std::begin(args_), arg);
+    }
+    // std::vector<std::string> literal_list;  // ( literal { , literal } )
+    for (std::string arg : q.literal_list) {
+      args_.emplace(std::begin(args_), arg);
+    }
+    // Condition condition;  // not used until Condition is implented, currently
+    args_.emplace(std::begin(args_), q.condition.operation);
+    // std::vector<SubCondition> subconditions;
+    BOOST_FOREACH (SubCondition const& subcon, q.condition.subconditions) {
+      boost::apply_visitor(subexpression_evaluator(args_), subcon);
+    }
+  }
+};
 
 #endif /* GRAMMAR_OBJECTS_H_ */
