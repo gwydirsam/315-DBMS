@@ -65,7 +65,12 @@ std::vector<Column<std::string>>::iterator Relation::find_column(
 }
 
 int Relation::find_column_index(std::string column_name) {
-  return std::distance(std::begin(columns_), find_column(column_name));
+  if (find_column(column_name) == std::end(columns_)) {
+    // Return failure
+    return -1;
+  } else {
+    return std::distance(std::begin(columns_), find_column(column_name));
+  }
 }
 
 int Relation::num_rows() const {
@@ -111,7 +116,7 @@ std::vector<std::string> Relation::get_column_types() {
 }
 
 int Relation::append_row(std::vector<std::string> row) {
-  if ( (int) row.size() != num_cols()) {
+  if ((int)row.size() != num_cols()) {
     // cannot append row if it doesn't have same number of entries as relation
     // has columns
     return -1;
