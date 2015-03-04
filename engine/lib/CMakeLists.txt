@@ -2,7 +2,6 @@ set(SRCS
   engine.cc
   relation.cc
   utility.cc
-  parser.cc
   grammar_objects.cc
 	)
 

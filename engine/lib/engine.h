@@ -10,7 +10,6 @@
 #include "sqltypes.h"
 #include "relation.h"
 #include "utility.h"
-#include "grammar.h"
 
 class Engine {
  public:
@@ -21,6 +20,8 @@ class Engine {
   ~Engine();
 
   // Finders
+  // Find table or view, returns a relation, wherever it finds it.
+  Relation& find_relation_or_view(std::string TableName);
   // Find Table
   Relation& find_relation(std::string TableName);
   // Returns an iterator
@@ -28,6 +29,15 @@ class Engine {
   std::vector<Relation>::iterator find_table(std::string TableName);
   // Returns the index of where the table is. Returns -1 if failed to find.
   int find_table_index(std::string TableName);
+
+  // Find Table
+  Relation& find_view(std::string TableName);
+  // Returns an iterator
+  // TODO: should probably be private
+  std::vector<Relation>::iterator find_view_table(std::string TableName);
+  // Returns the index of where the table is. Returns -1 if failed to find.
+  int find_view_index(std::string TableName);
+
   int find_tuple_index(std::string TableName, std::vector<std::string> tuple);
 
   // Getters
@@ -69,6 +79,9 @@ class Engine {
 
   // Write table to filename TableName.db
   void writeTable(Relation relation);
+
+  // Add view to open_views
+  void addView(Relation relation);
 
   // Delete table from open_tables_ and Write table to filename TableName.db
   int closeTable(std::string TableName);
@@ -135,6 +148,9 @@ class Engine {
  private:
   // Data Structures
   std::vector<Relation> open_tables_;
+  std::vector<Relation> open_views_;
+  // Grammar<
 };
+
 
 #endif  // ENGINE_H_

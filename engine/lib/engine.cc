@@ -25,6 +25,23 @@ Engine::~Engine() {
   endlog();
 }
 
+Relation& Engine::find_relation_or_view(std::string TableName) {
+  if (find_table_index(TableName) == -1) {
+    // no open table found.
+    std::string errmsg = "Engine: Table " + TableName + " Not Found";
+    errlog(errmsg);
+  } else {
+    return find_relation(TableName);
+  }
+  if (find_view_index(TableName) == -1) {
+    // no open table found.
+    std::string errmsg = "Engine: View " + TableName + " Not Found";
+    errlog(errmsg);
+  } else {
+    return find_view(TableName);
+  }
+}
+
 Relation& Engine::find_relation(std::string TableName) {
   return open_tables_.at(find_table_index(TableName));
 }
@@ -42,6 +59,26 @@ int Engine::find_table_index(std::string TableName) {
     return -1;
   } else {
     return std::distance(std::begin(open_tables_), find_table(TableName));
+  }
+}
+
+Relation& Engine::find_view(std::string TableName) {
+  return open_views_.at(find_view_index(TableName));
+}
+
+// Returns std::end if NOTHING found
+std::vector<Relation>::iterator Engine::find_view_table(std::string TableName) {
+  return std::find_if(std::begin(open_views_), std::end(open_views_),
+                      [TableName](Relation relation)
+                          -> bool { return relation.title() == TableName; });
+}
+
+int Engine::find_view_index(std::string TableName) {
+  if (find_view_table(TableName) == std::end(open_views_)) {
+    // Return failure
+    return -1;
+  } else {
+    return std::distance(std::begin(open_views_), find_view_table(TableName));
   }
 }
 
@@ -204,18 +241,51 @@ int Engine::execSQL(std::string input_string) {
   // boost::apply_visitor(expression_accessor(), program);
   //           // << std::endl;
 
+  // // get std::vector
+  // std::vector<std::string> args;
+
+  // boost::apply_visitor(program_accessor(args), program);
+
+  // for (std::string str : args) {
+  //   std::cout << str << " ";
+  // }
+  // std::cout << std::endl;
+  // std::cout << std::endl;
+
+  // // get std::vector
+  // std::vector<std::vector<std::string>> args;
+
+  // boost::apply_visitor(program_accessor(args), program);
+
+  // for (std::vector<std::string> argv : args) {
+  //     std::cout << "{";
+  //   for (std::string str : argv) {
+  //     std::cout << str << " ";
+  //   }
+  //     std::cout << "}";
+  // }
+  // std::cout << std::endl;
+  // std::cout << std::endl;
   // get std::vector
-  std::vector<std::string> args;
 
-  boost::apply_visitor(program_accessor(args), program);
+  execute_program(*this, program);
 
-  for (std::string str : args) {
-    std::cout << str << " ";
+  for (Relation table: open_tables_) {
+    std::cout << table << std::endl;
   }
-  std::cout << std::endl;
-  std::cout << std::endl;
-  std::cout << std::endl;
+  for (Relation table: open_views_) {
+    std::cout << table << std::endl;
+  }
 
+  // for (std::vector<std::string> argv : args) {
+  //     std::cout << "{";
+  //   for (std::string str : argv) {
+  //     std::cout << str << " ";
+  //   }
+  //     std::cout << "}";
+  // }
+  // std::cout << std::endl;
+  // std::cout << std::endl;
 
   return -1;
 }
@@ -233,6 +303,10 @@ void Engine::writeTable(Relation relation) {
   dbfile << relation;
 
   dbfile.close();
+}
+
+void Engine::addView(Relation relation) {
+  open_views_.push_back(relation);
 }
 
 int Engine::closeTable(std::string TableName) {

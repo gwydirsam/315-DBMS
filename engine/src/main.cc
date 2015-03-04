@@ -23,6 +23,7 @@ int main(int argc, char* argv[]) {
   dbengine.execSQL("UPDATE species SET name = \"Sam\" WHERE ID == 11;");
   dbengine.execSQL("DELETE FROM animals WHERE extinct == \"false\";");
   dbengine.execSQL(" posts  <-   select (aname == name && akind != kind) (a * animals)  ;");
+  dbengine.execSQL(" posts  <-    animals  ;");
   dbengine.execSQL("cats_or_dogs <- dogs + (select (kind == \"cat\") animals);");
   dbengine.execSQL("animals <- species * animals;");
   dbengine.execSQL("common_names <- project (name) (select (aname == name && akind != kind) (a * animals));");
