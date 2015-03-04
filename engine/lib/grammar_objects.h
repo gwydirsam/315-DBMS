@@ -30,6 +30,7 @@
 
 #include "relation.h"
 #include "engine.h"
+#include "utility.h"
 
 struct Condition;
 
@@ -545,7 +546,7 @@ struct subexpression_execute : boost::static_visitor<Relation> {
 
   Relation operator()(std::string const& q) const {
     // args_.emplace(std::begin(args_), q);
-    return Relation("empty");
+    return db_.find_relation_or_view(q);
   }
 
   Relation operator()(Condition const& c) const {
@@ -577,7 +578,6 @@ struct subexpression_execute : boost::static_visitor<Relation> {
     BOOST_FOREACH (SubCondition const& subcon, e.condition.subconditions) {
       boost::apply_visitor(subexpression_accessor(conds), subcon);
     }
-
     std::vector<std::string> args;
     for (std::string arg : e.argument) {
       args.emplace(std::begin(args), arg);
@@ -590,6 +590,20 @@ struct subexpression_execute : boost::static_visitor<Relation> {
         subexps.emplace_back(r);
       }
     }
+    std::string errmsg = "SubExpression Execute: " + e.query + " ";
+    for (std::string cond : conds) {
+      errmsg += cond + " ";
+    }
+    errmsg += "|";
+    for (std::string arg : args) {
+      errmsg += arg + " ";
+    }
+    errmsg += "|";
+    for (Relation r : subexps) {
+      errmsg += r.title() + " ";
+    }
+    errmsg += "|";
+    errlog(errmsg);
 
     return execute_expression(db_, e.query, conds, args, subexps);
   }
@@ -619,10 +633,18 @@ struct program_execute : boost::static_visitor<void> {
     // std::vector<SubExpression> subexpressions;  // atomic_expression
     std::vector<Relation> subexpreturns;
     BOOST_FOREACH (SubExpression const& sexp, q.expression.subexpressions) {
-      subexpreturns.emplace(
-          std::begin(subexpreturns),
-          boost::apply_visitor(subexpression_execute(db_), sexp));
+      Relation subexprel =
+          boost::apply_visitor(subexpression_execute(db_), sexp);
+      std::string errmsg = "Program Execute: Sub Expression Result: ";
+      errmsg += subexprel.title();
+      errlog(errmsg);
+      subexpreturns.emplace(std::begin(subexpreturns), subexprel);
     }
+    std::string errmsg = "Program Execute: Sub Expression Results: ";
+    for (Relation r : subexpreturns) {
+      errmsg += r.title() + " ";
+    }
+    errlog(errmsg);
 
     // execute top expression
     Relation newrelation = execute_expression(
@@ -671,7 +693,7 @@ struct program_execute : boost::static_visitor<void> {
     // BOOST_FOREACH (SubCondition const& subcon, q.condition.subconditions) {
     //   boost::apply_visitor(subexpression_exec(args_), subcon);
     // }
-    std::cout << "got command";
+    errlog("got command");
   }
 };
 
