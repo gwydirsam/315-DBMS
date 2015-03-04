@@ -3,8 +3,14 @@ set(MAIN_SRC main.cc)
 set(UNITTEST_SRCS
   test_main.cc)
 
-#find_package(Boost 1.57.0)
-#include_directories(${Boost_INCLUDE_DIRS})
+if(APPLE)
+  find_package(Boost 1.57.0 COMPONENTS filesystem system)
+  if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS})
+  endif()
+else()
+  include_directories(${Boost_INCLUDE_DIRS})
+endif()
 
 set(RELEASE_BINARY "main")
 set(RELEASE_BINARY_OUTNAME "${PROJECT_NAME}")
