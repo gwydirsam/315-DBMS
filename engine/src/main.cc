@@ -112,7 +112,7 @@ int main(int argc, char* argv[]) {
   dbengine.execSQL("DELETE FROM animals WHERE extinct == \"false\";");
   dbengine.execSQL(
       " posts  <-   select (Scrooge == \"bah\") (Test0 * Test2)  ;");
-  dbengine.execSQL(" posts  <-    animals  ;");
+  dbengine.execSQL(" posts  <-    Test2  ;");
   dbengine.execSQL(
       "cats_or_dogs <- dogs + (select (kind == \"cat\") animals);");
   dbengine.execSQL("animals <- species * animals;");
