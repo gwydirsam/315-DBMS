@@ -150,6 +150,8 @@ std::ostream &operator<<(std::ostream &os, const Relation &relation) {
     if (i != (relation.num_rows() - 1)) os << std::endl;
   }
 
+  os << std::endl;
+
   return os;
 }
 
