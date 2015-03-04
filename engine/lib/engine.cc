@@ -681,29 +681,7 @@ Relation Engine::setcrossproduct(Relation Table1, Relation Table2) {
   Relation crossproduct("CrossProductTable");
   // Create Columns for Difference Relation
   std::vector<Column<std::string>> crosscolumns;
-  
   for (Column<std::string> column : Table1.columns()) {
-    crosscolumns.push_back(column);
-  }
-  
-  bool same_name = false;
-  for(unsigned int i = 0; i < Table2.num_cols(); i++) {
-	same_name = false;
-	for(unsigned int t = 0; t < Table1.num_cols(); t++) {
-		if(Table1.get_column(t).title() == Table2.get_column(i).title()) {
-			same_name = true;
-			break;
-		}
-	}
-	if(!same_name){
-		crosscolumns.push_back(Table2.get_column(i));
-	}
-  }
-  
-  crossproduct.columns(crosscolumns);
-  
-  
-  /*for (Column<std::string> column : Table1.columns()) {
     crosscolumns.push_back(Column<std::string>(column.title()));
   }
   for (Column<std::string> column : Table2.columns()) {
@@ -722,7 +700,7 @@ Relation Engine::setcrossproduct(Relation Table1, Relation Table2) {
       row.insert(std::end(row), std::begin(t2row), std::end(t2row));
       crossproduct.append_row(row);
     }
-  }*/
+  }
 
   return crossproduct;
 }
