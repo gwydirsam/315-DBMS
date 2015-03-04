@@ -6,15 +6,19 @@
 
 #include <vector>
 #include <functional>
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/operations.hpp>
 
 #include "sqltypes.h"
 #include "relation.h"
 #include "utility.h"
 
+
 class Engine {
  public:
   // Constructors
-  Engine() { errlog("Engine: Creating New Engine"); }
+  Engine() { 	if(!boost::filesystem::create_directory("tables")) {errlog("Failed creating a directory.");}
+				errlog("Engine: Creating New Engine"); }
 
   // Destructors
   ~Engine();
