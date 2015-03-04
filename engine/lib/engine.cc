@@ -270,10 +270,10 @@ int Engine::execSQL(std::string input_string) {
 
   execute_program(*this, program);
 
-  for (Relation table: open_tables_) {
+  for (Relation table : open_tables_) {
     std::cout << table << std::endl;
   }
-  for (Relation table: open_views_) {
+  for (Relation table : open_views_) {
     std::cout << table << std::endl;
   }
 
@@ -305,9 +305,7 @@ void Engine::writeTable(Relation relation) {
   dbfile.close();
 }
 
-void Engine::addView(Relation relation) {
-  open_views_.push_back(relation);
-}
+void Engine::addView(Relation relation) { open_views_.push_back(relation); }
 
 int Engine::closeTable(std::string TableName) {
   int i = find_table_index(TableName);
@@ -345,10 +343,88 @@ int Engine::rename_column(std::string TableName, std::string ColumnName,
 }
 
 Relation Engine::rename_column(Relation relation, std::string ColumnName,
-                          std::string newname) {
-      relation.rename_column(ColumnName, newname);
+                               std::string newname) {
+  relation.rename_column(ColumnName, newname);
   // Success
   return relation;
+}
+
+Relation Engine::select(std::vector<std::string> Conditions,
+                        Relation relation) {
+  Relation table = relation;
+  Relation selectTable;
+
+#ifdef DEBUG
+  std::cerr << table;
+#endif
+
+  if ((int)Conditions.size() == 0) {
+    // table is whole table from relation
+    selectTable = table;
+  } else {
+    // Break down conditions
+    std::vector<std::string> column_names;
+    std::vector<std::string> literals;
+    std::vector<std::string> ops;
+    for (std::string str : Conditions) {
+      if ((str == "OR") || (str == "AND") || (str == "==") || (str == "!=") ||
+          (str == "<") || (str == ">") || (str == "<=") || (str == ">=")) {
+        ops.push_back(str);
+      } else if (str.front() == '"') {
+        literals.push_back(str);
+      } else {
+        column_names.push_back(str);
+      }
+    }
+    std::string errmsg = "Engine: Select Column Names : ";
+    for (std::string str : column_names) {
+      errmsg += str + " ";
+    }
+    errlog(errmsg);
+    errmsg = "Engine: Select Condition Ops : ";
+    for (std::string str : ops) {
+      errmsg += str + " ";
+    }
+    errlog(errmsg);
+    errmsg = "Engine: Select Condition Literals : ";
+    for (std::string str : literals) {
+      errmsg += str + " ";
+    }
+    errlog(errmsg);
+
+    std::vector<int> column_indexes;
+    // Select Conditions from relation
+    for (std::string column_name : column_names) {
+      // Get indexes of columns requested
+      int i = (table.find_column_index(column_name));
+      if (i >= 0) {
+        column_indexes.emplace_back(i);
+      }
+    }
+    errmsg = "Engine: Select Column Indexes : ";
+    for (int i : column_indexes) {
+      errmsg += i + " ";
+    }
+    errlog(errmsg);
+    // Build new relation from column_indexes
+    std::vector<Column<std::string>> selectcolumns;
+    for (int i = 0; i < (int)column_indexes.size(); ++i) {
+      selectcolumns.push_back(table.get_column(column_indexes[i]));
+    }
+    selectTable = Relation(table.title(), selectcolumns);
+  }
+  // // Now process where clause
+  // for (int i = (selectTable.num_rows() - 1); i >= 0; --i) {
+  //   std::vector<std::string> current_row = table.get_row(i);
+  //   // if where clause fails, drop row
+  //   // std::cout << current_row[selectTable.find_column_index(WhereColumn)]
+  //   <<
+  //   // std::endl;
+  //   if (current_row[table.find_column_index(WhereColumn)] != WhereEqual) {
+  //     selectTable.drop_row(i);
+  //   }
+  // }
+  return selectTable;
 }
 
 Relation Engine::select(std::vector<std::string> ColumnNames,
@@ -375,29 +451,29 @@ Relation Engine::select(std::vector<std::string> ColumnNames,
   return selectTable;
 }
 
-Relation Engine::select(std::vector<std::string> ColumnNames,
-                        Relation relation) {
-  Relation table = relation;
-  Relation selectTable;
-  if (ColumnNames.size() == 0) {
-    // table is whole table from relation
-    selectTable = table;
-  } else {
-    std::vector<int> column_indexes;
-    // Select ColumnNames from relation
-    for (const std::string& column_name : ColumnNames) {
-      // Get indexes of columns requested
-      column_indexes.push_back(table.find_column_index(column_name));
-    }
-    // Build new relation from column_indexes
-    std::vector<Column<std::string>> selectcolumns;
-    for (int i = 0; i < (int)column_indexes.size(); ++i) {
-      selectcolumns.push_back(table.get_column(column_indexes[i]));
-    }
-    selectTable = Relation(table.title(), selectcolumns);
-  }
-  return selectTable;
-}
+// Relation Engine::select(std::vector<std::string> ColumnNames,
+//                         Relation relation) {
+//   Relation table = relation;
+//   Relation selectTable;
+//   if (ColumnNames.size() == 0) {
+//     // table is whole table from relation
+//     selectTable = table;
+//   } else {
+//     std::vector<int> column_indexes;
+//     // Select ColumnNames from relation
+//     for (const std::string& column_name : ColumnNames) {
+//       // Get indexes of columns requested
+//       column_indexes.push_back(table.find_column_index(column_name));
+//     }
+//     // Build new relation from column_indexes
+//     std::vector<Column<std::string>> selectcolumns;
+//     for (int i = 0; i < (int)column_indexes.size(); ++i) {
+//       selectcolumns.push_back(table.get_column(column_indexes[i]));
+//     }
+//     selectTable = Relation(table.title(), selectcolumns);
+//   }
+//   return selectTable;
+// }
 
 Relation Engine::select(std::vector<std::string> ColumnNames,
                         std::string TableName, std::string WhereColumn,
@@ -435,9 +511,8 @@ Relation Engine::select(std::vector<std::string> ColumnNames,
   return selectTable;
 }
 
-Relation Engine::select(std::vector<std::string> ColumnNames,
-                        Relation relation, std::string WhereColumn,
-                        std::string WhereEqual) {
+Relation Engine::select(std::vector<std::string> ColumnNames, Relation relation,
+                        std::string WhereColumn, std::string WhereEqual) {
   Relation table = relation;
   Relation selectTable;
 

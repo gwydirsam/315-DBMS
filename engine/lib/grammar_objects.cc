@@ -48,9 +48,9 @@ Relation execute_expression(Engine& db, std::string query,
     // select (condition) from subexps[0](should be a relation/view/table)
 
     // won't work yet
-    std::vector<std::string> columnnames;
-    columnnames.emplace_back(condition[3]);
-    relation = db.select(columnnames, subexps[0]);
+    // std::vector<std::string> columnnames;
+    // columnnames.emplace_back(condition[3]);
+    relation = db.select(condition, subexps[0]);
   } else if (queryname == "PROJECT") {
     // project
     // projection := project ( attribute-list ) atomic-expr
