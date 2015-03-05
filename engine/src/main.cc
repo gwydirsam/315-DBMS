@@ -132,37 +132,34 @@ int main(int argc, char* argv[]) {
       "VARCHAR(9), length_hrs INTEGER) PRIMARY KEY (with_who, weekday); ");
 
   dbengine.execSQL(
-      "INSERT INTO plans VALUES FROM (\"Joe\", \"Park\", \"Friday\", "
-      "4); ");
+      "INSERT INTO plans VALUES FROM (\"Joe\", \"Park\", \"Friday\", 4); ");
   dbengine.execSQL(
-      "INSERT INTO plans VALUES FROM (\"Abby\", \"Movie_Theater\", \""
-      "Saturday\", 5); ");
+      "INSERT INTO plans VALUES FROM (\"Abby\", \"Movie_Theater\", \"Saturday\", 5); ");
   dbengine.execSQL(
-      "INSERT INTO plans VALUES FROM (\" Tomas \", \" BBQ_Place \", \" Monday "
-      "\", 3); ");
+      "INSERT INTO plans VALUES FROM (\"Tomas\", \"BBQ_Place\", \"Monday\", 3); ");
   dbengine.execSQL(
-      "INSERT INTO plans VALUES FROM (\" John \", \" A & M \", \" Tuesday \", "
+      "INSERT INTO plans VALUES FROM (\"John\", \"A & M\", \"Tuesday\", "
       "1); ");
   dbengine.execSQL(
-      "INSERT INTO plans VALUES FROM (\" Terry \", \" Farm \", \" Tuesday \", "
+      "INSERT INTO plans VALUES FROM (\"Terry\", \"Farm\", \"Tuesday\", "
       "2); ");
   dbengine.execSQL(
-      "INSERT INTO plans VALUES FROM (\" Kary \", \" Lab \", \" Thursday \", "
+      "INSERT INTO plans VALUES FROM (\"Kary\", \"Lab\", \"Thursday\", "
       "2); ");
   dbengine.execSQL("SHOW plans; ");
-  dbengine.execSQL("Tues <- select (weekday == \" Tuesday \") plans; ");
+  dbengine.execSQL("Tues <- select (weekday == \"Tuesday\") plans; ");
   dbengine.execSQL("long_plans <- select (length_hrs > 2) plans; ");
   dbengine.execSQL(
-      "long_plans_not_on_tues <- long_plans - (select (weekday == \" Tuesday "
+      "long_plans_not_on_tues <- long_plans - (select (weekday == \"Tuesday"
       "\") Tues); ");
   dbengine.execSQL("SHOW long_plans_not_on_tues; ");
   dbengine.execSQL(
       "CREATE TABLE days (weekday VARCHAR(10)) PRIMARY KEY (weekday); ");
   dbengine.execSQL(
-      "INSERT INTO days VALUES FROM RELATION project (weekday) plans; ");
+      "INSERT INTO days VALUES FROM RELATION (project (weekday) plans); ");
   dbengine.execSQL(
-      "DELETE FROM RELATION days WHERE (weekday == \" Tuesday \"); ");
-  dbengine.execSQL("INSERT INTO days VALUES FROM (\" Wednesday \"); ");
+      "DELETE FROM RELATION days WHERE (weekday == \"Tuesday\"); ");
+  dbengine.execSQL("INSERT INTO days VALUES FROM (\"Wednesday\"); ");
   dbengine.execSQL("SHOW days; ");
   dbengine.execSQL("WRITE days; ");
   dbengine.execSQL("WRITE plans; ");
