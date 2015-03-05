@@ -5,12 +5,8 @@ set(SRCS
   grammar_objects.cc
 	)
 
-if(APPLE)
-  find_package(Boost 1.57.0 COMPONENTS filesystem system)
-  if(Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIRS})
-  endif()
-else()
+find_package(Boost 1.57.0 COMPONENTS filesystem system)
+if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
