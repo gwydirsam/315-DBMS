@@ -72,7 +72,7 @@ class Engine {
   // Insert Tuple into Table
   int insertTuple(Relation& relation, std::vector<std::string> tuple);
   int insertTuple(std::string TableName, std::vector<std::string> tuple);
-  int insertTuple(std::string TableName, Relation relation);
+  int insertTuple(std::string TableName, Relation& relation);
 
   // Drop Table
   int dropTable(std::string TableName);

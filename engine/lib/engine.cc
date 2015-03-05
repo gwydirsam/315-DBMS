@@ -247,10 +247,10 @@ int Engine::insertTuple(Relation& relation, std::vector<std::string> tuple) {
 }
 
 int Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) {
-  return insertTuple(find_relation(TableName), tuple);
+  return insertTuple(find_relation_or_view(TableName), tuple);
 }
 
-int Engine::insertTuple(std::string TableName, Relation relation) {
+int Engine::insertTuple(std::string TableName, Relation& relation) {
   for(int i=0; i < relation.num_rows(); ++i) {
     insertTuple(TableName, relation.get_row(i));
   }
@@ -612,7 +612,7 @@ Relation Engine::project(std::vector<std::string> ColumnNames,
   Relation table = relation;
   if (ColumnNames.size() == 0) {
     // Return Empty Relation
-    return Relation(table.title());
+    return Relation("Project-" + table.title());
   } else {
     std::vector<int> column_indexes;
     // Select ColumnNames from TableName
@@ -625,30 +625,13 @@ Relation Engine::project(std::vector<std::string> ColumnNames,
     for (int i = 0; i < (int)column_indexes.size(); ++i) {
       selectcolumns.push_back(table.get_column(column_indexes[i]));
     }
-    return Relation(table.title(), selectcolumns);
+    return Relation(("Project-" + table.title()), selectcolumns);
   }
 }
 
 Relation Engine::project(std::vector<std::string> ColumnNames,
                          std::string TableName) {
-  Relation table = find_relation(TableName);
-  if (ColumnNames.size() == 0) {
-    // Return Empty Relation
-    return Relation(TableName);
-  } else {
-    std::vector<int> column_indexes;
-    // Select ColumnNames from TableName
-    for (const std::string& column_name : ColumnNames) {
-      // Get indexes of columns requested
-      column_indexes.push_back(table.find_column_index(column_name));
-    }
-    // Build new relation from column_indexes
-    std::vector<Column<std::string>> selectcolumns;
-    for (int i = 0; i < (int)column_indexes.size(); ++i) {
-      selectcolumns.push_back(table.get_column(column_indexes[i]));
-    }
-    return Relation(TableName, selectcolumns);
-  }
+  return project(ColumnNames, find_relation_or_view(TableName));
 }
 
 bool Engine::unioncompatible(Relation table1, Relation table2) {
