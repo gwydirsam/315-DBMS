@@ -106,24 +106,6 @@ else
     echo "Done Installing Gtest 1.7.0!"
 fi
 
-if [ "$HOSTNAME" = "sun" ]
-then
-    echo "Checking if you have compiled and installed Boost"
-    if [ ! -d "$HOME/usr/include/boost" ] #this may need to be changed
-    then
-        echo "Compiling and Installing Boost to ~/usr/"
-        cd $BOOSTDIR
-        ./bootstrap.sh --prefix="$HOME/usr"
-        CC="/opt/csw/bin/gcc-4.9" CXX="/opt/csw/bin/g++-4.9" ./b2 install
-        echo "Adding ~/usr/lib to LD_LIBRARY_PATH"
-        echo 'export LD_LIBRARY_PATH=$HOME/usr/lib:$LD_LIBRARY_PATH' >> "$HOME/.bash_profile"
-        echo "Done Compiling and Installing Boost 1.57.0!"
-    else
-        echo "You have boost installed and compiled."
-    fi
-fi
-
-
 # if on unix also check if you have boost and ccache
 if [ "$HOSTNAME" = "sun" ]
 then
@@ -142,6 +124,19 @@ then
                 ln -s "$BOOSTDIR" boost
             fi
         done
+        echo "Checking if you have compiled and installed Boost"
+        if [ ! -d "$HOME/usr/include/boost" ] #this may need to be changed
+        then
+            echo "Compiling and Installing Boost to ~/usr/"
+            cd $BOOSTDIR
+            ./bootstrap.sh --prefix="$HOME/usr"
+            CC="/opt/csw/bin/gcc-4.9" CXX="/opt/csw/bin/g++-4.9" ./b2 install
+            echo "Adding ~/usr/lib to LD_LIBRARY_PATH"
+            echo 'export LD_LIBRARY_PATH=$HOME/usr/lib:$LD_LIBRARY_PATH' >> "$HOME/.bash_profile"
+            echo "Done Compiling and Installing Boost 1.57.0!"
+        else
+            echo "You have boost installed and compiled."
+        fi
         echo "Done!"
     else
         # if you don't have boost
@@ -350,7 +345,7 @@ then
         CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto" \
           CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
           cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
-          # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
+        # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
     fi
 
     RESULT=$?
@@ -420,7 +415,7 @@ then
         CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto" \
           CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
           cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
-          # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+        # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
 
         RESULT=$?
         if [ $RESULT -ne 0 ]
