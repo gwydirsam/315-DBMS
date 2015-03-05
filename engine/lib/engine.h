@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <functional>
+#include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
 
@@ -13,12 +14,15 @@
 #include "relation.h"
 #include "utility.h"
 
-
 class Engine {
  public:
   // Constructors
-  Engine() { 	if(!boost::filesystem::create_directory("tables")) {errlog("Failed creating a directory.");}
-				errlog("Engine: Creating New Engine"); }
+  Engine() {
+    // if (!boost::filesystem::create_directory(boost::filesystem::path("./tables"))) {
+    //   errlog("Failed creating a directory.");
+    // }
+    errlog("Engine: Creating New Engine");
+  }
 
   // Destructors
   ~Engine();
@@ -103,7 +107,7 @@ class Engine {
   int rename_column(std::string TableName, std::string Column,
                     std::string newname);
   Relation rename_column(Relation relation, std::string Column,
-                    std::string newname);
+                         std::string newname);
 
   // Select
   // Select in TableName where Function takes a tuple and returns a bool,
@@ -155,6 +159,5 @@ class Engine {
   std::vector<Relation> open_views_;
   // Grammar<
 };
-
 
 #endif  // ENGINE_H_
