@@ -115,6 +115,8 @@ then
         cd $BOOSTDIR
         ./bootstrap.sh --prefix="$HOME/usr"
         CC="/opt/csw/bin/gcc-4.9" CXX="/opt/csw/bin/g++-4.9" ./b2 install
+        echo "Adding ~/usr/lib to LD_LIBRARY_PATH"
+        echo 'export LD_LIBRARY_PATH=$HOME/usr/lib:$LD_LIBRARY_PATH' >> "$HOME/.bash_profile"
         echo "Done Compiling and Installing Boost 1.57.0!"
     else
         echo "You have boost installed and compiled."
@@ -278,7 +280,7 @@ then
         #add ~/usr/share/man to manpath
         echo 'export MANPATH=$HOME/usr/share/man:$MANPATH' >> "$HOME/.bash_profile"
         #add stuff for gcc
-        echo 'export LD_LIBRARY_PATH=/usr/local/gcc4.9.2/lib64:$LD_LIBRARY_PATH' >> "$HOME/.bash_profile"
+        #echo 'export LD_LIBRARY_PATH=/usr/local/gcc4.9.2/lib64:$LD_LIBRARY_PATH' >> "$HOME/.bash_profile"
         echo 'export CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto"' >> "$HOME/.bash_profile" 
         echo 'export CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto"' >> "$HOME/.bash_profile" 
 
