@@ -540,6 +540,13 @@ Relation execute_expression(Engine& db, std::string query,
                             std::vector<std::string> args,
                             std::vector<Relation> subexps);
 
+void execute_command(Engine& db, std::string command, std::string relation_name,
+                     std::vector<std::string> condition, Relation view,
+                     std::vector<std::string> typed_attribute_list,
+                     std::vector<std::string> attribute_list,
+                     std::vector<std::string> attribute_value_list,
+                     std::vector<std::string> literal_list);
+
 struct subexpression_execute : boost::static_visitor<Relation> {
   subexpression_execute(Engine& db) : db_(db) {}
   Engine& db_;
@@ -693,7 +700,62 @@ struct program_execute : boost::static_visitor<void> {
     // BOOST_FOREACH (SubCondition const& subcon, q.condition.subconditions) {
     //   boost::apply_visitor(subexpression_exec(args_), subcon);
     // }
-    errlog("got command");
+
+    // std::string command;  // open_cmd, close_cmd, write_cmd...
+    // std::string relation_name;
+
+    // Condition condition;    //  condition
+    std::vector<std::string> conds;
+    conds.emplace(std::begin(conds), q.condition.operation);
+    // std::vector<SubCondition> subconditions;
+    BOOST_FOREACH (SubCondition const& subcon, q.condition.subconditions) {
+      boost::apply_visitor(subexpression_accessor(conds), subcon);
+    }
+    std::vector<std::string> subconds;
+    if (q.expression.condition.operation.size() > 0) {
+      conds.emplace(std::begin(subconds), q.expression.condition.operation);
+    }
+    // std::vector<SubCondition> subconditions;
+    BOOST_FOREACH (SubCondition const& subcon,
+                   q.expression.condition.subconditions) {
+      boost::apply_visitor(subexpression_accessor(subconds), subcon);
+    }
+
+    std::vector<Relation> subexpreturns;
+    BOOST_FOREACH (SubExpression const& sexp, q.expression.subexpressions) {
+      Relation subexprel =
+          boost::apply_visitor(subexpression_execute(db_), sexp);
+      std::string errmsg = "Program Execute: Sub Expression Result: ";
+      errmsg += subexprel.title();
+      errlog(errmsg);
+      if (subexprel.title().size() > 0)
+        subexpreturns.emplace(std::begin(subexpreturns), subexprel);
+    }
+    std::string errmsg = "Program Execute: Sub Expression Results: ";
+    for (Relation r : subexpreturns) {
+      errmsg += r.title() + " ";
+    }
+    errlog(errmsg);
+
+    // Expression expression;  // atomic_expression or expression
+    Relation newview;
+    if (q.expression.query.size() > 0) {
+      newview =
+          execute_expression(db_, q.expression.query, subconds,
+                             q.expression.argument, subexpreturns);
+    }
+
+    // std::vector<std::string> typed_attribute_list;  // typed-attribute-list
+    // q.typed_attribute_list
+    // std::vector<std::string> attribute_list;        // attribute-list
+    // q.attribute_list
+    // std::vector<std::string> attribute_value_list;  // attribute-name =
+    // q.attribute_value_list
+    // std::vector<std::string> literal_list;  // ( literal { , literal } )
+    // q.literal_list
+    execute_command(db_, q.command, q.relation_name, conds, newview,
+                    q.typed_attribute_list, q.attribute_list,
+                    q.attribute_value_list, q.literal_list);
   }
 };
 
