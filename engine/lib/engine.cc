@@ -460,7 +460,7 @@ Relation Engine::select(std::vector<std::string> Conditions,
     }
     errmsg = "Engine: Select Column Indexes : ";
     for (int i : column_indexes) {
-      errmsg += i + " ";
+      errmsg += std::to_string(i) + " ";
     }
     errlog(errmsg);
     // Build new relation from column_indexes
