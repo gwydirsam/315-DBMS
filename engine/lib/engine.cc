@@ -32,6 +32,10 @@ Engine::Engine() {
 
 Engine::~Engine() {
   errlog("Engine: Shutting Down Database Engine");
+  exitEngine();
+}
+
+void Engine::exitEngine() {
   errlog("Engine: Writing all open tables to disk");
   for (const Relation& relation : open_tables_) {
     std::string errstring = "Engine: Writing " + relation.title() + ".db";
@@ -193,6 +197,37 @@ Relation Engine::createNewTable(std::string TableName,
   return table;
 }
 
+Relation Engine::createNewTable(std::string TableName,
+                                std::vector<std::string> typed_attribute_list,
+                                std::vector<std::string> primary_keys) {
+  std::vector<Column<std::string>> columns;
+
+  // create columns
+  // we skip the types
+  for (int i = 0; i < typed_attribute_list.size(); i += 2) {
+    columns.push_back(Column<std::string>(typed_attribute_list[i]));
+  }
+  // set primary keys
+  for (Column<std::string> col : columns) {
+    for (std::string key_title : primary_keys) {
+      if (col.title() == key_title) {
+        col.primary_key(true);
+      }
+    }
+  }
+
+  // call normal createNewTable
+  return createNewTable(TableName, columns);
+}
+
+Relation Engine::updateTable(std::string TableName,
+                             std::vector<std::string> attribute_value_list,
+                             std::vector<std::string> condition) {
+  Relation relation = find_relation_or_view(TableName);
+  // do stuff
+  return relation;
+}
+
 int Engine::insertTuple(Relation& relation, std::vector<std::string> tuple) {
   if (relation.num_cols() < (int)tuple.size()) {
     // Error -3 tuple row is larger than number of columns
@@ -214,6 +249,13 @@ int Engine::insertTuple(Relation& relation, std::vector<std::string> tuple) {
 int Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) {
   return insertTuple(find_relation(TableName), tuple);
 }
+
+int Engine::insertTuple(std::string TableName, Relation relation) {
+  for(int i=0; i < relation.num_rows(); ++i) {
+    insertTuple(TableName, relation.get_row(i));
+  }
+}
+
 
 int Engine::dropTable(std::string TableName) {
   // Right now this is the only way i know how to handle if the Table isn't
@@ -744,4 +786,9 @@ Relation Engine::setcrossproduct(Relation TableName1, std::string TableName2) {
 
 Relation Engine::setcrossproduct(std::string TableName1, Relation TableName2) {
   return setcrossproduct(find_relation(TableName1), TableName2);
+}
+
+void Engine::showTable(Relation table) { std::cout << table << std::endl; }
+void Engine::showTable(std::string TableName) {
+  showTable(find_relation_or_view(TableName));
 }

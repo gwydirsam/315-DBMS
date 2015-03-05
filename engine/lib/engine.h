@@ -20,6 +20,8 @@ class Engine {
   // Destructors
   ~Engine();
 
+  void exitEngine();
+
   // Finders
   // Find table or view, returns a relation, wherever it finds it.
   Relation& find_relation_or_view(std::string TableName);
@@ -60,12 +62,17 @@ class Engine {
   // Create Table
   Relation createNewTable(std::string TableName,
                           std::vector<Column<std::string>> columns);
+  Relation createNewTable(std::string TableName,
+                          std::vector<std::string> typed_attribute_list,
+                          std::vector<std::string> primary_keys);
 
   // Update Table
+  Relation updateTable(std::string TableName, std::vector<std::string> attribute_value_list, std::vector<std::string> condition);
 
   // Insert Tuple into Table
   int insertTuple(Relation& relation, std::vector<std::string> tuple);
   int insertTuple(std::string TableName, std::vector<std::string> tuple);
+  int insertTuple(std::string TableName, Relation relation);
 
   // Drop Table
   int dropTable(std::string TableName);
@@ -146,11 +153,14 @@ class Engine {
   Relation setcrossproduct(Relation TableName1, std::string TableName2);
   Relation setcrossproduct(std::string TableName1, Relation TableName2);
 
+  // Show Table
+  void showTable(Relation table);
+  void showTable(std::string TableName);
+
  private:
   // Data Structures
   std::vector<Relation> open_tables_;
   std::vector<Relation> open_views_;
-  // Grammar<
 };
 
 #endif  // ENGINE_H_
