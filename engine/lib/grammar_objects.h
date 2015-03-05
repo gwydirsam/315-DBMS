@@ -738,8 +738,10 @@ struct program_execute : boost::static_visitor<void> {
     errlog(errmsg);
 
     // Expression expression;  // atomic_expression or expression
-    Relation newview;
+    Relation newview("");
     if (q.expression.query.size() > 0) {
+      std::string errmsg = "Program Execute: Sub Expression Name: " + q.expression.query;
+      errlog(errmsg);
       newview =
           execute_expression(db_, q.expression.query, subconds,
                              q.expression.argument, subexpreturns);
