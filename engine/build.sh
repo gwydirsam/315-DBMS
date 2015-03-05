@@ -109,7 +109,7 @@ fi
 if [ "$HOSTNAME" = "sun" ]
 then
     echo "Checking if you have compiled and installed Boost"
-    if [ ! -d "$HOME/usr/include/boost"] #this may need to be changed
+    if [ ! -d "$HOME/usr/include/boost" ] #this may need to be changed
     then
         echo "Compiling and Installing Boost to ~/usr/"
         cd $BOOSTDIR
