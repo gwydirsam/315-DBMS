@@ -145,7 +145,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
     attribute_name = identifier.alias();
 
     // literal := intentionally left unspecified (strings, numbers, etc.)
-    literal = lexeme[as_string[-char_('"') >> +alnum >> -char_('"')]];
+    literal = lexeme[as_string[-lit('"') >> +alnum >> -lit('"')]];
 
     // type := VARCHAR ( integer ) | INTEGER
     type = hold[(no_case[string("varchar")] >> string("(") >> +digit >>
