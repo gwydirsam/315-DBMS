@@ -126,8 +126,12 @@ void execute_command(Engine& db, std::string command,
     db.updateTable(relation_name, attribute_value_list, condition);
   } else if (command == "INSERT INTO") {
     if(literal_list.size() > 0) {
+      std::string errstr = "Execute Command: Literal list size: " + std::to_string(literal_list.size());
+      errlog(errstr);
       db.insertTuple(relation_name, literal_list);
     } else {
+      std::string errstr = "Execute Command: View: " + view.title();
+      errlog(errstr);
       db.insertTuple(relation_name, view);
     }
   } else if (command == "DELETE FROM") {
