@@ -238,9 +238,7 @@ int Engine::insertTuple(Relation& relation, std::vector<std::string> tuple) {
     // columns with no value.
     return -4;
   } else {
-    for (unsigned int c = 0; c < tuple.size(); c++) {
       relation.append_row(tuple);
-    }
     // Success
     return 0;
   }
