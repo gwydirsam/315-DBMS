@@ -106,13 +106,29 @@ else
     echo "Done Installing Gtest 1.7.0!"
 fi
 
+if [ "$HOSTNAME" = "sun" ]
+then
+    echo "Checking if you have compiled and installed Boost"
+    if [ ! -d "$HOME/usr/include/boost"] #this may need to be changed
+    then
+        echo "Compiling and Installing Boost to ~/usr/"
+        cd $BOOSTDIR
+        ./bootstrap.sh --prefix="$HOME/usr"
+        CC="/opt/csw/bin/gcc-4.9" CXX="/opt/csw/bin/g++-4.9" ./b2 install
+        echo "Done Compiling and Installing Boost 1.57.0!"
+    else
+        echo "You have boost installed and compiled."
+    fi
+fi
+
+
 # if on unix also check if you have boost and ccache
 if [ "$HOSTNAME" = "sun" ]
 then
     echo "Checking if you have Boost 1.57.0"
     if [ -d "$BOOSTDIR" ]
     then
-        echo "You have boost 1.57.0. Checking symlinks..." 
+        echo "You have boost 1.57.0. Checking symlinks..."
         for i in "${BOOSTSYMLINKS[@]}"
         do
             if [ ! -h "$i" ]
@@ -169,7 +185,11 @@ then
                 ln -s "$BOOSTDIR" boost
             fi
         done
-        echo "Done Installing Boost 1.57.0!"
+        echo "Compiling and Installing Boost to ~/usr/"
+        cd $BOOSTDIR
+        ./bootstrap.sh --prefix="$HOME/usr"
+        CC="/opt/csw/bin/gcc-4.9" CXX="/opt/csw/bin/g++-4.9" ./b2 install
+        echo "Done Compiling and Installing Boost 1.57.0!"
     fi
     # check for ccache
     echo "Checking for CCache..."
@@ -217,7 +237,7 @@ then
         # build
         echo "Building CCache..."
         cd "$HOME/.tmp/build/`basename $CCACHEURL .tar.bz2`"
-        CC="/opt/csw/bin/gcc" CXX="/opt/csw/bin/g++" \
+        CC="/opt/csw/bin/gcc-4.9" CXX="/opt/csw/bin/g++-4.9" \
           ./configure --prefix="$HOME/usr" #>> "$LOGFILE" 2>&1
         RESULT=$?
         if [ $RESULT -ne 0 ]
@@ -297,13 +317,13 @@ then
         echo "Creating build/release directory..."
         mkdir -p "build/release";
         cd "$ENGINEDIR/build/release"
-        CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto" \
-          CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
-          cmake -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
-          # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
-        # CC="/usr/local/opt/ccache/libexec/clang-3.5.1" \
-        #   CXX="/usr/local/opt/ccache/libexec/clang++-3.5.1" \
-        #   cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
+        # CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto" \
+        #   CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
+        #   cmake -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
+        #   # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
+        CC="/usr/local/opt/ccache/libexec/clang-3.5.1" \
+          CXX="/usr/local/opt/ccache/libexec/clang++-3.5.1" \
+          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
 
         RESULT=$?
         if [ $RESULT -ne 0 ]
@@ -360,13 +380,13 @@ then
         echo "Creating build/debug directory..."
         mkdir -p "build/debug";
         cd "$ENGINEDIR/build/debug"
-        CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto" \
-          CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
-          cmake -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
-          # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
-        # CC="/usr/local/opt/ccache/libexec/clang-3.5.1" \
-        #   CXX="/usr/local/opt/ccache/libexec/clang++-3.5.1" \
-        #   cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+        # CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto" \
+        #   CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
+        #   cmake -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+        #   # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+        CC="/usr/local/opt/ccache/libexec/clang-3.5.1" \
+          CXX="/usr/local/opt/ccache/libexec/clang++-3.5.1" \
+          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
 
         RESULT=$?
         if [ $RESULT -ne 0 ]
