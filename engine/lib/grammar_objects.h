@@ -739,12 +739,14 @@ struct program_execute : boost::static_visitor<void> {
 
     // Expression expression;  // atomic_expression or expression
     Relation newview("");
+    if (subexpreturns.size() == 1) {
+      newview = subexpreturns[0];
+    }
     if (q.expression.query.size() > 0) {
       std::string errmsg = "Program Execute: Sub Expression Name: " + q.expression.query;
       errlog(errmsg);
-      newview =
-          execute_expression(db_, q.expression.query, subconds,
-                             q.expression.argument, subexpreturns);
+      Relation newview = execute_expression(db_, q.expression.query, subconds,
+                                   q.expression.argument, subexpreturns);
     }
 
     // std::vector<std::string> typed_attribute_list;  // typed-attribute-list
