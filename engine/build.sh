@@ -260,7 +260,7 @@ then
         echo "Setting up CCache settings..."
         cd "$HOME/usr/bin/ccache/"
         ccache -F 0 #>> "$LOGFILE" 2>&1
-        ccache -M 0 #>> "$LOGFILE" 2>&1
+        ccache -M10 #>> "$LOGFILE" 2>&1
         # setup symlinks
         ln -s ccache gcc
         ln -s ccache g++
