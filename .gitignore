@@ -44,3 +44,9 @@ build/*
 engine/build/*
 app/build/*
 
+/engine/.dir-locals.el
+/engine/debuglog.log
+/engine/lib/.clang_complete
+/engine/src/.clang_complete
+/engine/src/__SEMANTIC_CLANG_TEMPFILE.cc
+/engine/testfile.txt
