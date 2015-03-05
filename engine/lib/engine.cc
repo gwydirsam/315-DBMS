@@ -208,9 +208,11 @@ Relation Engine::createNewTable(std::string TableName,
     columns.push_back(Column<std::string>(typed_attribute_list[i]));
   }
   // set primary keys
-  for (Column<std::string> col : columns) {
+  for (Column<std::string>& col : columns) {
     for (std::string key_title : primary_keys) {
       if (col.title() == key_title) {
+        std::string errstr = "Found Primary Key: " + key_title;
+        errlog(errstr);
         col.primary_key(true);
       }
     }
