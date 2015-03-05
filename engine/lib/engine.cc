@@ -291,6 +291,8 @@ int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
 }
 
 int Engine::execSQL(std::string input_string) {
+  std::cout << input_string << std::endl;
+  std::cout << std::endl;
   Program program = parse_string(input_string);
   std::cout << program << std::endl;
   std::cout << std::endl;
