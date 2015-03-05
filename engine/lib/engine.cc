@@ -6,12 +6,29 @@
 #include <algorithm>
 #include <iterator>
 #include <functional>
+#include <string>
+
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/operations.hpp>
 
 #include "column.h"
 #include "relation.h"
 #include "utility.h"
 #include "grammar.h"
 #include "grammar_objects.h"
+
+Engine::Engine() {
+  boost::filesystem::path tabledir(boost::filesystem::absolute("tables"));
+  if (boost::filesystem::exists(tabledir)) {
+    errlog("Engine: Tables Directory Exists");
+  } else {
+    errlog("Engine: Creating Tables Directory");
+    // boost::filesystem::absolute(tabledir);
+    boost::filesystem::create_directory(tabledir);
+  }
+  errlog("Engine: Creating New Engine");
+}
 
 Engine::~Engine() {
   errlog("Engine: Shutting Down Database Engine");
