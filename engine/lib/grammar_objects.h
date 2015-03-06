@@ -711,6 +711,11 @@ struct program_execute : boost::static_visitor<void> {
     BOOST_FOREACH (SubCondition const& subcon, q.condition.subconditions) {
       boost::apply_visitor(subexpression_accessor(conds), subcon);
     }
+    std::string errmsg = "Program Execute: Conditions Results: ";
+    for (std::string c : conds) {
+      errmsg += c + " ";
+    }
+    errlog(errmsg);
 
 
     // std::vector<SubCondition> subconditions;
@@ -733,7 +738,7 @@ struct program_execute : boost::static_visitor<void> {
       if (subexprel.title().size() > 0)
         subexpreturns.emplace(std::begin(subexpreturns), subexprel);
     }
-    std::string errmsg = "Program Execute: Sub Expression Results: ";
+    errmsg = "Program Execute: Sub Expression Results: ";
     for (Relation r : subexpreturns) {
       errmsg += r.title() + " ";
     }

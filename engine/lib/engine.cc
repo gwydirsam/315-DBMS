@@ -240,7 +240,7 @@ int Engine::insertTuple(Relation& relation, std::vector<std::string> tuple) {
     // columns with no value.
     return -4;
   } else {
-      relation.append_row(tuple);
+    relation.append_row(tuple);
     // Success
     return 0;
   }
@@ -251,11 +251,13 @@ int Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) {
 }
 
 int Engine::insertTuple(std::string TableName, Relation relation) {
-  for(int i=0; i < relation.num_rows(); ++i) {
-    insertTuple(find_relation_or_view(TableName), relation.get_row(i));
+  for (int i = 0; i < relation.num_rows(); ++i) {
+    if ((insertTuple(find_relation_or_view(TableName), relation.get_row(i))) == -1) {
+      return -1;
+    }
   }
+  return 0;
 }
-
 
 int Engine::dropTable(std::string TableName) {
   // Right now this is the only way i know how to handle if the Table isn't
@@ -427,14 +429,15 @@ Relation Engine::select(std::vector<std::string> Conditions,
     std::vector<std::string> column_names;
     std::vector<std::string> literals;
     std::vector<std::string> ops;
-    for (std::string str : Conditions) {
-      if ((str == "OR") || (str == "AND") || (str == "==") || (str == "!=") ||
-          (str == "<") || (str == ">") || (str == "<=") || (str == ">=")) {
-        ops.push_back(str);
-      } else if (str.front() == '"') {
-        literals.push_back(str);
+    for (int i = 0; i < Conditions.size(); ++i) {
+      if ((Conditions[i] == "OR") || (Conditions[i] == "AND") ||
+          (Conditions[i] == "==") || (Conditions[i] == "!=") ||
+          (Conditions[i] == "<") || (Conditions[i] == ">") ||
+          (Conditions[i] == "<=") || (Conditions[i] == ">=")) {
+        ops.push_back(Conditions[i]);
       } else {
-        column_names.push_back(str);
+        column_names.push_back(Conditions[i]);
+        column_names.push_back(Conditions[++i]);
       }
     }
     std::string errmsg = "Engine: Select Column Names : ";
@@ -473,18 +476,18 @@ Relation Engine::select(std::vector<std::string> Conditions,
       selectcolumns.push_back(table.get_column(column_indexes[i]));
     }
     selectTable = Relation(table.title(), selectcolumns);
+    // // Now process conditions
+    // for (int i = (selectTable.num_rows() - 1); i >= 0; --i) {
+    //   std::vector<std::string> current_row = table.get_row(i);
+    //   // if where clause fails, drop row
+    //   // std::cout << current_row[selectTable.find_column_index(WhereColumn)]
+    //   <<
+    //       // std::endl;
+    //       if (current_row[table.find_column_index(WhereColumn)] != WhereEqual) {
+    //     selectTable.drop_row(i);
+    //   }
+    // }
   }
-  // // Now process where clause
-  // for (int i = (selectTable.num_rows() - 1); i >= 0; --i) {
-  //   std::vector<std::string> current_row = table.get_row(i);
-  //   // if where clause fails, drop row
-  //   // std::cout << current_row[selectTable.find_column_index(WhereColumn)]
-  //   <<
-  //   // std::endl;
-  //   if (current_row[table.find_column_index(WhereColumn)] != WhereEqual) {
-  //     selectTable.drop_row(i);
-  //   }
-  // }
   return selectTable;
 }
 
