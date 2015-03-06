@@ -63,14 +63,17 @@ Relation execute_expression(Engine& db, std::string query,
                                   args[i]);
     }
   } else if (queryname == "UNION") {
+    // note: order of expressions is reversed when you get here
     // union := atomic-expr + atomic-expr
-    relation = db.setunion(subexps[0], subexps[1]);
+    relation = db.setunion(subexps[1], subexps[0]);
   } else if (queryname == "DIFFERENCE") {
+    // note: order of expressions is reversed when you get here
     // difference := atomic-expr - atomic-expr
-    relation = db.setdifference(subexps[0], subexps[1]);
+    relation = db.setdifference(subexps[1], subexps[0]);
   } else if (queryname == "PRODUCT") {
+    // note: order of expressions is reversed when you get here
     // product := atomic-expr * atomic-expr
-    relation = db.setcrossproduct(subexps[0], subexps[1]);
+    relation = db.setcrossproduct(subexps[1], subexps[0]);
   } else {
     relation = db.find_relation_or_view(subexps[0].title());
   }

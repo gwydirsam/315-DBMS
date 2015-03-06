@@ -3,6 +3,9 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <string>
+
+#include "utility.h"
 
 std::vector<Column<std::string>> Relation::primary_keys() {
   std::vector<Column<std::string>> primary_keys;
@@ -79,6 +82,10 @@ int Relation::num_rows() const {
   if (columns_.size() == 0) {
     return 0;
   } else {
+    // way too verbose
+    // std::string errstr = "Relation: num_rows: found " +
+    //                      std::to_string(columns_.at(0).size()) + " rows";
+    // errlog(errstr);
     return columns_.at(0).size();
   }
 }

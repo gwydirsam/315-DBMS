@@ -252,7 +252,8 @@ int Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) {
 
 int Engine::insertTuple(std::string TableName, Relation relation) {
   for (int i = 0; i < relation.num_rows(); ++i) {
-    if ((insertTuple(find_relation_or_view(TableName), relation.get_row(i))) == -1) {
+    if ((insertTuple(find_relation_or_view(TableName), relation.get_row(i))) ==
+        -1) {
       return -1;
     }
   }
@@ -299,58 +300,26 @@ int Engine::execSQL(std::string input_string) {
   std::cout << program << std::endl;
   std::cout << std::endl;
 
-  // // Print parsed program
-  // // std::cout <<
-  // boost::apply_visitor(expression_accessor(), program);
-  //           // << std::endl;
-
-  // // get std::vector
-  // std::vector<std::string> args;
-
-  // boost::apply_visitor(program_accessor(args), program);
-
-  // for (std::string str : args) {
-  //   std::cout << str << " ";
-  // }
-  // std::cout << std::endl;
-  // std::cout << std::endl;
-
-  // // get std::vector
-  // std::vector<std::vector<std::string>> args;
-
-  // boost::apply_visitor(program_accessor(args), program);
-
-  // for (std::vector<std::string> argv : args) {
-  //     std::cout << "{";
-  //   for (std::string str : argv) {
-  //     std::cout << str << " ";
-  //   }
-  //     std::cout << "}";
-  // }
-  // std::cout << std::endl;
-  // std::cout << std::endl;
-  // get std::vector
-
+  // execute
   execute_program(*this, program);
 
+#ifdef DEBUG
+  errstr = "Engine: execSQL: Open Tables (" + std::to_string(open_tables_.size()) + "): ";
+  errlog(errstr);
   for (Relation table : open_tables_) {
-    std::cout << table << std::endl;
+    std::cerr << table << std::endl;
   }
+  errstr = "Engine: execSQL: Open Views (" + std::to_string(open_views_.size()) + "): ";
+  errlog(errstr);
   for (Relation table : open_views_) {
-    std::cout << table << std::endl;
+    std::cerr << table << std::endl;
   }
+#endif
+  errstr = "Engine execSQL Finished: " + input_string;
+  errlog(errstr);
+  endlog();
 
-  // for (std::vector<std::string> argv : args) {
-  //     std::cout << "{";
-  //   for (std::string str : argv) {
-  //     std::cout << str << " ";
-  //   }
-  //     std::cout << "}";
-  // }
-  // std::cout << std::endl;
-  // std::cout << std::endl;
-
-  return -1;
+  return 0;
 }
 
 void Engine::writeTable(Relation relation) {
@@ -414,16 +383,14 @@ Relation Engine::rename_column(Relation relation, std::string ColumnName,
 
 Relation Engine::select(std::vector<std::string> Conditions,
                         Relation relation) {
-  Relation table = relation;
-  Relation selectTable;
-
+  Relation table(relation);
 #ifdef DEBUG
-  std::cerr << table;
+  std::cerr << table << std::endl;
 #endif
 
   if ((int)Conditions.size() == 0) {
     // table is whole table from relation
-    selectTable = table;
+    return (Relation((table.title()+"-Select"), table.columns()));
   } else {
     // Break down conditions
     std::vector<std::string> column_names;
@@ -437,7 +404,8 @@ Relation Engine::select(std::vector<std::string> Conditions,
         ops.push_back(Conditions[i]);
       } else {
         column_names.push_back(Conditions[i]);
-        column_names.push_back(Conditions[++i]);
+        // column names are followed by a literal
+        literals.push_back(Conditions[++i]);
       }
     }
     std::string errmsg = "Engine: Select Column Names : ";
@@ -470,25 +438,112 @@ Relation Engine::select(std::vector<std::string> Conditions,
       errmsg += std::to_string(i) + " ";
     }
     errlog(errmsg);
-    // Build new relation from column_indexes
+
+    // Add empty columns from table
     std::vector<Column<std::string>> selectcolumns;
-    for (int i = 0; i < (int)column_indexes.size(); ++i) {
-      selectcolumns.push_back(table.get_column(column_indexes[i]));
+    for (Column<std::string> col : table.columns()) {
+      selectcolumns.push_back(
+          Column<std::string>(col.title(), col.type(), col.primary_key()));
     }
-    selectTable = Relation(table.title(), selectcolumns);
-    // // Now process conditions
-    // for (int i = (selectTable.num_rows() - 1); i >= 0; --i) {
-    //   std::vector<std::string> current_row = table.get_row(i);
-    //   // if where clause fails, drop row
-    //   // std::cout << current_row[selectTable.find_column_index(WhereColumn)]
-    //   <<
-    //       // std::endl;
-    //       if (current_row[table.find_column_index(WhereColumn)] != WhereEqual) {
-    //     selectTable.drop_row(i);
-    //   }
-    // }
+
+    Relation selectTable(table.title() + "-Select", selectcolumns);
+    // Now process conditions
+    for (int i : column_indexes) {
+      for (int j = 0; j < table.num_rows(); ++j) {
+        std::string errmsg = "Engine: Select: table.num_rows() = " + std::to_string(table.num_rows());
+        errlog(errmsg);
+        std::vector<std::string> current_row = table.get_row(j);
+        for (int k = (ops.size() - 1); k > (ops.size() - literals.size());
+             --k) {
+          std::string errstr = "Engine: Select: Conditions Loop: i=" +
+                               std::to_string(i) + " j=" + std::to_string(j) +
+                               " k=" + std::to_string(k);
+          errlog(errstr);
+          errstr = "Engine: Select: Performing: " + current_row[i] + " " +
+                   ops[k] + " " + literals[(ops.size() - 1) - k];
+          errlog(errstr);
+          // need to fix these maybe with lexical_cast
+          // if (ops[i] == "OR") {
+          //   if (current_row[i] || literals[k - 2]) {
+          //     selectTable.append_row(current_row);
+          //   }
+          // } else if (ops[i] == "AND") {
+          //   if (current_row[i] && literals[k - 2]) {
+          //     selectTable.append_row(current_row);
+          //   }
+          // } else
+          if (ops[k] == "==") {
+            if (current_row[i] == literals[(ops.size() - 1) - k]) {
+              errlog("Condition returned true. Appending row.");
+              selectTable.append_row(current_row);
+#ifdef DEBUG
+              std::cout << std::endl << selectTable << std::endl;
+#endif
+            } else {
+              errlog("Condition returned false. Not appending row.");
+            }
+          } else if (ops[k] == "!=") {
+            if (current_row[i] != literals[(ops.size() - 1) - k]) {
+              errlog("Condition returned true. Appending row.");
+              selectTable.append_row(current_row);
+#ifdef DEBUG
+              std::cout << std::endl << selectTable << std::endl;
+#endif
+            } else {
+              errlog("Condition returned false. Not appending row.");
+            }
+          } else if (ops[k] == "<") {
+            if (current_row[i] < literals[(ops.size() - 1) - k]) {
+              errlog("Condition returned true. Appending row.");
+              selectTable.append_row(current_row);
+#ifdef DEBUG
+              std::cout << std::endl << selectTable << std::endl;
+#endif
+            } else {
+              errlog("Condition returned false. Not appending row.");
+            }
+          } else if (ops[k] == ">") {
+            if (current_row[i] > literals[(ops.size() - 1) - k]) {
+              errlog("Condition returned true. Appending row.");
+              selectTable.append_row(current_row);
+#ifdef DEBUG
+              std::cout << std::endl << selectTable << std::endl;
+#endif
+            } else {
+              errlog("Condition returned false. Not appending row.");
+            }
+          } else if (ops[k] == "<=") {
+            if (current_row[i] <= literals[(ops.size() - 1) - k]) {
+              errlog("Condition returned true. Appending row.");
+              selectTable.append_row(current_row);
+#ifdef DEBUG
+              std::cout << std::endl << selectTable << std::endl;
+#endif
+            } else {
+              errlog("Condition returned false. Not appending row.");
+            }
+          } else if (ops[k] == ">=") {
+            if (current_row[i] >= literals[(ops.size() - 1) - k]) {
+              errlog("Condition returned true. Appending row.");
+              selectTable.append_row(current_row);
+#ifdef DEBUG
+              std::cout << std::endl << selectTable << std::endl;
+#endif
+            } else {
+              errlog("Condition returned false. Not appending row.");
+            }
+          } else {
+            std::string errmsg = "Engine: Select: Illegal Op: " + ops[k];
+            errlog(errmsg);
+#ifdef DEBUG
+            std::cout << std::endl << selectTable << std::endl;
+#endif
+          }
+        }
+      }
+    }
+    return selectTable;
   }
-  return selectTable;
 }
 
 Relation Engine::select(std::vector<std::string> ColumnNames,

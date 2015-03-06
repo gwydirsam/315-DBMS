@@ -660,6 +660,8 @@ struct program_execute : boost::static_visitor<void> {
     // set the name
     newrelation.title(q.relation_name);
 
+    errmsg = "Grammar Objects: Program Execute: Query: New View: " + q.relation_name;
+    errlog(errmsg);
     // add relation to open views
     db_.addView(newrelation);
   }
