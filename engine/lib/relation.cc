@@ -1,6 +1,7 @@
 #include "relation.h"
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -142,9 +143,16 @@ void Relation::drop_row(int i) {
 }
 
 std::ostream &operator<<(std::ostream &os, const Relation &relation) {
+  const char separator    = ' ';
+  const int nameWidth     = 6;
+  const int numWidth      = 8;
+
+    cout << left << setw(nameWidth) << setfill(separator) << "Bob";
+  
+  
   std::string delimiter = "\t\t";
 
-  os << relation.title() << std::endl;
+  os << "Table: " << relation.title() << std::endl;
 
   for (const Column<std::string> &column : relation.columns()) {
     std::string title;
@@ -240,45 +248,21 @@ std::ifstream &operator>>(std::ifstream &is, Relation &relation) {
 }
 
 std::ofstream &operator<<(std::ofstream &os, const Relation &relation) {
-  // Lines:
-  // 0: relation.title()
-  // 1: relation.num_rows()
-  // 2: relation.num_cols()
-  // 3: number of primary keys
-  // 4: primary keys (column names if theyre primary key)
-  // Columns separated by tabs
-  // 5: relation.columns()
-  // 6-infinity: columns.entries()
+  const char separator    = ' ';
+  const int Width     = 8;
+  // Line 1: TableName
+  (std::basic_ostream<char> &)os << "Table: " << relation.title() << std::endl;
 
-  // delimiter is used to seperate columns
-  std::string delimiter = "\t";
-
-  // Line 0: TableName
-  (std::basic_ostream<char> &)os << relation.title() << std::endl;
-
-  // Line 1: Number of Rows
-  os << relation.num_rows() << std::endl;
-  // line 2: number of Columns
-  os << relation.num_cols() << std::endl;
-  // line 3: number of primary keys
-  os << relation.primary_keys().size() << std::endl;
-
-  // Line 4: Primary Keys
-  for (const Column<std::string> &column : relation.primary_keys()) {
-    (std::basic_ostream<char> &)os << column.title() << delimiter;
-  }
-  os << std::endl;
-
-  // Line 5: Column Names
+  // Line 2: Column Names
   for (const std::string &title : relation.get_column_titles()) {
-    (std::basic_ostream<char> &)os << title << delimiter;
+    (std::basic_ostream<char> &)os << std::left << std::setw(Width) << std::setfill(separator) << title;
   }
   os << std::endl;
 
-  // Line 6-infinity: entries
+  // Line 3-infinity: entries
   for (int i = 0; i < relation.num_rows(); ++i) {
     for (const std::string &entry : relation.get_row(i)) {
-      (std::basic_ostream<char> &)os << entry << delimiter;
+      (std::basic_ostream<char> &)os << std::left << std::setw(Width) << std::setfill(separator) << entry;
     }
     os << std::endl;
   }
