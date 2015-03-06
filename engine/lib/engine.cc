@@ -204,7 +204,7 @@ Relation Engine::createNewTable(std::string TableName,
 
   // create columns
   // we skip the types
-  for (int i = 0; i < typed_attribute_list.size(); i += 2) {
+  for (unsigned int i = 0; i < typed_attribute_list.size(); i += 2) {
     columns.push_back(Column<std::string>(typed_attribute_list[i]));
   }
   // set primary keys
@@ -292,7 +292,7 @@ int Engine::deleteFrom(Relation& Table, std::vector<std::string> Conditions) {
     std::vector<std::string> column_names;
     std::vector<std::string> literals;
     std::vector<std::string> ops;
-    for (int i = 0; i < Conditions.size(); ++i) {
+    for (unsigned int i = 0; i < Conditions.size(); ++i) {
       if ((Conditions[i] == "OR") || (Conditions[i] == "AND") ||
           (Conditions[i] == "==") || (Conditions[i] == "!=") ||
           (Conditions[i] == "<") || (Conditions[i] == ">") ||
@@ -349,7 +349,7 @@ int Engine::deleteFrom(Relation& Table, std::vector<std::string> Conditions) {
                              std::to_string(Table.num_rows());
         errlog(errmsg);
         std::vector<std::string> current_row = Table.get_row(j);
-        for (int k = (ops.size() - 1); k > (ops.size() - literals.size());
+        for (unsigned int k = (ops.size() - 1); k > (ops.size() - literals.size());
              --k) {
           std::string errstr = "Engine: Delete From: Conditions Loop: i=" +
                                std::to_string(i) + " j=" + std::to_string(j) +
@@ -475,7 +475,7 @@ int Engine::execSQL(std::string input_string) {
   std::string errstr = "Engine execSQL: " + input_string;
   errlog(errstr);
   Program program = parse_string(input_string);
-  std::string programstr = "Engine: Parsed: " + (std::ostringstream() << program).str();
+  std::string programstr = "Engine: Parsed: " + (static_cast<std::ostringstream&>(std::ostringstream() << program)).str();
   errlog(programstr);
   // std::cout << program << std::endl;
   // std::cout << std::endl;
@@ -575,7 +575,7 @@ Relation Engine::select(std::vector<std::string> Conditions,
     std::vector<std::string> column_names;
     std::vector<std::string> literals;
     std::vector<std::string> ops;
-    for (int i = 0; i < Conditions.size(); ++i) {
+    for (unsigned int i = 0; i < Conditions.size(); ++i) {
       if ((Conditions[i] == "OR") || (Conditions[i] == "AND") ||
           (Conditions[i] == "==") || (Conditions[i] == "!=") ||
           (Conditions[i] == "<") || (Conditions[i] == ">") ||
@@ -633,7 +633,7 @@ Relation Engine::select(std::vector<std::string> Conditions,
                              std::to_string(table.num_rows());
         errlog(errmsg);
         std::vector<std::string> current_row = table.get_row(j);
-        for (int k = (ops.size() - 1); k > (ops.size() - literals.size());
+        for (unsigned int k = (ops.size() - 1); k > (ops.size() - literals.size());
              --k) {
           std::string errstr = "Engine: Select: Conditions Loop: i=" +
                                std::to_string(i) + " j=" + std::to_string(j) +
@@ -1012,6 +1012,4 @@ Relation Engine::setcrossproduct(std::string TableName1, Relation TableName2) {
 }
 
 void Engine::showTable(Relation table) { std::cout << table << std::endl; }
-void Engine::showTable(std::string TableName) {
-  showTable(find_relation_or_view(TableName));
-}
+void Engine::showTable(std::string TableName) { showTable(find_relation_or_view(TableName)); }
