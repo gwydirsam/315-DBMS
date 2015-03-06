@@ -66,12 +66,12 @@ then
         fi
     else
         cd "$APPDIR"
-        echo "Creating build/release directory..."
-        mkdir -p "build/release";
-        cd "$APPDIR/build/release"
+        echo "Creating lib/group16dbms directory..."
+        mkdir -p "lib/group16dbms";
+        cd "$APPDIR/lib/group16dbms"
         CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto" \
           CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
-          cmake ../.. /include/Group16DBMS/. && make -j4
+          cmake ../../include/Group16DBMS/. && make -j4
           # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
     fi
 
