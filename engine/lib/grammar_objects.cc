@@ -138,6 +138,6 @@ void execute_command(Engine& db, std::string command,
       db.insertTuple(relation_name, view);
     }
   } else if (command == "DELETE FROM") {
-    db.dropTuple(relation_name, condition);
+    db.deleteFrom(relation_name, condition);
   }
 }

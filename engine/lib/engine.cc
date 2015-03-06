@@ -261,20 +261,198 @@ int Engine::insertTuple(std::string TableName, Relation relation) {
 }
 
 int Engine::dropTable(std::string TableName) {
-  // Right now this is the only way i know how to handle if the Table isn't
-  // found.
-  int i = find_table_index(TableName);
-  if (i != -1) {
-    open_tables_.erase(find_table(TableName) - 1);
-    // Success
+  return dropTable(find_relation(TableName));
+}
+
+int Engine::dropTable(Relation Table) {
+  if ((find_table_index(Table.title())) == -1) {
+    // Couldn't find Table
+    return -1;
+  } else {
+    // Found Table
+    open_tables_.erase(find_table(Table.title()));
     return 0;
   }
-  // Couldn't find Table
-  return -1;
 }
-int Engine::dropTable(Relation Table) { return dropTable(Table.title()); }
 
-// TODO: Needs rewriting with OOP...this is too complex for what it is
+int Engine::deleteFrom(Relation& Table, std::vector<std::string> Conditions) {
+#ifdef DEBUG
+  std::cerr << Table << std::endl;
+#endif
+
+  if ((int)Conditions.size() == 0) {
+    // don't delete anything
+    // also log this.
+    std::string errstring =
+        "Engine: Delete From: " + Table.title() + " had no conditions";
+    errlog(errstring);
+    return 0;
+  } else {
+    // Break down conditions
+    std::vector<std::string> column_names;
+    std::vector<std::string> literals;
+    std::vector<std::string> ops;
+    for (int i = 0; i < Conditions.size(); ++i) {
+      if ((Conditions[i] == "OR") || (Conditions[i] == "AND") ||
+          (Conditions[i] == "==") || (Conditions[i] == "!=") ||
+          (Conditions[i] == "<") || (Conditions[i] == ">") ||
+          (Conditions[i] == "<=") || (Conditions[i] == ">=")) {
+        ops.push_back(Conditions[i]);
+      } else {
+        column_names.push_back(Conditions[i]);
+        // column names are followed by a literal
+        literals.push_back(Conditions[++i]);
+      }
+    }
+    std::string errmsg = "Engine: Delete From Column Names : ";
+    for (std::string str : column_names) {
+      errmsg += str + " ";
+    }
+    errlog(errmsg);
+    errmsg = "Engine: Delete From Condition Ops : ";
+    for (std::string str : ops) {
+      errmsg += str + " ";
+    }
+    errlog(errmsg);
+    errmsg = "Engine: Delete From Condition Literals : ";
+    for (std::string str : literals) {
+      errmsg += str + " ";
+    }
+    errlog(errmsg);
+
+    std::vector<int> column_indexes;
+    // Delete From Conditions from relation
+    for (std::string column_name : column_names) {
+      // Get indexes of columns requested
+      int i = (Table.find_column_index(column_name));
+      if (i >= 0) {
+        column_indexes.emplace_back(i);
+      }
+    }
+    errmsg = "Engine: Delete From Column Indexes : ";
+    for (int i : column_indexes) {
+      errmsg += std::to_string(i) + " ";
+    }
+    errlog(errmsg);
+
+    // Add empty columns from table
+    std::vector<Column<std::string>> selectcolumns;
+    for (Column<std::string> col : Table.columns()) {
+      selectcolumns.push_back(
+          Column<std::string>(col.title(), col.type(), col.primary_key()));
+    }
+
+    // Now process conditions
+    for (int i : column_indexes) {
+      for (int j = 0; j < Table.num_rows(); ++j) {
+        std::string errmsg = "Engine: Delete From: Table.num_rows() = " +
+                             std::to_string(Table.num_rows());
+        errlog(errmsg);
+        std::vector<std::string> current_row = Table.get_row(j);
+        for (int k = (ops.size() - 1); k > (ops.size() - literals.size());
+             --k) {
+          std::string errstr = "Engine: Delete From: Conditions Loop: i=" +
+                               std::to_string(i) + " j=" + std::to_string(j) +
+                               " k=" + std::to_string(k);
+          errlog(errstr);
+          errstr = "Engine: Delete From: Performing: " + current_row[i] + " " +
+                   ops[k] + " " + literals[(ops.size() - 1) - k];
+          errlog(errstr);
+          // need to fix these maybe with lexical_cast
+          // if (ops[i] == "OR") {
+          //   if (current_row[i] || literals[k - 2]) {
+          //     selectTable.append_row(current_row);
+          //   }
+          // } else if (ops[i] == "AND") {
+          //   if (current_row[i] && literals[k - 2]) {
+          //     selectTable.append_row(current_row);
+          //   }
+          // } else
+          if (ops[k] == "==") {
+            if (current_row[i] == literals[(ops.size() - 1) - k]) {
+              errlog("Condition returned true. Dropping row.");
+              // j----, drop row j--, then decrement, because theyre is one less
+              // row.
+              Table.drop_row(j--);
+#ifdef DEBUG
+              std::cout << std::endl << Table << std::endl;
+#endif
+            } else {
+              errlog("Condition returned false. Not dropping row.");
+            }
+          } else if (ops[k] == "!=") {
+            if (current_row[i] != literals[(ops.size() - 1) - k]) {
+              errlog("Condition returned true. Dropping row.");
+              Table.drop_row(j--);
+#ifdef DEBUG
+              std::cout << std::endl << Table << std::endl;
+#endif
+            } else {
+              errlog("Condition returned false. Not dropping row.");
+            }
+          } else if (ops[k] == "<") {
+            if (current_row[i] < literals[(ops.size() - 1) - k]) {
+              errlog("Condition returned true. Dropping row.");
+              Table.drop_row(j--);
+#ifdef DEBUG
+              std::cout << std::endl << Table << std::endl;
+#endif
+            } else {
+              errlog("Condition returned false. Not dropping row.");
+            }
+          } else if (ops[k] == ">") {
+            if (current_row[i] > literals[(ops.size() - 1) - k]) {
+              errlog("Condition returned true. Dropping row.");
+              Table.drop_row(j--);
+#ifdef DEBUG
+              std::cout << std::endl << Table << std::endl;
+#endif
+            } else {
+              errlog("Condition returned false. Not dropping row.");
+            }
+          } else if (ops[k] == "<=") {
+            if (current_row[i] <= literals[(ops.size() - 1) - k]) {
+              errlog("Condition returned true. Dropping row.");
+              Table.drop_row(j--);
+#ifdef DEBUG
+              std::cout << std::endl << Table << std::endl;
+#endif
+            } else {
+              errlog("Condition returned false. Not dropping row.");
+            }
+          } else if (ops[k] == ">=") {
+            if (current_row[i] >= literals[(ops.size() - 1) - k]) {
+              errlog("Condition returned true. Dropping row.");
+              Table.drop_row(j--);
+#ifdef DEBUG
+              std::cout << std::endl << Table << std::endl;
+#endif
+            } else {
+              errlog("Condition returned false. Not dropping row.");
+            }
+          } else {
+            std::string errmsg = "Engine: Delete From: Illegal Op: " + ops[k];
+            errlog(errmsg);
+#ifdef DEBUG
+            std::cout << std::endl << Table << std::endl;
+#endif
+          }
+        }
+      }
+    }
+#ifdef DEBUG
+    std::cout << std::endl << Table << std::endl;
+#endif
+  }
+
+  return 0;
+}
+
+int Engine::deleteFrom(std::string TableName,
+                       std::vector<std::string> Conditions) {
+  return deleteFrom(find_relation_or_view(TableName), Conditions);
+}
+
 int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
   int r = find_tuple_index(TableName, tuple);
   int i = find_table_index(TableName);
@@ -297,19 +475,23 @@ int Engine::execSQL(std::string input_string) {
   std::string errstr = "Engine execSQL: " + input_string;
   errlog(errstr);
   Program program = parse_string(input_string);
-  std::cout << program << std::endl;
-  std::cout << std::endl;
+  std::string programstr = "Engine: Parsed: " + (std::ostringstream() << program).str();
+  errlog(programstr);
+  // std::cout << program << std::endl;
+  // std::cout << std::endl;
 
   // execute
   execute_program(*this, program);
 
 #ifdef DEBUG
-  errstr = "Engine: execSQL: Open Tables (" + std::to_string(open_tables_.size()) + "): ";
+  errstr = "Engine: execSQL: Open Tables (" +
+           std::to_string(open_tables_.size()) + "): ";
   errlog(errstr);
   for (Relation table : open_tables_) {
     std::cerr << table << std::endl;
   }
-  errstr = "Engine: execSQL: Open Views (" + std::to_string(open_views_.size()) + "): ";
+  errstr = "Engine: execSQL: Open Views (" +
+           std::to_string(open_views_.size()) + "): ";
   errlog(errstr);
   for (Relation table : open_views_) {
     std::cerr << table << std::endl;
@@ -339,19 +521,16 @@ void Engine::writeTable(Relation relation) {
 
 void Engine::addView(Relation relation) { open_views_.push_back(relation); }
 
-int Engine::closeTable(std::string TableName) {
-  int i = find_table_index(TableName);
-  writeTable(open_tables_.at(i));
-  int d = dropTable(TableName);
+int Engine::closeTable(Relation relation) {
+  std::string errstr = "Engine: Close Table: " + relation.title();
+  errlog(errstr);
 
-  return d;
+  writeTable(relation);
+  return dropTable(relation);
 }
 
-int Engine::closeTable(Relation relation) {
-  writeTable(relation);
-  int d = dropTable(relation);
-
-  return d;
+int Engine::closeTable(std::string TableName) {
+  return closeTable(find_relation(TableName));
 }
 
 Relation Engine::rename_table(Relation table, std::string newname) {
@@ -390,7 +569,7 @@ Relation Engine::select(std::vector<std::string> Conditions,
 
   if ((int)Conditions.size() == 0) {
     // table is whole table from relation
-    return (Relation((table.title()+"-Select"), table.columns()));
+    return (Relation((table.title() + "-Select"), table.columns()));
   } else {
     // Break down conditions
     std::vector<std::string> column_names;
@@ -450,7 +629,8 @@ Relation Engine::select(std::vector<std::string> Conditions,
     // Now process conditions
     for (int i : column_indexes) {
       for (int j = 0; j < table.num_rows(); ++j) {
-        std::string errmsg = "Engine: Select: table.num_rows() = " + std::to_string(table.num_rows());
+        std::string errmsg = "Engine: Select: table.num_rows() = " +
+                             std::to_string(table.num_rows());
         errlog(errmsg);
         std::vector<std::string> current_row = table.get_row(j);
         for (int k = (ops.size() - 1); k > (ops.size() - literals.size());
