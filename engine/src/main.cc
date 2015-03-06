@@ -156,7 +156,7 @@ int main(int argc, char* argv[]) {
   dbengine.execSQL(
       "CREATE TABLE days (weekday VARCHAR(10)) PRIMARY KEY (weekday); ");
   dbengine.execSQL(
-      "INSERT INTO days VALUES FROM RELATION (project (weekday) plans); ");
+      "INSERT INTO days VALUES FROM RELATION project (weekday) plans; ");
   dbengine.execSQL(
       "DELETE FROM RELATION days WHERE (weekday == \"Tuesday\"); ");
   dbengine.execSQL("INSERT INTO days VALUES FROM (\"Wednesday\"); ");

@@ -711,11 +711,13 @@ struct program_execute : boost::static_visitor<void> {
     BOOST_FOREACH (SubCondition const& subcon, q.condition.subconditions) {
       boost::apply_visitor(subexpression_accessor(conds), subcon);
     }
+
+
+    // std::vector<SubCondition> subconditions;
     std::vector<std::string> subconds;
     if (q.expression.condition.operation.size() > 0) {
       conds.emplace(std::begin(subconds), q.expression.condition.operation);
     }
-    // std::vector<SubCondition> subconditions;
     BOOST_FOREACH (SubCondition const& subcon,
                    q.expression.condition.subconditions) {
       boost::apply_visitor(subexpression_accessor(subconds), subcon);
@@ -742,12 +744,12 @@ struct program_execute : boost::static_visitor<void> {
     if (subexpreturns.size() == 1) {
       newview = subexpreturns[0];
     }
-    if (q.expression.query.size() > 0) {
-      std::string errmsg = "Program Execute: Sub Expression Name: " + q.expression.query;
-      errlog(errmsg);
-      Relation newview = execute_expression(db_, q.expression.query, subconds,
-                                   q.expression.argument, subexpreturns);
-    }
+    // if (q.expression.query.size() > 0) {
+    //   std::string errmsg = "Program Execute: Sub Expression Name: " + q.expression.query;
+    //   errlog(errmsg);
+    //   Relation newview = execute_expression(db_, q.expression.query, subconds,
+    //                                q.expression.argument, subexpreturns);
+    // }
 
     // std::vector<std::string> typed_attribute_list;  // typed-attribute-list
     // q.typed_attribute_list

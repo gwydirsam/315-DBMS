@@ -250,9 +250,9 @@ int Engine::insertTuple(std::string TableName, std::vector<std::string> tuple) {
   return insertTuple(find_relation_or_view(TableName), tuple);
 }
 
-int Engine::insertTuple(std::string TableName, Relation& relation) {
+int Engine::insertTuple(std::string TableName, Relation relation) {
   for(int i=0; i < relation.num_rows(); ++i) {
-    insertTuple(TableName, relation.get_row(i));
+    insertTuple(find_relation_or_view(TableName), relation.get_row(i));
   }
 }
 

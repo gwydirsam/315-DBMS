@@ -101,7 +101,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
           ")"))[_val = boost::phoenix::construct<Command>(_1, _2, _3)] |
         (no_case[string("insert into")] >> (relation_name) >>
          (no_case["values from relation"] >>
-          atomic_expressions))[_val = boost::phoenix::construct<Command>(_1, _2,
+          expressions))[_val = boost::phoenix::construct<Command>(_1, _2,
                                                                          _3)];
 
     // delete-cmd := DELETE FROM relation-name WHERE condition
