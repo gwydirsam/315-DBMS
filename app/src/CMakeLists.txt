@@ -8,16 +8,11 @@ set(UNITTEST_SRCS
 
 # rest of cc's
 set(SRCS
-  main_menu.cc
-  search_menu.cc
+  menu.cc
   )
 
-if(APPLE)
-  find_package(Boost 1.57.0)
-  if(Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIRS})
-  endif()
-else()
+find_package(Boost 1.57.0)
+if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
@@ -25,8 +20,10 @@ set(RELEASE_BINARY "main")
 set(RELEASE_BINARY_OUTNAME "${PROJECT_NAME}")
 set(UNITTEST_BINARY "${PROJECT_NAME}test")
 set(ENGINE_LIBRARY "${PROJECT_NAME}")
+set(GROUP16_LIBRARY "group16dbms")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+find_library(${GROUP16_LIBRARY} PATHS "${CMAKE_SOURCE_DIR}/lib/group16dbms")
 
 add_executable(${RELEASE_BINARY} ${MAIN_SRC} ${SRCS})
 
@@ -38,7 +35,7 @@ set_property(TARGET ${RELEASE_BINARY} PROPERTY CXX_STANDARD 14)
 set_target_properties(${RELEASE_BINARY} PROPERTIES OUTPUT_NAME "${RELEASE_BINARY_OUTNAME}")
 
 # target_link_libraries(${RELEASE_BINARY} ${ENGINE_LIBRARY})
-target_link_libraries(${RELEASE_BINARY} ${ENGINE_LIBRARY})
+target_link_libraries(${RELEASE_BINARY} ${GROUP16_LIBRARY})
 
 # Testing
 if (test)

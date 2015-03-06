@@ -15,6 +15,12 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb -O0 -DDEBUG -Wall -Wextra")
 endif()
 
+if(APPLE)
+  # do nothing
+elseif(UNIX)
+  set(BOOST_ROOT ~/usr/)
+endif()
+
 # Unit testing with Google Test
 # to run tests use 'cmake -Dtest=ON'
 option(test "Build ${PROJECT_NAME}'s tests" OFF)
