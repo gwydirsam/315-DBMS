@@ -50,3 +50,4 @@ app/build/*
 /engine/src/.clang_complete
 /engine/src/__SEMANTIC_CLANG_TEMPFILE.cc
 /engine/testfile.txt
+/app/include/gtest
