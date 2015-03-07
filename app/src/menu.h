@@ -16,9 +16,9 @@ public:
 	//Getters:
 	//Setters:
 	//Functions:
-	void print_menu();
 	void exit();
-	void search_menu();
+	std::string print_menu();
+	std::string search_menu();
 	std::string make_post();
 	std::string search_by_author(std::string str_input);
 	std::string search_by_title(std::string str_input);
