@@ -58,6 +58,10 @@ Relation execute_expression(Engine& db, std::string query,
   } else if (queryname == "RENAME") {
     //     renaming := rename ( attribute-list ) atomic-expr
     // TODO: maybe have change the way rename columns works
+    if (arg.size() != subexps[0].num_cols()) {
+      std::string errstr = "Execute Expression: Rename: # of attributes, " + std::to_string(args.size()) + " does not match # of columns in " + subexps[0].title() + ", (" + subexps.[0].num_cols() + ")";
+      errlog(errstr);
+    }
     for (unsigned int i = 0; i < args.size(); ++i) {
       relation = db.rename_column(subexps[0], subexps[0].get_column(i).title(),
                                   args[i]);

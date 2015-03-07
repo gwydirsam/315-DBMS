@@ -475,8 +475,10 @@ int Engine::execSQL(std::string input_string) {
   std::string errstr = "Engine execSQL: " + input_string;
   errlog(errstr);
   Program program = parse_string(input_string);
+  #ifdef DEBUG
   std::cout << program << std::endl;
   std::cout << std::endl;
+  #endif
 
   // execute
   execute_program(*this, program);
@@ -551,7 +553,7 @@ int Engine::rename_column(std::string TableName, std::string ColumnName,
   return 0;
 }
 
-Relation Engine::rename_column(Relation relation, std::string ColumnName,
+Relation Engine::rename_column(Relation& relation, std::string ColumnName,
                                std::string newname) {
   relation.rename_column(ColumnName, newname);
   // Success
@@ -998,15 +1000,15 @@ Relation Engine::setcrossproduct(Relation Table1, Relation Table2) {
 
 Relation Engine::setcrossproduct(std::string TableName1,
                                  std::string TableName2) {
-  return setcrossproduct(find_relation(TableName1), find_relation(TableName2));
+  return setcrossproduct(find_relation_or_view(TableName1), find_relation_or_view(TableName2));
 }
 
 Relation Engine::setcrossproduct(Relation TableName1, std::string TableName2) {
-  return setcrossproduct(TableName1, find_relation(TableName2));
+  return setcrossproduct(TableName1, find_relation_or_view(TableName2));
 }
 
 Relation Engine::setcrossproduct(std::string TableName1, Relation TableName2) {
-  return setcrossproduct(find_relation(TableName1), TableName2);
+  return setcrossproduct(find_relation_or_view(TableName1), TableName2);
 }
 
 void Engine::showTable(Relation table) { std::cout << table << std::endl; }

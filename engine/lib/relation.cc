@@ -23,7 +23,8 @@ const std::vector<Column<std::string>> Relation::primary_keys() const {
   for (const Column<std::string> &column : columns_) {
     if (column.primary_key()) {
       primary_keys.push_back(column);
-      std::cout << column.title() << std::endl;
+      std::string errstr = "Relation: Primary Key: " + column.title();
+      errlog(errstr);
     }
   }
   return primary_keys;

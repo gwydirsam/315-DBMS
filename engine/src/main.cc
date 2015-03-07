@@ -130,7 +130,6 @@ int main(int argc, char* argv[]) {
   dbengine.execSQL(
       " CREATE TABLE plans (with_who VARCHAR(10), where VARCHAR(20), weekday "
       "VARCHAR(9), length_hrs INTEGER) PRIMARY KEY (with_who, weekday); ");
-
   dbengine.execSQL(
       "INSERT INTO plans VALUES FROM (\"Joe\", \"Park\", \"Friday\", 4); ");
   dbengine.execSQL(
@@ -154,12 +153,17 @@ int main(int argc, char* argv[]) {
       "\") Tues); ");
   dbengine.execSQL("SHOW long_plans_not_on_tues; ");
   dbengine.execSQL(
+      "locale <- rename (locales, ID) (Tues * (project (where, length_hrs) plans));");
+  dbengine.execSQL("WRITE locale; ");
+  dbengine.execSQL("OPEN locale; ");
+  dbengine.execSQL(
       "CREATE TABLE days (weekday VARCHAR(10)) PRIMARY KEY (weekday); ");
   dbengine.execSQL(
       "INSERT INTO days VALUES FROM RELATION project (weekday) plans; ");
   dbengine.execSQL(
       "DELETE FROM days WHERE weekday == \"Tuesday\"; ");
   dbengine.execSQL("INSERT INTO days VALUES FROM (\"Wednesday\"); ");
+  dbengine.execSQL("SHOW locale; ");
   dbengine.execSQL("SHOW days; ");
   dbengine.execSQL("WRITE days; ");
   dbengine.execSQL("WRITE plans; ");

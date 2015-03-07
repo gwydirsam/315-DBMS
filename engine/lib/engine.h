@@ -110,7 +110,7 @@ class Engine {
   int rename_table(std::string TableName, std::string newname);
   int rename_column(std::string TableName, std::string Column,
                     std::string newname);
-  Relation rename_column(Relation relation, std::string Column,
+  Relation rename_column(Relation& relation, std::string Column,
                          std::string newname);
 
   // Select
