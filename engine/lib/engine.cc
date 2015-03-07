@@ -475,10 +475,8 @@ int Engine::execSQL(std::string input_string) {
   std::string errstr = "Engine execSQL: " + input_string;
   errlog(errstr);
   Program program = parse_string(input_string);
-  std::string programstr = "Engine: Parsed: " + (static_cast<std::ostringstream&>(std::ostringstream() << program)).str();
-  errlog(programstr);
-  // std::cout << program << std::endl;
-  // std::cout << std::endl;
+  std::cout << program << std::endl;
+  std::cout << std::endl;
 
   // execute
   execute_program(*this, program);
