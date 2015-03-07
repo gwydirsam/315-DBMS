@@ -58,8 +58,11 @@ Relation execute_expression(Engine& db, std::string query,
   } else if (queryname == "RENAME") {
     //     renaming := rename ( attribute-list ) atomic-expr
     // TODO: maybe have change the way rename columns works
-    if (arg.size() != subexps[0].num_cols()) {
-      std::string errstr = "Execute Expression: Rename: # of attributes, " + std::to_string(args.size()) + " does not match # of columns in " + subexps[0].title() + ", (" + subexps.[0].num_cols() + ")";
+    if (args.size() != subexps[0].num_cols()) {
+      std::string errstr =
+          "Execute Expression: Rename: # of attributes, " +
+          std::to_string(args.size()) + " does not match # of columns in " +
+        subexps[0].title() + ", (" + std::to_string(subexps[0].num_cols()) + ")";
       errlog(errstr);
     }
     for (unsigned int i = 0; i < args.size(); ++i) {
@@ -85,8 +88,7 @@ Relation execute_expression(Engine& db, std::string query,
   return relation;
 }
 
-void execute_command(Engine& db, std::string command,
-                     std::string relation_name,
+void execute_command(Engine& db, std::string command, std::string relation_name,
                      std::vector<std::string> condition, Relation view,
                      std::vector<std::string> typed_attribute_list,
                      std::vector<std::string> attribute_list,
@@ -132,8 +134,9 @@ void execute_command(Engine& db, std::string command,
   } else if (command == "UPDATE") {
     db.updateTable(relation_name, attribute_value_list, condition);
   } else if (command == "INSERT INTO") {
-    if(literal_list.size() > 0) {
-      std::string errstr = "Execute Command: Literal list size: " + std::to_string(literal_list.size());
+    if (literal_list.size() > 0) {
+      std::string errstr = "Execute Command: Literal list size: " +
+                           std::to_string(literal_list.size());
       errlog(errstr);
       db.insertTuple(relation_name, literal_list);
     } else {
