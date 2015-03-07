@@ -157,16 +157,23 @@ std::ostream &operator<<(std::ostream &os, const Relation &relation) {
   }
 
   // Line 1: TableName
-  (std::basic_ostream<char> &)os << "Table: " << relation.title() << std::endl;
+  (std::basic_ostream<char> &)os << relation.title() << std::endl;
+  // Line 2: ────
 
-  // Line 2: Column Names
+  // Draw 80 line characters
+  for (int i = 0; i < 80; ++i) {
+    os << "─";
+  }
+  os << std::endl;
+  
+  // Line 3: Column Names
   for (const std::string &title : relation.get_column_titles()) {
     (std::basic_ostream<char> &)os << std::left << std::setw(Width)
                                    << std::setfill(separator) << title;
   }
   os << std::endl;
 
-  // Line 3-infinity: entries
+  // Line 4-infinity: entries
   for (int i = 0; i < relation.num_rows(); ++i) {
     for (const std::string &entry : relation.get_row(i)) {
       (std::basic_ostream<char> &)os << std::left << std::setw(Width)
