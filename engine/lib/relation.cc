@@ -145,43 +145,56 @@ void Relation::drop_row(int i) {
 
 std::ostream &operator<<(std::ostream &os, const Relation &relation) {
   const char separator = ' ';
-  int Width = 0;
+  int width = 0;
 
   for (const std::string &title : relation.get_column_titles()) {
-    Width = std::max(Width, ((int)title.length()) + 1);
+    width = std::max(width, ((int)title.length()) + 1);
   }
 
   for (int i = 0; i < relation.num_rows(); ++i) {
     for (const std::string &entry : relation.get_row(i)) {
-      Width = std::max(Width, ((int)entry.length()) + 1);
+      width = std::max(width, ((int)entry.length()) + 1);
     }
   }
+
+  int linewidth = width * relation.num_cols() + 1;
 
   // Line 1: TableName
   (std::basic_ostream<char> &)os << relation.title() << std::endl;
   // Line 2: ────
 
   // Draw 80 line characters
-  for (int i = 0; i < 80; ++i) {
+  for (int i = 0; i < linewidth; ++i) {
     os << "─";
   }
   os << std::endl;
 
   // Line 3: Column Names
   for (const std::string &title : relation.get_column_titles()) {
-    (std::basic_ostream<char> &)os << std::left << std::setw(Width)
+    (std::basic_ostream<char> &)os << std::left << std::setw(width)
                                    << std::setfill(separator) << title;
+  }
+  os << "┊" << std::endl;
+
+  // Draw 80 line characters
+  for (int i = 0; i < linewidth; ++i) {
+    os << "─";
   }
   os << std::endl;
 
   // Line 4-infinity: entries
   for (int i = 0; i < relation.num_rows(); ++i) {
     for (const std::string &entry : relation.get_row(i)) {
-      (std::basic_ostream<char> &)os << std::left << std::setw(Width)
+      (std::basic_ostream<char> &)os << std::left << std::setw(width)
                                      << std::setfill(separator) << entry;
     }
-    os << std::endl;
+    os << "┊" << std::endl;
   }
+  // Draw width line characters
+  for (int i = 0; i < linewidth; ++i) {
+    os << "─";
+  }
+  os << std::endl;
   return os;
 }
 
@@ -238,14 +251,14 @@ std::ifstream &operator>>(std::ifstream &is, Relation &relation) {
     std::string errmsg = "OpenTable: Column Names: " + columns[i].title();
     errlog(errmsg);
   }
-      if (is.peek() == delimiter) {
-        is.ignore(1);
-        errlog("OpenTable: ignored delimiter");
-      }
-      if (is.peek() == '\n') {
-        is.ignore(1);
-        errlog("OpenTable: ignored newline");
-      }
+  if (is.peek() == delimiter) {
+    is.ignore(1);
+    errlog("OpenTable: ignored delimiter");
+  }
+  if (is.peek() == '\n') {
+    is.ignore(1);
+    errlog("OpenTable: ignored newline");
+  }
 
   // Line 6-infinity: entries
   for (int j = 0; j < num_rows; ++j) {
