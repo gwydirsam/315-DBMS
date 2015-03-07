@@ -17,8 +17,12 @@ public:
 	//Setters:
 	//Functions:
 	void exit();
-	std::string print_menu();
-	std::string search_menu();
+	void print_menu();
+	void search_menu();
+	void post_manage_system(std::string str_input);
+	void comments_menu(std::string str_input);
+	void comment_on_post(std::string str_input);
+	void comment_on_comment(std::string str_input);
 	std::string make_post();
 	std::string search_by_author(std::string str_input);
 	std::string search_by_title(std::string str_input);
