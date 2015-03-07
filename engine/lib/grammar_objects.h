@@ -42,15 +42,49 @@ std::ostream& operator<<(std::ostream& os, SubCondition const& sc);
 struct Condition {
   Condition(std::string op, SubCondition subcon1, SubCondition subcon2)
       : operation(op) {
+    errlog("Condition Constructor 1 Called.");
+    std::string errstr = "Condition Constructor 1 args: " + op;
+    errlog(errstr);
+    std::cerr << "Constructor 1: " << subcon1 << std::endl;
+    std::cerr << "Constructor 1: " << subcon2 << std::endl;
     subconditions.push_back(subcon1);
     subconditions.push_back(subcon2);
   }
   Condition(std::string op, std::vector<SubCondition> subcons)
-      : operation(op), subconditions(subcons){};
-  Condition(std::vector<SubCondition> subcons)
-      : operation(), subconditions(subcons){};
-  Condition(std::string op) : operation(op), subconditions(){};
-  Condition() : operation(), subconditions(){};
+      : operation(op), subconditions(subcons) {
+    errlog("Condition Constructor 2 Called.");
+    std::string errstr = "Condition Constructor 2 args: " + op;
+    errlog(errstr);
+    for (SubCondition subcon : subcons) {
+      std::cerr << "Constructor 2: " << subcon << std::endl;
+    }
+  }
+  Condition(std::vector<SubCondition> subcons) : operation(), subconditions() {
+    errlog("Condition Constructor 3 Called.");
+    if (!subcons.empty()) {
+      operation = boost::get<Condition>(subcons[0]).operation;
+      std::string errstr = "Condition Constructor 3: Setting Op = " + operation;
+      errlog(errstr);
+      for (SubCondition subcon : subcons) {
+        std::cerr << "Constructor 3: Pushing back:" << subcon << std::endl;
+        for (SubCondition ssubcon : boost::get<Condition>(subcon).subconditions) {
+          subconditions.push_back(boost::get<std::string>(ssubcon));
+        }
+      }
+    }
+    std::cerr << "Constructor 3: op: " << operation << std::endl;
+    for (SubCondition subcon : subconditions) {
+      std::cerr << "Constructor 3: " << subcon << std::endl;
+    }
+  }
+  Condition(std::string op) : operation(op), subconditions() {
+    errlog("Condition Constructor 4 Called.");
+    std::string errstr = "Condition Constructor 4 args: " + op;
+    errlog(errstr);
+  }
+  Condition() : operation(), subconditions() {
+    errlog("Condition Constructor 5 Called.");
+  }
 
   std::string operation;
   std::vector<SubCondition> subconditions;
@@ -660,7 +694,8 @@ struct program_execute : boost::static_visitor<void> {
     // set the name
     newrelation.title(q.relation_name);
 
-    errmsg = "Grammar Objects: Program Execute: Query: New View: " + q.relation_name;
+    errmsg =
+        "Grammar Objects: Program Execute: Query: New View: " + q.relation_name;
     errlog(errmsg);
     // add relation to open views
     db_.addView(newrelation);
@@ -719,7 +754,6 @@ struct program_execute : boost::static_visitor<void> {
     }
     errlog(errmsg);
 
-
     // std::vector<SubCondition> subconditions;
     std::vector<std::string> subconds;
     if (q.expression.condition.operation.size() > 0) {
@@ -752,7 +786,8 @@ struct program_execute : boost::static_visitor<void> {
       newview = subexpreturns[0];
     }
     if (q.expression.query.size() > 0) {
-      std::string errmsg = "Program Execute: Sub Expression Name: " + q.expression.query;
+      std::string errmsg =
+          "Program Execute: Sub Expression Name: " + q.expression.query;
       errlog(errmsg);
       newview = execute_expression(db_, q.expression.query, subconds,
                                    q.expression.argument, subexpreturns);

@@ -101,8 +101,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
           ")"))[_val = boost::phoenix::construct<Command>(_1, _2, _3)] |
         (no_case[string("insert into")] >> (relation_name) >>
          (no_case["values from relation"] >>
-          expressions))[_val = boost::phoenix::construct<Command>(_1, _2,
-                                                                         _3)];
+          expressions))[_val = boost::phoenix::construct<Command>(_1, _2, _3)];
 
     // delete-cmd := DELETE FROM relation-name WHERE condition
     delete_cmd =
@@ -132,7 +131,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
          (operand >> op >>
           operand))[_val = boost::phoenix::construct<Condition>(_2, _1, _3)] |
         ("(" >> conditions >>
-         ")")[_val = boost::phoenix::construct<Condition>(_1)];
+         ")")[_val = boost::phoenix::construct<SubCondition>(_1)];
 
     // // op := == | != | < | > | <= | >=
     op = hold[string("==")] | hold[string("!=")] | hold[string("<")] |
@@ -296,12 +295,15 @@ Program parse_string(const C& input) {
     if (ok) {
       return program;
     } else {
-      // std::cerr << "parse failed: '" << std::string(f, l) << std::endl;
+      std::string errstr = "Grammar: parse failed: " + std::string(f, l);
+      errlog(errstr);
       return program;
     }
 
     if (f != l) {
-      std::cerr << "trailing unparsed: '" << std::string(f, l) << std::endl;
+      std::string errstr =
+          "Grammar: parse failed: trailing unparsed: " + std::string(f, l);
+      errlog(errstr);
     }
   } catch (const boost::spirit::qi::expectation_failure<decltype(f)>& e) {
     std::string frag(e.first, e.last);
