@@ -197,7 +197,7 @@ std::ifstream &operator>>(std::ifstream &is, Relation &relation) {
   // 6-infinity: columns.entries()
 
   // delimiter is used to seperate columns
-  // std::string delimiter = "\t";
+  char delimiter = '\t';
 
   // Line 0: TableName
   std::string relation_title;
@@ -238,11 +238,25 @@ std::ifstream &operator>>(std::ifstream &is, Relation &relation) {
     std::string errmsg = "OpenTable: Column Names: " + columns[i].title();
     errlog(errmsg);
   }
+      if (is.peek() == delimiter) {
+        is.ignore(1);
+        errlog("OpenTable: ignored delimiter");
+      }
+      if (is.peek() == '\n') {
+        is.ignore(1);
+        errlog("OpenTable: ignored newline");
+      }
 
   // Line 6-infinity: entries
   for (int j = 0; j < num_rows; ++j) {
     for (int i = 0; i < num_cols; ++i) {
-      is >> columns[i];
+      std::string entry;
+      std::getline(is, entry, delimiter);
+      columns[i].insert_entry(entry);
+      if (is.peek() == '\n') {
+        is.ignore(1);
+        errlog("OpenTable: ignored newline");
+      }
       std::string errmsg = std::string("OpenTable: Column[") +
                            std::to_string(i) + std::string("][") +
                            std::to_string(j) + std::string("] : ") +
@@ -269,7 +283,7 @@ std::ofstream &operator<<(std::ofstream &os, const Relation &relation) {
   // 6-infinity: columns.entries()
 
   // delimiter is used to seperate columns
-  std::string delimiter = "\t";
+  char delimiter = '\t';
 
   // Line 0: TableName
   (std::basic_ostream<char> &)os << relation.title() << std::endl;
@@ -296,6 +310,8 @@ std::ofstream &operator<<(std::ofstream &os, const Relation &relation) {
   // Line 6-infinity: entries
   for (int i = 0; i < relation.num_rows(); ++i) {
     for (const std::string &entry : relation.get_row(i)) {
+      std::string errstr = "Relation: ofstream<<: " + entry;
+      errlog(errstr);
       (std::basic_ostream<char> &)os << entry << delimiter;
     }
     os << std::endl;

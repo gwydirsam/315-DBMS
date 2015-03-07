@@ -129,6 +129,7 @@ int main(int argc, char* argv[]) {
 
   // dbengine.execSQL("OPEN locale; ");
   // dbengine.execSQL("SHOW locale; ");
+
   dbengine.execSQL(
       " CREATE TABLE plans (with_who VARCHAR(10), where VARCHAR(20), weekday "
       "VARCHAR(9), length_hrs INTEGER) PRIMARY KEY (with_who, weekday); ");
@@ -156,8 +157,10 @@ int main(int argc, char* argv[]) {
   dbengine.execSQL("SHOW long_plans_not_on_tues; ");
   dbengine.execSQL(
       "locale <- rename (locales, ID) (Tues * (project (where, length_hrs) plans));");
+  dbengine.execSQL("SHOW locale; ");
   dbengine.execSQL("WRITE locale; ");
   dbengine.execSQL("OPEN locale; ");
+  dbengine.execSQL("SHOW locale; ");
   dbengine.execSQL(
       "CREATE TABLE days (weekday VARCHAR(10)) PRIMARY KEY (weekday); ");
   dbengine.execSQL(
