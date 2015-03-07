@@ -91,6 +91,7 @@ class Engine {
 
   // Write table to filename TableName.db
   void writeTable(Relation relation);
+  void writeTable(std::string TableName);
 
   // Add view to open_views
   void addView(Relation relation);

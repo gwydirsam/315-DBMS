@@ -519,6 +519,10 @@ void Engine::writeTable(Relation relation) {
   dbfile.close();
 }
 
+void Engine::writeTable(std::string TableName) {
+  writeTable(find_relation_or_view(TableName));
+}
+
 void Engine::addView(Relation relation) { open_views_.push_back(relation); }
 
 int Engine::closeTable(Relation relation) {
