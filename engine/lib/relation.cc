@@ -143,57 +143,37 @@ void Relation::drop_row(int i) {
 }
 
 std::ostream &operator<<(std::ostream &os, const Relation &relation) {
-  const char separator    = ' ';
-  int Width     = 0;
-  
+  const char separator = ' ';
+  int Width = 0;
+
   for (const std::string &title : relation.get_column_titles()) {
-    Width = std::max(Width, ( (int)title.length()) + 1 );
+    Width = std::max(Width, ((int)title.length()) + 1);
   }
-  
+
   for (int i = 0; i < relation.num_rows(); ++i) {
     for (const std::string &entry : relation.get_row(i)) {
-      Width = std::max(Width, ( (int)entry.length()) + 1 );
+      Width = std::max(Width, ((int)entry.length()) + 1);
     }
   }
-  
+
   // Line 1: TableName
   (std::basic_ostream<char> &)os << "Table: " << relation.title() << std::endl;
 
   // Line 2: Column Names
   for (const std::string &title : relation.get_column_titles()) {
-    (std::basic_ostream<char> &)os << std::left << std::setw(Width) << std::setfill(separator) << title;
+    (std::basic_ostream<char> &)os << std::left << std::setw(Width)
+                                   << std::setfill(separator) << title;
   }
   os << std::endl;
 
   // Line 3-infinity: entries
   for (int i = 0; i < relation.num_rows(); ++i) {
     for (const std::string &entry : relation.get_row(i)) {
-      (std::basic_ostream<char> &)os << std::left << std::setw(Width) << std::setfill(separator) << entry;
+      (std::basic_ostream<char> &)os << std::left << std::setw(Width)
+                                     << std::setfill(separator) << entry;
     }
     os << std::endl;
   }
-  
-  
-  
-  
-  /*for (const Column<std::string> &column : relation.columns()) {
-    std::string title;
-    if (column.primary_key()) {
-      title = "*" + column.title() + "*";
-    } else {
-      title = column.title();
-    }
-    os << title << delimiter;
-  }
-  os << std::endl;
-
-  for (int i = 0; i < relation.num_rows(); ++i) {
-    relation.print_row(i, delimiter);
-    if (i != (relation.num_rows() - 1)) os << std::endl;
-  }
-
-  os << std::endl;
-*/
   return os;
 }
 
@@ -315,7 +295,6 @@ std::ofstream &operator<<(std::ofstream &os, const Relation &relation) {
 
   return os;
 }
-
 
 bool operator==(const Relation &lhs, const Relation &rhs) {
   bool equal = lhs.title() == rhs.title();
