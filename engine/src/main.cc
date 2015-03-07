@@ -127,6 +127,8 @@ int main(int argc, char* argv[]) {
   // dbengine.execSQL(
   //     "a <- rename (aname, akind) (project (name, kind) animals);");
 
+  // dbengine.execSQL("OPEN locale; ");
+  // dbengine.execSQL("SHOW locale; ");
   dbengine.execSQL(
       " CREATE TABLE plans (with_who VARCHAR(10), where VARCHAR(20), weekday "
       "VARCHAR(9), length_hrs INTEGER) PRIMARY KEY (with_who, weekday); ");

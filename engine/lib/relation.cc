@@ -166,7 +166,7 @@ std::ostream &operator<<(std::ostream &os, const Relation &relation) {
     os << "─";
   }
   os << std::endl;
-  
+
   // Line 3: Column Names
   for (const std::string &title : relation.get_column_titles()) {
     (std::basic_ostream<char> &)os << std::left << std::setw(Width)
