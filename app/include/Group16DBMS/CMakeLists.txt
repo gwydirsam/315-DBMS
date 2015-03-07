@@ -16,7 +16,6 @@ endif()
 
 set(SRCS
 Conditions.cpp
-DBShell.cpp
 Database.cpp
 Parser.cpp
 Table.cpp
@@ -27,5 +26,5 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_library(${PROJECT_NAME} SHARED ${SRCS})
 
 #use C++14
-set_property(TARGET ${ENGINE_LIBRARY} PROPERTY CXX_STANDARD 14)
-set_target_properties(${ENGINE_LIBRARY} PROPERTIES VERSION 1.0.0 SOVERSION 1)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
+set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)

@@ -33,5 +33,11 @@ if (test)
   include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 endif()
 
+set(GROUP16_LIBRARY "group16dbms")
+#include_directories("${INCLUDES_DIR}/Group16DBMS")
+add_subdirectory("${INCLUDES_DIR}/Group16DBMS")
+find_library(GROUP16DBMS NAMES ${GROUP16_LIBRARY} libgroup16dbms HINTS "${CMAKE_SOURCE_DIR}/lib/group16dbms")
+
+
 # add directory for project source files
 add_subdirectory(${SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME})
