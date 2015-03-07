@@ -143,8 +143,19 @@ void Relation::drop_row(int i) {
 }
 
 std::ostream &operator<<(std::ostream &os, const Relation &relation) {
-   const char separator    = ' ';
-  const int Width     = 8;
+  const char separator    = ' ';
+  int Width     = 0;
+  
+  for (const std::string &title : relation.get_column_titles()) {
+    Width = std::max(Width, ( (int)title.length()) + 1 );
+  }
+  
+  for (int i = 0; i < relation.num_rows(); ++i) {
+    for (const std::string &entry : relation.get_row(i)) {
+      Width = std::max(Width, ( (int)entry.length()) + 1 );
+    }
+  }
+  
   // Line 1: TableName
   (std::basic_ostream<char> &)os << "Table: " << relation.title() << std::endl;
 
