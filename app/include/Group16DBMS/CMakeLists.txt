@@ -14,6 +14,10 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb -O0 -DDEBUG -Wall -Wextra")
 endif()
 
+set(MAIN
+  DBShell.cpp
+  )
+
 set(SRCS
 Conditions.cpp
 Database.cpp
@@ -23,6 +27,7 @@ Table.cpp
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+add_executable(${PROJECT_NAME}shell ${MAIN} ${SRCS})
 add_library(${PROJECT_NAME} SHARED ${SRCS})
 
 #use C++14
