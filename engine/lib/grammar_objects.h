@@ -41,7 +41,7 @@ std::ostream& operator<<(std::ostream& os, SubCondition const& sc);
 
 struct Condition {
   Condition(std::string op, SubCondition subcon1, SubCondition subcon2)
-      : operation(op) {
+    : operation(op), subconditions() {
     errlog("Condition Constructor 1 Called.");
     std::string errstr = "Condition Constructor 1 args: " + op;
     errlog(errstr);
@@ -59,20 +59,8 @@ struct Condition {
       std::cerr << "Constructor 2: " << subcon << std::endl;
     }
   }
-  Condition(std::vector<SubCondition> subcons) : operation(), subconditions() {
+  Condition(std::vector<SubCondition> subcons) : operation(), subconditions(subcons) {
     errlog("Condition Constructor 3 Called.");
-    if (!subcons.empty()) {
-      operation = boost::get<Condition>(subcons[0]).operation;
-      std::string errstr = "Condition Constructor 3: Setting Op = " + operation;
-      errlog(errstr);
-      for (SubCondition subcon : subcons) {
-        std::cerr << "Constructor 3: Pushing back:" << subcon << std::endl;
-        for (SubCondition ssubcon : boost::get<Condition>(subcon).subconditions) {
-          subconditions.push_back(boost::get<std::string>(ssubcon));
-        }
-      }
-    }
-    std::cerr << "Constructor 3: op: " << operation << std::endl;
     for (SubCondition subcon : subconditions) {
       std::cerr << "Constructor 3: " << subcon << std::endl;
     }
