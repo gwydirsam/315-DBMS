@@ -205,6 +205,7 @@ std::string Menu::make_post() {
 
 std::string Menu::search_by_author(std::string str_input) {
 	std::string author = str_input;
+	std::string query = "answer <- select ( author == \"" + str_input +"\") posts;";
 	int ID;
 	std::cout << "[" << author << "'s Posts]\n";
 	//Search database for posts
@@ -219,24 +220,22 @@ std::string Menu::search_by_author(std::string str_input) {
 }
 
 std::string Menu::search_by_title(std::string str_input) {
-	std::string title;
+	std::string query = "answer <- select ( title == \"" + str_input +"\") posts;";
 	std::cout << "" << std::endl;
-	std::cin >> title;
-	return title;
+	return str_input;
 }
 
 std::string Menu::search_by_tags(std::string str_input) {
-	std::string tags;
+	std::string table = "CREATE TABLE tags (tags VARCHAR(50), postid VARCHAR(50)) PRIMARY KEY (tags);";
+	std::string query = "answer <- select ( tag == \"" + str_input +"\") posts;";
 	std::cout << "" << std::endl;
-	std::cin >> tags;
-	return tags;
+	return str_input;
 }
 
 std::string Menu::search_by_dates(std::string str_input) {
-	std::string dates;
+	std::string query = "answer <- select ( date == \"" + str_input +"\") posts;";
 	std::cout << "" << std::endl;
-	std::cin >> dates;
-	return dates;
+	return str_input;
 }
 
 void Menu::edit_author(std::string str_input) {	
@@ -245,6 +244,7 @@ void Menu::edit_author(std::string str_input) {
 	//TODO std::cout << "Current Author: "<< relation.author() <<"\n\n";
 	std::cout << "* Enter new Author: ";
 	std::getline(std::cin, author);
+	std::string query = "posts <- rename ("+author+") (select ( author == \"" + str_input +"\") posts;";
 	//TODO store new author
 }
 
@@ -254,6 +254,7 @@ void Menu::edit_title(std::string str_input) {
 	//TODO std::cout << "Current Title: " << relation.title() << "\n\n";
 	std::cout << "* Enter new Title: ";
 	std::getline(std::cin, title);
+	std::string query = "posts <- rename ("+title+") (select ( title == \"" + str_input +"\") posts;";
 	//TODO store new title
 }
 
@@ -269,6 +270,7 @@ void Menu::edit_content(std::string str_input) {
 	//TODO std::cout << "Current Content: "<< relation.content() <<"\n\n";
 	std::cout << "* Enter new Content: ";
 	std::getline(std::cin, content);
+	std::string query = "posts <- rename ("+content+") (select ( content == \"" + str_input +"\") posts;";
 	//TODO store new content
 }
 
@@ -279,6 +281,7 @@ void Menu::edit_comments(std::string str_input) {
 	//TODO print out comments
 	std::cout << "* Enter new Comment: ";
 	std::getline(std::cin, comment);
+	std::string query = "posts <- rename ("+comment+") (select ( comment == \"" + str_input +"\") posts;";
 	// TODO store new comment
 }
 
