@@ -61,15 +61,19 @@ struct Expression {
       errstr += str = " ";
     }
     errlog(errstr);
+#ifdef DEBUG
     std::cerr << subexp << std::endl;
+#endif
   }
   Expression(std::string q, Condition cond, SubExpression subexp)
       : query(q), condition(cond), argument() {
     subexpressions.push_back(subexp);
     std::string errstr = "Expression: " + q;
     errlog(errstr);
+#ifdef DEBUG
     std::cerr << cond << std::endl;
     std::cerr << subexp << std::endl;
+#endif
   }
   Expression(std::string q, std::vector<std::string> args,
              std::vector<SubExpression> subexps)

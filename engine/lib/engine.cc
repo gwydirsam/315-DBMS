@@ -8,6 +8,9 @@
 #include <functional>
 #include <string>
 
+#include <boost/variant.hpp>
+#include <boost/variant/recursive_variant.hpp>
+
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -352,8 +355,8 @@ int Engine::deleteFrom(Relation& Table, std::vector<std::string> Conditions) {
                              std::to_string(Table.num_rows());
         errlog(errmsg);
         std::vector<std::string> current_row = Table.get_row(j);
-        for (unsigned int k = (ops.size() - 1); k > (ops.size() - literals.size());
-             --k) {
+        for (unsigned int k = (ops.size() - 1);
+             k > (ops.size() - literals.size()); --k) {
           std::string errstr = "Engine: Delete From: Conditions Loop: i=" +
                                std::to_string(i) + " j=" + std::to_string(j) +
                                " k=" + std::to_string(k);
@@ -477,11 +480,13 @@ int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
 int Engine::execSQL(std::string input_string) {
   std::string errstr = "Engine execSQL: " + input_string;
   errlog(errstr);
+
   Program program = parse_string(input_string);
-  #ifdef DEBUG
+
+#ifdef DEBUG
   std::cout << program << std::endl;
   std::cout << std::endl;
-  #endif
+#endif
 
   // execute
   execute_program(*this, program);
@@ -500,6 +505,7 @@ int Engine::execSQL(std::string input_string) {
     std::cerr << table << std::endl;
   }
 #endif
+
   errstr = "Engine execSQL Finished: " + input_string;
   errlog(errstr);
   endlog();
@@ -640,8 +646,8 @@ Relation Engine::select(std::vector<std::string> Conditions,
                              std::to_string(table.num_rows());
         errlog(errmsg);
         std::vector<std::string> current_row = table.get_row(j);
-        for (unsigned int k = (ops.size() - 1); k > (ops.size() - literals.size());
-             --k) {
+        for (unsigned int k = (ops.size() - 1);
+             k > (ops.size() - literals.size()); --k) {
           std::string errstr = "Engine: Select: Conditions Loop: i=" +
                                std::to_string(i) + " j=" + std::to_string(j) +
                                " k=" + std::to_string(k);
@@ -1007,7 +1013,8 @@ Relation Engine::setcrossproduct(Relation Table1, Relation Table2) {
 
 Relation Engine::setcrossproduct(std::string TableName1,
                                  std::string TableName2) {
-  return setcrossproduct(find_relation_or_view(TableName1), find_relation_or_view(TableName2));
+  return setcrossproduct(find_relation_or_view(TableName1),
+                         find_relation_or_view(TableName2));
 }
 
 Relation Engine::setcrossproduct(Relation TableName1, std::string TableName2) {
@@ -1019,4 +1026,6 @@ Relation Engine::setcrossproduct(std::string TableName1, Relation TableName2) {
 }
 
 void Engine::showTable(Relation table) { std::cout << table << std::endl; }
-void Engine::showTable(std::string TableName) { showTable(find_relation_or_view(TableName)); }
+void Engine::showTable(std::string TableName) {
+  showTable(find_relation_or_view(TableName));
+}

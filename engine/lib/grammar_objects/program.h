@@ -29,8 +29,9 @@
 #include <boost/foreach.hpp>
 
 #include "../utility.h"
-
 #include "../engine.h"
+// class Engine;
+
 #include "condition.h"
 #include "command.h"
 #include "query.h"

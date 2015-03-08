@@ -68,6 +68,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
 
 template <typename C>
 Program parse_string(const C& input) {
+
   auto f(std::begin(input)), l(std::end(input));
 
   Grammar<decltype(f), boost::spirit::qi::space_type> p;

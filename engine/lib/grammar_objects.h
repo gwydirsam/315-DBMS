@@ -28,14 +28,14 @@
 
 #include <boost/foreach.hpp>
 
+// #include "relation.h"
+// #include "engine.h"
+// #include "utility.h"
+
 #include "grammar_objects/condition.h"
 #include "grammar_objects/expression.h"
 #include "grammar_objects/command.h"
 #include "grammar_objects/query.h"
 #include "grammar_objects/program.h"
-
-#include "relation.h"
-#include "engine.h"
-#include "utility.h"
 
 #endif /* GRAMMAR_OBJECTS_H_ */
