@@ -19,15 +19,23 @@ public:
 	void exit();
 	void print_menu();
 	void search_menu();
+	void edit_menu(std::string str_input);
 	void post_manage_system(std::string str_input);
 	void comments_menu(std::string str_input);
+	
 	void comment_on_post(std::string str_input);
 	void comment_on_comment(std::string str_input);
 	std::string make_post();
+	
 	std::string search_by_author(std::string str_input);
 	std::string search_by_title(std::string str_input);
 	std::string search_by_tags(std::string str_input);
 	std::string search_by_dates(std::string str_input);
-	std::string return_to_menu();
+	
+	void edit_author(std::string str_input);
+	void edit_title(std::string str_input);
+	void edit_tags(std::string str_input);
+	void edit_content(std::string str_input);
+	void edit_comments(std::string str_input);
 };
 #endif  // MENU_H_

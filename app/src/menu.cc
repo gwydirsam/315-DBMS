@@ -24,7 +24,7 @@ void Menu::print_menu() {
 		case 3: exit();
 				break;
 		default: 
-			 std::cout <<"Incorrect input restarting this step.\nPlease try to enter 1-3."; 
+			 std::cout <<"Incorrect input restarting this step.\nPlease try to enter 1-3.\n"; 
 			 print_menu(); break;
 	}
 }
@@ -36,11 +36,11 @@ void Menu::search_menu() {
 	//Search Menu Dialogue
 	std::cout << "[Search Menu]\n\n";
 	std::cout << "Search by:\n";
-	std::cout << "1.\tAuthor\n"; 
-	std::cout << "2.\tTitle\n"; 
-	std::cout << "3.\tTag(s)\n";
-	std::cout << "4.\tDate\n";
-	std::cout << "5.\tReturn to Main Menu\n\n";
+	std::cout << "1. Author\n"; 
+	std::cout << "2. Title\n"; 
+	std::cout << "3. Tag(s)\n";
+	std::cout << "4. Date\n";
+	std::cout << "5. Return to Main Menu\n\n";
 	std::cout<< "* Enter command: ";
 	std::cin >> selection_input;
 	std::cout << "\n";
@@ -66,11 +66,43 @@ void Menu::search_menu() {
 					break;
 			default: 
 					std::cout <<
-					"Incorrect input restarting this step.\nPlease try to enter 1-5."; 
+					"Incorrect input restarting this step.\nPlease try to enter 1-5.\n"; 
 					search_menu();
 					break;
 	}
 }
+
+//probably this will be passed the equivalent of a relation on group 16s DMS
+void Menu::edit_menu(std::string str_input) {
+	int selection_input;
+	//Edit Menu Dialogue
+	//TODO std::cout << "["<< relation.title() <<"'s Edit Menu]\n\n"; 
+	std::cout << "[Edit Menu]\n\n";
+	std::cout << "1. Author\n"; 
+	std::cout << "2. Title\n"; 
+	std::cout << "3. Tag(s)\n";
+	std::cout << "4. Content\n";
+	std::cout << "5. Comments\n";
+	std::cout << "6. Return to Main Menu\n\n";
+	std::cout<< "* Enter command: ";
+	std::cin >> selection_input;
+	std::cout << "\n";
+	
+	switch(selection_input) {
+			
+			case 1: edit_author(str_input); break;
+			case 2: edit_title(str_input); break;
+			case 3: edit_tags(str_input); break;
+			case 4: edit_content(str_input); break;
+			case 5: edit_comments(str_input); break;
+			case 6: print_menu(); break;
+			default: 
+					std::cout <<
+					"Incorrect input restarting this step.\nPlease try to enter 1-6.\n"; 
+					edit_menu(str_input); break;
+	}
+}
+
 
 //probably this will be passed the equivalent of a relation on group 16s DMS
 void Menu::post_manage_system(std::string str_input) {
@@ -91,10 +123,8 @@ void Menu::post_manage_system(std::string str_input) {
 			case 1: // TODO print_post
 					// print_tags
 					// print_comments and comments_on_comments
-					post_manage_system(str_input);
-					break;
-			case 2: //TODO!!!
-					break;
+					post_manage_system(str_input); break;
+			case 2: edit_menu(str_input); break;
 			case 3: //TODO!!! 
 					//Maybe just deletion the relation from their 
 					//version of open tables and its file
@@ -105,7 +135,7 @@ void Menu::post_manage_system(std::string str_input) {
 					break;
 			default: 
 					std::cout <<
-					"Incorrect input restarting this step.\nPlease try to enter 1-5."; 
+					"Incorrect input restarting this step.\nPlease try to enter 1-5.\n"; 
 					search_menu();
 					break;
 	}
@@ -209,4 +239,46 @@ std::string Menu::search_by_dates(std::string str_input) {
 	return dates;
 }
 
+void Menu::edit_author(std::string str_input) {	
+	std::string author;
+	//TODO std::cout << "[Editing"<< relation.title() <<"'s Author]\n\n";
+	//TODO std::cout << "Current Author: "<< relation.author() <<"\n\n";
+	std::cout << "* Enter new Author: ";
+	std::getline(std::cin, author);
+	//TODO store new author
+}
+
+void Menu::edit_title(std::string str_input) {	
+	std::string title;
+	//TODO std::cout << "[Editing"<< relation.title() <<"'s Title]\n\n";
+	//TODO std::cout << "Current Title: " << relation.title() << "\n\n";
+	std::cout << "* Enter new Title: ";
+	std::getline(std::cin, title);
+	//TODO store new title
+}
+
+void Menu::edit_tags(std::string str_input) {	
+	//TODO std::cout << "[Editing"<< relation.title() <<"'s Tag(s)]\n\n";
+	//IDK how to impletement at all?
+	//Are they each an element of a vector?
+}
+
+void Menu::edit_content(std::string str_input) {	
+	std::string content;
+	//TODO std::cout << "[Editing"<< relation.title() <<"'s Content]\n\n";
+	//TODO std::cout << "Current Content: "<< relation.content() <<"\n\n";
+	std::cout << "* Enter new Content: ";
+	std::getline(std::cin, content);
+	//TODO store new content
+}
+
+void Menu::edit_comments(std::string str_input) {	
+	std::string comment;
+	//TODO std::cout << "[Editing"<< relation.title() <<"'s Comments]\n\n";
+	//TODO std::cout << "Current Comments: "<< relation.comments() <<"\n\n";
+	//TODO print out comments
+	std::cout << "* Enter new Comment: ";
+	std::getline(std::cin, comment);
+	// TODO store new comment
+}
 
