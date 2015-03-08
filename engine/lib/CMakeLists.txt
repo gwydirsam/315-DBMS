@@ -1,8 +1,12 @@
 set(SRCS
-  engine.cc
-  relation.cc
   utility.cc
-  grammar_objects.cc
+  relation.cc
+  engine.cc
+  condition.cc
+  expression.cc
+  command.cc
+  query.cc
+  program.cc
 	)
 
 find_package(Boost 1.57.0 COMPONENTS filesystem system)

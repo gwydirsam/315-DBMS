@@ -52,6 +52,8 @@ Relation& Engine::find_relation_or_view(std::string TableName) {
     std::string errmsg = "Engine: Table " + TableName + " Not Found";
     errlog(errmsg);
   } else {
+    std::string errmsg = "Engine: Table " + TableName + " Found";
+    errlog(errmsg);
     return find_relation(TableName);
   }
   if (find_view_index(TableName) == -1) {
@@ -59,6 +61,8 @@ Relation& Engine::find_relation_or_view(std::string TableName) {
     std::string errmsg = "Engine: View " + TableName + " Not Found";
     errlog(errmsg);
   } else {
+    std::string errmsg = "Engine: View " + TableName + " Found";
+    errlog(errmsg);
     return find_view(TableName);
   }
 }

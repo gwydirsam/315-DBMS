@@ -131,7 +131,7 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
          (operand >> op >>
           operand))[_val = boost::phoenix::construct<Condition>(_2, _1, _3)] |
         ("(" >> conditions >>
-         ")")[_val = boost::phoenix::construct<SubCondition>(_1)];
+         ")")[_val = boost::phoenix::construct<Condition>(_1)];
 
     // // op := == | != | < | > | <= | >=
     op = hold[string("==")] | hold[string("!=")] | hold[string("<")] |
