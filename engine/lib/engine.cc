@@ -16,7 +16,6 @@
 #include "relation.h"
 #include "utility.h"
 #include "grammar.h"
-#include "grammar_objects.h"
 
 Engine::Engine() {
   boost::filesystem::path tabledir(boost::filesystem::absolute("tables"));

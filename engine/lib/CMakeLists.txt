@@ -2,6 +2,7 @@ set(SRCS
   utility.cc
   relation.cc
   engine.cc
+  grammar.cc
   grammar_objects/condition.cc
   grammar_objects/expression.cc
   grammar_objects/command.cc
