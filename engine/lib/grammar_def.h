@@ -98,9 +98,9 @@ Grammar<It, Skipper>::Grammar()
 
   // condition := conjunction { || conjunction }
   conditions =
-      (conjunctions >>
-       *("||" >> conjunctions))[_val = boost::phoenix::construct<Condition>(
-                                    "OR", _1, _2)];
+    attr("OR") >> (conjunctions >>
+       *("||" >> conjunctions));
+
   // conjunction := comparison { && comparison }
   conjunctions =
       (comparisons >>
