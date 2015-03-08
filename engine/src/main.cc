@@ -149,7 +149,7 @@ int main(int argc, char* argv[]) {
       "INSERT INTO plans VALUES FROM (\"Kary\", \"Lab\", \"Thursday\", "
       "2); ");
   dbengine.execSQL(
-      "DELETE FROM plans WHERE (( weekday == \"Tuesday\" ) && (with_who != \"John\")); ");
+      "DELETE FROM plans WHERE ( weekday == \"Tuesday\" ) && (with_who != \"John\"); ");
   dbengine.execSQL("SHOW plans; ");
   dbengine.execSQL("Tues <- select (weekday == \"Tuesday\") plans; ");
   dbengine.execSQL("long_plans <- select (length_hrs > 2) plans; ");
