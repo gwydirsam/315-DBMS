@@ -3,16 +3,19 @@
 
 #include <iostream>
 #include <string>
+#include "../include/Group16DBMS/Parser.h"
 
 class Menu {
 public:
-	//Constructor:
-	//Destructor:
 	//Global:
-		std::string str_input;
-		int m_selection_input;
-		int s_selection_input;
-		int search_input;
+	Parser parser;
+	std::string str_input;
+	int m_selection_input;
+	int s_selection_input;
+	int search_input;
+	//Constructor:
+	Menu();
+	//Destructor:
 	//Getters:
 	//Setters:
 	//Functions:
@@ -25,6 +28,7 @@ public:
 	
 	void comment_on_post(std::string str_input);
 	void comment_on_comment(std::string str_input);
+	void view_post(std::string str_input);
 	std::string make_post();
 	
 	std::string search_by_author(std::string str_input);

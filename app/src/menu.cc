@@ -1,6 +1,16 @@
 #include "menu.h"
 
+Menu::Menu() {
+	parser.lex("CREATE TABLE posts (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(1000000), date VARCHAR(20)) PRIMARY KEY (title, author);");
+	parser.lex("INSERT INTO posts VALUES FROM (\"Test\", \"Kade\", \"Does the app work? Does view work?\", \"testing, app, view\", \"OH BOY IT WORKS\", \"3/8/15\");");
+	parser.lex("INSERT INTO posts VALUES FROM (\"The app\", \"Admin\", \"Testing edit content and tags\", \"testing, content\", \"Hello???\", \"3/8/15\");");
+}
 void Menu::exit() {
+	
+	parser.lex("Write posts;");
+	parser.lex("EXIT;");
+	std::cout << "Goodbye.";
+	
 	//exit main menu
 }
 
@@ -32,7 +42,8 @@ void Menu::print_menu() {
 //search menu
 void Menu::search_menu() {
 	std::string str_input;
-	int selection_input;
+	std::string post;
+	int selection_input = 0;
 	//Search Menu Dialogue
 	std::cout << "[Search Menu]\n\n";
 	std::cout << "Search by:\n";
@@ -47,16 +58,22 @@ void Menu::search_menu() {
 	
 	switch(selection_input) {
 			case 1: std::cout << "* Enter Author: "; 
-					std::getline(std::cin,str_input);
-					search_by_author(str_input);
+					std::cin >> str_input;
+					std::cout << "\n\n"<<str_input;
+					//std::getline(std::cin,str_input);
+					
+					post = search_by_author(str_input);
+					post_manage_system(post);
 					break;
 			case 2: std::cout << "* Enter Title: "; 
 					std::getline(std::cin,str_input);
-					search_by_title(str_input);
+					post = search_by_title(str_input);
+					post_manage_system(post);
 					break;
 			case 3: std::cout << "* Enter Tag(s): "; 
 					std::getline(std::cin,str_input);
-					search_by_tags(str_input);
+					post = search_by_tags(str_input);
+					post_manage_system(post);
 					break;
 			case 4: std::cout << "* Enter Date: "; 
 					std::cin >> str_input;
@@ -68,7 +85,6 @@ void Menu::search_menu() {
 					std::cout <<
 					"Incorrect input restarting this step.\nPlease try to enter 1-5.\n"; 
 					search_menu();
-					break;
 	}
 }
 
@@ -90,16 +106,16 @@ void Menu::edit_menu(std::string str_input) {
 	
 	switch(selection_input) {
 			
-			case 1: edit_author(str_input); break;
-			case 2: edit_title(str_input); break;
-			case 3: edit_tags(str_input); break;
-			case 4: edit_content(str_input); break;
-			case 5: edit_comments(str_input); break;
+			case 1: edit_author(str_input); print_menu(); break;
+			case 2: edit_title(str_input); print_menu(); break;
+			case 3: edit_tags(str_input); print_menu(); break;
+			case 4: edit_content(str_input); print_menu(); break;
+			case 5: edit_comments(str_input); print_menu(); break;
 			case 6: print_menu(); break;
 			default: 
 					std::cout <<
 					"Incorrect input restarting this step.\nPlease try to enter 1-6.\n"; 
-					edit_menu(str_input); break;
+					edit_menu(str_input);
 	}
 }
 
@@ -120,9 +136,7 @@ void Menu::post_manage_system(std::string str_input) {
 	std::cout << "\n";
 	
 	switch(selection_input) {
-			case 1: // TODO print_post
-					// print_tags
-					// print_comments and comments_on_comments
+			case 1: view_post(str_input);
 					post_manage_system(str_input); break;
 			case 2: edit_menu(str_input); break;
 			case 3: //TODO!!! 
@@ -136,8 +150,8 @@ void Menu::post_manage_system(std::string str_input) {
 			default: 
 					std::cout <<
 					"Incorrect input restarting this step.\nPlease try to enter 1-5.\n"; 
-					search_menu();
-					break;
+					post_manage_system(str_input);
+					
 	}
 }
 
@@ -160,8 +174,8 @@ void Menu::comments_menu(std::string str_input) {
 		case 2: comment_on_comment(str_input); //relation
 				break;
 		default: 
-			 std::cout <<"Incorrect input restarting this step.\nPlease try to enter 1-3."; 
-			 print_menu(); break;
+			 std::cout <<"Incorrect input restarting this step.\nPlease try to enter 1-2."; 
+			 comments_menu(str_input);
 	}
 
 }
@@ -196,6 +210,14 @@ void Menu::comment_on_comment(std::string str_input) {
 	post_manage_system(str_input);
 }
 
+void Menu::view_post(std::string str_input) {
+	//TODO
+	std::cout << "--------------------------------------------------------------------------------";
+	parser.lex("");
+	std::cout << "By: " << str_input << std::endl;
+	std::cout << "--------------------------------------------------------------------------------";
+}
+
 std::string Menu::make_post() {
 	std::string post;
 	std::cout << "New post: " << std::endl;
@@ -206,6 +228,8 @@ std::string Menu::make_post() {
 std::string Menu::search_by_author(std::string str_input) {
 	std::string author = str_input;
 	std::string query = "answer <- select ( author == \"" + str_input +"\") posts;";
+	parser.lex(query);
+	parser.lex("SHOW answer;");
 	int ID;
 	std::cout << "[" << author << "'s Posts]\n";
 	//Search database for posts
@@ -243,7 +267,8 @@ void Menu::edit_author(std::string str_input) {
 	//TODO std::cout << "[Editing"<< relation.title() <<"'s Author]\n\n";
 	//TODO std::cout << "Current Author: "<< relation.author() <<"\n\n";
 	std::cout << "* Enter new Author: ";
-	std::getline(std::cin, author);
+	//std::getline(std::cin, author);
+	std::cin >> author;
 	std::string query = "posts <- rename ("+author+") (select ( author == \"" + str_input +"\") posts;";
 	//TODO store new author
 }
