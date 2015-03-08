@@ -10,8 +10,10 @@ Condition::Condition(std::string op, SubCondition subcon1, SubCondition subcon2)
   errlog("Condition Constructor 1 Called.");
   std::string errstr = "Condition Constructor 1 args: " + op;
   errlog(errstr);
+  #ifdef DEBUG
   std::cerr << "Constructor 1: " << subcon1 << std::endl;
   std::cerr << "Constructor 1: " << subcon2 << std::endl;
+  #endif
   subconditions.push_back(subcon1);
   subconditions.push_back(subcon2);
 }
@@ -21,7 +23,9 @@ Condition::Condition(std::string op, SubCondition subcon1)
   errlog("Condition Constructor 1a Called.");
   std::string errstr = "Condition Constructor 1a args: " + op;
   errlog(errstr);
+  #ifdef DEBUG
   std::cerr << "Constructor 1a: " << subcon1 << std::endl;
+  #endif
   subconditions.push_back(subcon1);
 }
 
@@ -30,17 +34,21 @@ Condition::Condition(std::string op, std::vector<SubCondition> subcons)
   errlog("Condition Constructor 2 Called.");
   std::string errstr = "Condition Constructor 2 args: " + op;
   errlog(errstr);
+  #ifdef DEBUG
   for (SubCondition subcon : subcons) {
     std::cerr << "Constructor 2: " << subcon << std::endl;
   }
+  #endif
 }
 
 Condition::Condition(std::vector<SubCondition> subcons)
     : operation(), subconditions(subcons) {
   errlog("Condition Constructor 3 Called.");
+  #ifdef DEBUG
   for (SubCondition subcon : subconditions) {
     std::cerr << "Constructor 3: " << subcon << std::endl;
   }
+  #endif
 }
 
 Condition::Condition(std::string op) : operation(op), subconditions() {
