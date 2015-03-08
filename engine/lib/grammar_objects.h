@@ -50,6 +50,14 @@ struct Condition {
     subconditions.push_back(subcon1);
     subconditions.push_back(subcon2);
   }
+  Condition(std::string op, SubCondition subcon1)
+    : operation(op), subconditions() {
+    errlog("Condition Constructor 1a Called.");
+    std::string errstr = "Condition Constructor 1a args: " + op;
+    errlog(errstr);
+    std::cerr << "Constructor 1a: " << subcon1 << std::endl;
+    subconditions.push_back(subcon1);
+  }
   Condition(std::string op, std::vector<SubCondition> subcons)
       : operation(op), subconditions(subcons) {
     errlog("Condition Constructor 2 Called.");
