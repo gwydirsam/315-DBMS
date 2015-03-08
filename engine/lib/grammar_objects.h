@@ -28,11 +28,11 @@
 
 #include <boost/foreach.hpp>
 
-#include "condition.h"
-#include "expression.h"
-#include "command.h"
-#include "query.h"
-#include "program.h"
+#include "grammar_objects/condition.h"
+#include "grammar_objects/expression.h"
+#include "grammar_objects/command.h"
+#include "grammar_objects/query.h"
+#include "grammar_objects/program.h"
 
 #include "relation.h"
 #include "engine.h"

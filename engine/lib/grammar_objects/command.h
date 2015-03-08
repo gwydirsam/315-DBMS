@@ -28,8 +28,8 @@
 
 // #include <boost/foreach.hpp>
 
-#include "relation.h"
-#include "utility.h"
+#include "../relation.h"
+#include "../utility.h"
 
 class Engine;
 

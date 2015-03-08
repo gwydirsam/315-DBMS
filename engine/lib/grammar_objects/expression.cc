@@ -4,9 +4,9 @@
 #include <boost/foreach.hpp>
 #include <boost/fusion/adapted.hpp>
 
-#include "engine.h"
+#include "../engine.h"
 
-#include "utility.h"
+#include "../utility.h"
 
 std::ostream& operator<<(std::ostream& os, Expression const& e) {
   os << "{";

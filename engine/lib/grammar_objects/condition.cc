@@ -3,7 +3,7 @@
 #include <boost/foreach.hpp>
 #include <boost/fusion/adapted.hpp>
 
-#include "utility.h"
+#include "../utility.h"
 
 Condition::Condition(std::string op, SubCondition subcon1, SubCondition subcon2)
     : operation(op), subconditions() {

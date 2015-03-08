@@ -26,7 +26,7 @@
 
 #include <boost/foreach.hpp>
 
-#include "relation.h"
+#include "../relation.h"
 
 class Engine;
 

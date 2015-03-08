@@ -2,11 +2,11 @@ set(SRCS
   utility.cc
   relation.cc
   engine.cc
-  condition.cc
-  expression.cc
-  command.cc
-  query.cc
-  program.cc
+  grammar_objects/condition.cc
+  grammar_objects/expression.cc
+  grammar_objects/command.cc
+  grammar_objects/query.cc
+  grammar_objects/program.cc
 	)
 
 find_package(Boost 1.57.0 COMPONENTS filesystem system)

@@ -3,9 +3,9 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/fusion/adapted.hpp>
 
-#include "engine.h"
+#include "../engine.h"
 
-#include "utility.h"
+#include "../utility.h"
 
 std::ostream& operator<<(std::ostream& os, Command const& ss) {
   os << ss.command << "||";
