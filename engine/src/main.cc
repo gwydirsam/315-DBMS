@@ -7,7 +7,6 @@
 
 #include <string>
 #include <cstring>
-
 #include <readline/readline.h>
 #include <readline/history.h>
 
@@ -17,7 +16,36 @@
 #include "../lib/utility.h"
 #include "../lib/grammar.h"
 
+std::vector<std::string> ReadSTDIN() {
+  errlog("Reading SQL Programs from stdin");
+
+  std::vector<std::string> programs;
+
+  // read file from stdin
+  std::string line;
+  while (std::getline(std::cin, line)) {
+    // skip empty lines
+    if (line.length() > 1) {
+      programs.push_back(line);
+    }
+  }
+
+// print debug info
+#ifdef DEBUG
+  errlog("Read Programs:");
+  for (std::string prog : programs) {
+    std::cout << prog << std::endl;
+  }
+#endif
+
+  return programs;
+}
+
+// shell by default
+// run dbengine --stdin < file for scripts
+// if your script does not explicitly EXIT, you will drop into a shell
 int main(int argc, char* argv[]) {
+  // Start Engine
   Engine dbengine;
 
   if ((argc > 1) && (std::strcmp(argv[1], "--stdin") == 0)) {
@@ -62,7 +90,7 @@ int main(int argc, char* argv[]) {
 
     // parse input
     // check if help
-    if (std::strcmp(input,"?") == 0) {
+    if (std::strcmp(input,"?") > 0) {
       std::cout << "help" << std::endl;
     } else {
       dbengine.execSQL(input);
