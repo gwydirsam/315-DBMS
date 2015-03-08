@@ -33,6 +33,8 @@ set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 
 if(APPLE)
   # do nothing
+  set(CMAKE_MODULE_PATH ${INCLUDES_DIR})
+  set(Readline_DIR ${INCLUDES_DIR})
 elseif(UNIX)
   set(BOOST_ROOT ~/usr/)
 endif()

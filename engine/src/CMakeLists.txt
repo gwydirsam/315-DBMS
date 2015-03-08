@@ -7,6 +7,12 @@ find_package(Boost 1.57.0 COMPONENTS filesystem system)
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
 endif()
+set(Readline_DIR ${INCLUDES_DIR})
+find_package(Readline)
+if(READLINE_FOUND)
+  include_directories(${Readline_INCLUDE_DIR})
+endif()
+
 
 set(RELEASE_BINARY "main")
 set(RELEASE_BINARY_OUTNAME "${PROJECT_NAME}")
@@ -24,7 +30,7 @@ set_property(TARGET ${RELEASE_BINARY} PROPERTY CXX_STANDARD 14)
 
 set_target_properties(${RELEASE_BINARY} PROPERTIES OUTPUT_NAME "${RELEASE_BINARY_OUTNAME}")
 
-target_link_libraries(${RELEASE_BINARY} ${ENGINE_LIBRARY} ${Boost_LIBRARIES})
+target_link_libraries(${RELEASE_BINARY} ${ENGINE_LIBRARY} ${Boost_LIBRARIES}  ${Readline_LIBRARY})
 # target_link_libraries(${RELEASE_BINARY} ${ENGINE_LIBRARY})
 
 # Testing
