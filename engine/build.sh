@@ -30,8 +30,8 @@ GTESTSYMLINKS=( "$ENGINEDIR/include/gtest" "$APPDIR/include/gtest" )
 
 READLINEURL="http://git.savannah.gnu.org/cgit/readline.git/snapshot/readline-master.tar.gz"
 READLINETARFILENAME=`basename $READLINEURL`
-READLINEDIR="$PROJECTROOTDIR/include/`basename $READLINEURL .tar.gz`"
-READLINESYMLINKS=( "$ENGINEDIR/include/readline-master" "$APPDIR/include/readline-master" )
+READLINEDIR="$PROJECTROOTDIR/include/`basename $READLINEURL -master.tar.gz`"
+READLINESYMLINKS=( "$ENGINEDIR/include/readline" "$APPDIR/include/readline" )
 
 NCURSESURL="http://ftpmirror.gnu.org/ncurses/ncurses-5.9.tar.gz"
 NCURSESTARFILENAME=`basename $NCURSESURL`
