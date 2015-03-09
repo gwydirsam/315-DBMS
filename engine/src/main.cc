@@ -94,7 +94,9 @@ int main(int argc, char* argv[]) {
     input = readline(shell_prompt);
 
     // Check for EOF.
-    if (!input) break;
+    if (!input) {
+      break;
+    }
 
     // Add input to history.
     add_history(input);
@@ -104,6 +106,8 @@ int main(int argc, char* argv[]) {
     if (std::strcmp(input, "?") == 0) {
       std::cout << "Want Help? Read the docs. They end in .h and .cc."
                 << std::endl;
+    } else if (std::strcmp(input, "") == 0) {
+      // nothing
     } else {
       dbengine.execSQL(input);
     }
