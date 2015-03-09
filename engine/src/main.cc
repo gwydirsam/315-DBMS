@@ -100,5 +100,7 @@ int main(int argc, char* argv[]) {
     free(input);
   }
 
+  dbengine.execSQL("EXIT;");
+
   return 0;
 }
