@@ -42,7 +42,7 @@ set(Readline_ROOT_DIR ~/usr/)
 endif()
 
 # include directories
-include_directories(${LIB_DIR} ${Boost_INCLUDE_DIRS})
+include_directories(${LIB_DIR} ${Boost_INCLUDE_DIRS} ${INCLUDES_DIR} ~/usr/include)
 # if testing include gtest
 if (test)
   add_subdirectory(${INCLUDES_DIR}/gtest)
