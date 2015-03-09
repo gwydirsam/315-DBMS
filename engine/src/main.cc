@@ -7,8 +7,6 @@
 
 #include <string>
 #include <cstring>
-#include <readline/readline.h>
-#include <readline/history.h>
 
 #include "../lib/engine.h"
 #include "../lib/column.h"
@@ -60,44 +58,25 @@ int main(int argc, char* argv[]) {
         errlog(errstr);
         dbengine.execSQL(prog);
       }
+      draw_line();
+      std::cout << "Script Execution Finished." << std::endl;
+      std::cout.clear();
+      std::cin.clear();
+      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
   }
 
-  // input and shell_prompt buffer
-  char* input, shell_prompt[4096];
+  // run shell
+  errlog("Starting DBMS Shell.");
+  std::cout << "Group 15 DBMS Shell (^D to Finish)" << std::endl;
 
-  // Configure readline to auto-complete paths when the tab key is hit.
-  rl_bind_key('\t', rl_complete);
-
-  for (;;) {
-// Create prompt string from user name and current working directory.
-#ifdef DEBUG
-    snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBshell(DEBUG) > ",
-             getenv("USER"));
-#else
-    snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBshell > ",
-             getenv("USER"));
-#endif
-
-    // Display prompt and read input (NB: input must be freed after use)...
-    input = readline(shell_prompt);
-
-    // Check for EOF.
-    if (!input) break;
-
-    // Add input to history.
-    add_history(input);
-
-    // parse input
-    // check if help
-    // if (std::strcmp(input,"?") == 0) {
-    //   std::cout << "help" << std::endl;
-    // } else {
-      dbengine.execSQL(input);
-    // }
-
-    // Free input.
-    free(input);
+  std::string input;
+  std::cerr << "> ";
+  while (std::getline(std::cin, input)) {
+    std::cerr << "> ";
+    // TODO check if valid here
+    dbengine.execSQL(input);
+    input = "";
   }
 
   dbengine.execSQL("EXIT;");
