@@ -10,7 +10,6 @@ endif()
 
 if(APPLE)
 else()
-  set(CURSES_NEED_NCURSES TRUE)
   find_package(Curses)
   if(CURSES_FOUND)
     include_directories(${CURSES_INCLUDE_DIR})

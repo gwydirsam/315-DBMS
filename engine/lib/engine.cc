@@ -597,6 +597,8 @@ Relation Engine::select(std::vector<std::string> Conditions,
       } else {
         column_names.push_back(Conditions[i]);
         // column names are followed by a literal
+        std::string errstr = "Pushing back Literal: " + Conditions[i+1];
+        errlog(errstr);
         literals.push_back(Conditions[++i]);
       }
     }
