@@ -218,7 +218,7 @@ fi
 if [ "$HOSTNAME" = "sun" ]
 then
     echo "Checking if you have ncurses"
-    if [ -d "$HOME/usr/include/ncurses" ]
+    if [ -d "$HOME/usr/include/ncursesw" ]
     then
         echo "You have ncurses Checking symlinks..."
         for i in "${NCURSESSYMLINKS[@]}"
@@ -279,21 +279,7 @@ then
             exit 1
         fi
 
-        make
-        RESULT=$?
-        if [ $RESULT -ne 0 ]
-        then
-            echo "CCache Build Failed"
-            exit 1
-        fi
-
-        make install #>> "$LOGFILE" 2>&1
-        RESULT=$?
-        if [ $RESULT -ne 0 ]
-        then
-            echo "CCache Build Failed"
-            exit 1
-        fi
+        make -j4 -k; make install #>> "$LOGFILE" 2>&1
 
         # create symlinks
         echo "Creating Symlinks..."
