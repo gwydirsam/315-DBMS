@@ -38,11 +38,11 @@ if(APPLE)
 elseif(UNIX)
   set(BOOST_ROOT ~/usr/)
 set(Readline_ROOT_DIR ~/usr/)
-
+include_directories(~/usr/include)
 endif()
 
 # include directories
-include_directories(${LIB_DIR} ${Boost_INCLUDE_DIRS} ${INCLUDES_DIR} ~/usr/include)
+include_directories(${LIB_DIR} ${Boost_INCLUDE_DIRS} ${INCLUDES_DIR})
 # if testing include gtest
 if (test)
   add_subdirectory(${INCLUDES_DIR}/gtest)
