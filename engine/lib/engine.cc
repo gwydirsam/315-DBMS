@@ -359,8 +359,10 @@ int Engine::deleteFrom(Relation& Table, std::vector<std::string> Conditions) {
                              std::to_string(Table.num_rows());
         errlog(errmsg);
         std::vector<std::string> current_row = Table.get_row(j);
+        std::string errstr = "Engine: Delete: Ops Size: " + std::to_string( ops.size() );
+        errlog(errstr);
         for (unsigned int k = (ops.size() - 1);
-             k > (ops.size() - literals.size()); --k) {
+             k >= (ops.size() - literals.size()); --k) {
           std::string errstr = "Engine: Delete From: Conditions Loop: i=" +
                                std::to_string(i) + " j=" + std::to_string(j) +
                                " k=" + std::to_string(k);
