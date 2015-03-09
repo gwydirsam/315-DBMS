@@ -41,7 +41,6 @@ bool Database::close(string name)
 {
   int index = -1; //where we'll remove
   for (int i = 0; i < dbms.size(); ++i) {
-    cout << "hur\n";
     if (name.compare(dbms[i].get_name())==0) {
       index = i;
       break;
@@ -271,7 +270,6 @@ bool Database::delete_from(string name, Conditions cond)
 
   vector<int> to_delete;
   bool deleted = false;
-  cout << t->get_items().size() << endl;
   for (int i = 0; i < t->get_items().size(); ++i) {
     if (cond.evaluate(t, i)) {
       to_delete.push_back(i);
