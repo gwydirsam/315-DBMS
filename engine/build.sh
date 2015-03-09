@@ -46,7 +46,7 @@ else
 fi
 
 echo "Checking if you have readline"
-if [ -d "$READLINEDIR" ]
+if [ -d "$HOME/usr/include/readline" ]
 then
     echo "You have readline Checking symlinks..."
     for i in "${READLINESYMLINKS[@]}"
