@@ -24,4 +24,3 @@ SHOW days;
 WRITE days; 
 DELETE FROM plans WHERE ( weekday == "Tuesday" ) && (with_who != "John"); 
 WRITE plans; 
-CLOSE plans; 

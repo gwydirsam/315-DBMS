@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <memory>
+#include <fstream>
 
 #include <string>
 #include <cstring>
@@ -19,58 +20,57 @@
 #include "../lib/utility.h"
 #include "../lib/grammar.h"
 
-std::vector<std::string> ReadSTDIN() {
-  errlog("Reading SQL Programs from stdin");
-
-  std::vector<std::string> programs;
-
-  // read file from stdin
-  std::string line;
-  while (std::getline(std::cin, line)) {
-    // skip empty lines
-    if (line.length() > 1) {
-      programs.push_back(line);
-    }
-  }
-
-// print debug info
-#ifdef DEBUG
-  errlog("Read Programs:");
-  for (std::string prog : programs) {
-    std::cout << prog << std::endl;
-  }
-#endif
-
-  return programs;
-}
-
 // shell by default
-// run dbengine --stdin < file for scripts
+// run dbengine --file file for scripts
 // if your script does not explicitly EXIT, you will drop into a shell
 int main(int argc, char* argv[]) {
   // Start Engine
   Engine dbengine;
 
-  if ((argc > 1) && (std::strcmp(argv[1], "--stdin") == 0)) {
-    // if used with --stdin read stdinput
-    std::vector<std::string> stdinprograms = ReadSTDIN();
+  if ((argc > 2) && (std::strcmp(argv[1], "--file") == 0)) {
+    errlog("Reading SQL Programs from file");
+
+    std::vector<std::string> programs;
+
+    // read file from stdin
+    std::string line;
+    std::ifstream scriptfile(argv[2]);
+    if (scriptfile.is_open()) {
+      while (std::getline(scriptfile, line)) {
+        // skip empty lines
+        if (line.length() > 1) {
+          programs.push_back(line);
+        }
+      }
+      scriptfile.close();
+    }
+
+// print debug info
+#ifdef DEBUG
+    errlog("Read Programs:");
+    for (std::string prog : programs) {
+      std::cout << prog << std::endl;
+    }
+#endif
 
     // if there's at least one string
-    if (stdinprograms.size() > 0) {
+    if (programs.size() > 0) {
       // run script
-      for (std::string prog : stdinprograms) {
+      for (std::string prog : programs) {
         std::string errstr = "Main: Running: " + prog;
         errlog(errstr);
         if (prog.length() > 1) {
           dbengine.execSQL(prog);
+#ifdef READLINE
+          add_history(prog.c_str());
+    #endif
         }
+#ifdef DEBUG
         draw_line();
+#endif
       }
     }
     std::cout << "Script Execution Finished." << std::endl;
-    std::cout.clear();
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
   }
 
 #ifdef READLINE
