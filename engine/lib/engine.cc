@@ -481,7 +481,6 @@ int Engine::execSQL(std::string input_string) {
   std::string errstr = "Engine execSQL: " + input_string;
   errlog(errstr);
 
-  if (parseable(input_string)) {
   Program program = parse_string(input_string);
 
 #ifdef DEBUG
@@ -512,9 +511,6 @@ int Engine::execSQL(std::string input_string) {
   endlog();
 
   return 0;
-  } else {
-    return -1;
-  }
 }
 
 void Engine::writeTable(Relation relation) {
