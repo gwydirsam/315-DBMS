@@ -87,9 +87,12 @@ else
         fi
     fi
 
-    # extract zip
-    echo "Extracting in include..."
-    cd "$PROJECTROOTDIR/include/"
+    #create build directory if doesn't exist
+    if [ ! -d "$HOME/.tmp/build" ]; then mkdir -p "$HOME/.tmp/build"; fi
+
+    # extract tar
+    echo "Extracting Readline..."
+    cd "$HOME/.tmp/build"
     tar -zxvf "$DLDIR/`basename $READLINEURL`" #>> "$LOGFILE" 2>&1
 
     # build
@@ -107,7 +110,7 @@ else
     make #>> "$LOGFILE" 2>&1
     RESULT=$?
     if [ $RESULT -ne 0 ]
-    then 
+    then
         echo "CCache Build Failed"
         exit 1
     fi
