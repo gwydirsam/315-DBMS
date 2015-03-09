@@ -30,7 +30,7 @@ set_property(TARGET ${RELEASE_BINARY} PROPERTY CXX_STANDARD 14)
 
 set_target_properties(${RELEASE_BINARY} PROPERTIES OUTPUT_NAME "${RELEASE_BINARY_OUTNAME}")
 
-target_link_libraries(${RELEASE_BINARY} ${ENGINE_LIBRARY} ${Boost_LIBRARIES}  ${Readline_LIBRARY})
+target_link_libraries(${RELEASE_BINARY} ${ENGINE_LIBRARY} ${Boost_LIBRARIES})
 # target_link_libraries(${RELEASE_BINARY} ${ENGINE_LIBRARY})
 
 # Testing
