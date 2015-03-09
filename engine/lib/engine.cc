@@ -1025,7 +1025,7 @@ Relation Engine::setcrossproduct(std::string TableName1, Relation TableName2) {
   return setcrossproduct(find_relation_or_view(TableName1), TableName2);
 }
 
-void Engine::showTable(Relation table) { std::cout << table << std::endl; }
+void Engine::showTable(Relation table) { std::cout << std::endl << table << std::endl; }
 void Engine::showTable(std::string TableName) {
   showTable(find_relation_or_view(TableName));
 }

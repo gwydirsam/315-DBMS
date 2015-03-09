@@ -30,6 +30,8 @@ option(test "Build ${PROJECT_NAME}'s tests" OFF)
 set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(INCLUDES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
+set(CMAKE_MODULE_PATH ${INCLUDES_DIR})
+set(Readline_DIR ${INCLUDES_DIR})
 
 if(APPLE)
   # do nothing

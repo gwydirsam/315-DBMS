@@ -28,6 +28,8 @@ option(test "Build ${PROJECT_NAME}'s tests" OFF)
 # set some locations
 set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
 set(INCLUDES_DIR "${CMAKE_SOURCE_DIR}/include")
+set(CMAKE_MODULE_PATH ${INCLUDES_DIR})
+set(Readline_DIR ${INCLUDES_DIR})
 if (test)
   add_subdirectory(${INCLUDES_DIR}/gtest)
   include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
