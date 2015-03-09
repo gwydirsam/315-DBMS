@@ -61,7 +61,9 @@ int main(int argc, char* argv[]) {
       for (std::string prog : stdinprograms) {
         std::string errstr = "Main: Running: " + prog;
         errlog(errstr);
-        dbengine.execSQL(prog);
+        if (prog.length() > 1) {
+          dbengine.execSQL(prog);
+        }
         draw_line();
         std::cout << "Script Execution Finished." << std::endl;
         std::cout.clear();
