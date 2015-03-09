@@ -39,10 +39,10 @@ std::vector<std::string> ReadSTDIN() {
   for (std::string prog : programs) {
     std::cout << prog << std::endl;
   }
-#endif
 
   return programs;
 }
+#endif
 
 // shell by default
 // run dbengine --stdin < file for scripts
