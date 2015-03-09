@@ -308,9 +308,9 @@ int Engine::deleteFrom(Relation& Table, std::vector<std::string> Conditions) {
         column_names.push_back(Conditions[i]);
         // column names are followed by a literal
         if ((i + 1) < Conditions.size()) {
-        std::string errstr = "Pushing back Literal: " + Conditions[i+1];
-        errlog(errstr);
-        literals.push_back(Conditions[++i]);
+          std::string errstr = "Pushing back Literal: " + Conditions[i + 1];
+          errlog(errstr);
+          literals.push_back(Conditions[++i]);
         }
       }
     }
@@ -602,9 +602,9 @@ Relation Engine::select(std::vector<std::string> Conditions,
         column_names.push_back(Conditions[i]);
         // column names are followed by a literal
         if ((i + 1) < Conditions.size()) {
-        std::string errstr = "Pushing back Literal: " + Conditions[i+1];
-        errlog(errstr);
-        literals.push_back(Conditions[++i]);
+          std::string errstr = "Pushing back Literal: " + Conditions[i + 1];
+          errlog(errstr);
+          literals.push_back(Conditions[++i]);
         }
       }
     }
@@ -654,6 +654,8 @@ Relation Engine::select(std::vector<std::string> Conditions,
                              std::to_string(table.num_rows());
         errlog(errmsg);
         std::vector<std::string> current_row = table.get_row(j);
+        std::string errstr = "Engine: Select: Ops Size: " + std::to_string( ops.size() );
+        errlog(errstr);
         for (unsigned int k = (ops.size() - 1);
              k > (ops.size() - literals.size()); --k) {
           std::string errstr = "Engine: Select: Conditions Loop: i=" +
@@ -1033,7 +1035,9 @@ Relation Engine::setcrossproduct(std::string TableName1, Relation TableName2) {
   return setcrossproduct(find_relation_or_view(TableName1), TableName2);
 }
 
-void Engine::showTable(Relation table) { std::cout << std::endl << table << std::endl; }
+void Engine::showTable(Relation table) {
+  std::cout << std::endl << table << std::endl;
+}
 void Engine::showTable(std::string TableName) {
   showTable(find_relation_or_view(TableName));
 }
