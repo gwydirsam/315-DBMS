@@ -6,7 +6,7 @@ INSERT INTO plans VALUES FROM ("John", "A & M", "Tuesday", 1);
 INSERT INTO plans VALUES FROM ("Terry", "Farm", "Tuesday", 2); 
 INSERT INTO plans VALUES FROM ("Kary", "Lab", "Thursday", 2); 
 SHOW plans; 
-Tues <- select (weekday == "Tuesday") plans; 
+Tues <- select ( weekday == "Tuesday" ) plans; 
 long_plans <- select (length_hrs > 2) plans; 
 long_plans_not_on_tues <- long_plans - (select (weekday == "Tuesday") Tues); 
 SHOW long_plans_not_on_tues; 
