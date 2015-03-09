@@ -61,10 +61,7 @@ int main(int argc, char* argv[]) {
       for (std::string prog : stdinprograms) {
         std::string errstr = "Main: Running: " + prog;
         errlog(errstr);
-        if (dbengine.execSQL(prog) != 0) {
-          std::cerr << "Parse Failed" << std::endl;
-        }
-      }
+        dbengine.execSQL(prog) != 0
       draw_line();
       std::cout << "Script Execution Finished." << std::endl;
       std::cout.clear();
@@ -103,7 +100,7 @@ int main(int argc, char* argv[]) {
     // parse input
     // check if help
     if (std::strcmp(input, "?") == 0) {
-      std::cout << "help" << std::endl;
+      std::cout << "Want Help? Read the docs. They end in .h and .cc." << std::endl;
     } else {
       dbengine.execSQL(input);
     }
