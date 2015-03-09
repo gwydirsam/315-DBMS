@@ -11,6 +11,7 @@ set(Readline_DIR ${INCLUDES_DIR})
 find_package(Readline REQUIRED)
 if(READLINE_FOUND)
   include_directories(${Readline_INCLUDE_DIR})
+  message(${Readline_INCLUDE_DIR})
 endif()
 
 

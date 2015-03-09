@@ -19,6 +19,7 @@ if(APPLE)
   # do nothing
 elseif(UNIX)
   set(BOOST_ROOT ~/usr/)
+  set(Readline_ROOT_DIR /opt/csw/)
 endif()
 
 # Unit testing with Google Test
