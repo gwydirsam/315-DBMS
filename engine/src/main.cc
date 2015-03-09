@@ -65,12 +65,12 @@ int main(int argc, char* argv[]) {
           dbengine.execSQL(prog);
         }
         draw_line();
-        std::cout << "Script Execution Finished." << std::endl;
-        std::cout.clear();
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
       }
     }
+    std::cout << "Script Execution Finished." << std::endl;
+    std::cout.clear();
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
   }
 
 #ifdef READLINE
