@@ -41,6 +41,10 @@ NCURSESSYMLINKS=( "$ENGINEDIR/include/ncurses-5.9" "$APPDIR/include/ncurses-5.9"
 LOGFILE="$ENGINEDIR/.buildshlog"
 
 echo "Checking if you're on unix.cse.tamu.edu..."
+if [[ "$HOSTNAME" = "sun2.cs.tamu.edu" ]]
+then
+ HOSTNAME="sun"
+fi
 # or my computer! tee hee
 if ! [[ "$HOSTNAME" = "sun" || "$HOSTNAME" = "Tron" ]]
 then
