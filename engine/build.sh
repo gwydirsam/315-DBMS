@@ -279,7 +279,7 @@ then
             exit 1
         fi
 
-        make #>> "$LOGFILE" 2>&1
+        make sources libs
         RESULT=$?
         if [ $RESULT -ne 0 ]
         then
