@@ -51,6 +51,29 @@ int main(int argc, char* argv[]) {
   // Start Engine
   Engine dbengine;
 
+  if ((argc > 1) && (std::strcmp(argv[1], "--stdin") == 0)) {
+    // if used with --stdin read stdinput
+    std::vector<std::string> stdinprograms = ReadSTDIN();
+
+    // if there's at least one string
+    if (stdinprograms.size() > 0) {
+      // run script
+      for (std::string prog : stdinprograms) {
+        std::string errstr = "Main: Running: " + prog;
+        errlog(errstr);
+        if (dbengine.execSQL(prog) != 0) {
+          std::cerr << "Parse Failed" << std::endl;
+        }
+      }
+      draw_line();
+      std::cout << "Script Execution Finished." << std::endl;
+      std::cout.clear();
+      std::cin.clear();
+      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+  }
+
+
 #ifdef READLINE
   // input and shell_prompt buffer
   char* input, shell_prompt[4096];
@@ -89,28 +112,6 @@ int main(int argc, char* argv[]) {
     free(input);
   }
 #endif
-
-  if ((argc > 1) && (std::strcmp(argv[1], "--stdin") == 0)) {
-    // if used with --stdin read stdinput
-    std::vector<std::string> stdinprograms = ReadSTDIN();
-
-    // if there's at least one string
-    if (stdinprograms.size() > 0) {
-      // run script
-      for (std::string prog : stdinprograms) {
-        std::string errstr = "Main: Running: " + prog;
-        errlog(errstr);
-        if (dbengine.execSQL(prog) != 0) {
-          std::cerr << "Parse Failed" << std::endl;
-        }
-      }
-      draw_line();
-      std::cout << "Script Execution Finished." << std::endl;
-      std::cout.clear();
-      std::cin.clear();
-      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    }
-  }
 
 #ifndef READLINE
   // run shell
