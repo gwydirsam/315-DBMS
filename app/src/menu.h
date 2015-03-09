@@ -42,5 +42,6 @@ public:
 	void edit_tags(std::string str_input);
 	void edit_content(std::string str_input);
 	void edit_comments(std::string str_input);
+	void search_options(std::string str_input);
 };
 #endif  // MENU_H_
