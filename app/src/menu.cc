@@ -11,7 +11,7 @@ Menu::Menu() {
 	works = parser.program();
 	parser.lex("WRITE posts;");
 	works = parser.program();
-	parser.lex("CREATE TABLE result (title VARCHAR(50), date VARCHAR(20)) PRIMARY KEY (title, date);");
+	parser.lex("CREATE TABLE result (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(1000000), date VARCHAR(20)) PRIMARY KEY (title, author);");
 	works = parser.program();
 	}
 void Menu::exit() {
@@ -223,7 +223,11 @@ void Menu::view_post(std::string str_input) {
 	//TODO
 	std::cout << "--------------------------------------------------------------------------------";
 	parser.lex("");
-	std::cout << "By: " << str_input << std::endl;
+	std::cout << "By: " << std::endl;
+	std::cout << "Date: " << std::endl;
+	std::cout << "Content: " << std::endl;
+	std::cout << "Tags: " << std::endl;
+	std::cout << "Comment: " << std::endl;
 	std::cout << "--------------------------------------------------------------------------------";
 }
 
@@ -244,19 +248,18 @@ std::string Menu::search_by_author(std::string str_input) {
 	parser.lex("SHOW answer;");
 	works = parser.program();
 	std::cout << "\n";
-	parser.lex("INSERT INTO result VALUES FROM project (title, date) answer;");
+	parser.lex("INSERT INTO result VALUES FROM RELATION project (title, author, content, tags, comments, date) answer;");
 	works = parser.program();
 	parser.lex("WRITE result;");
 	works = parser.program();
-	search_options("result.db");
-	int ID;
 	std::cout << "[" << author << "'s Posts]\n";
+	search_options("result.db");
+	
 	//Search database for posts
 	//Store posts in a vector;
 	//Select a post by ID, which is vector loc = ID - 1;
 	//Then last on to be return to main menu
-	std::cout << "* Enter ID: "; 
-	std::cin >> ID;
+
 	// if(ID == vector post.size()) GOTO print_menu()
 	//return post_mangage_system(vector post.at(ID-1));
 	return "answer";
@@ -345,13 +348,30 @@ void Menu::search_options(std::string str_input) {
 Table* t = parser.database->get_table(str_input);
 
   if (t != NULL) {
-	
-	  for (int i = 0; i < t->get_items().size(); ++i) {
+	  int i;
+	  for (i = 0; i < t->get_items().size(); ++i) {
 		vector <string> entry = t->get_items()[i];
-		std::cout << i+1 << ". " << entry[0] << " " << entry[2] << std::endl;
+		std::cout << i+1 << ". " << entry[0] << " " << entry[5] << std::endl;
 		}
-
-  }
+		std::cout << i+1 << ". Return to Main Menu\n";
+		
+		int ID;
+		std::cout << "* Enter ID: "; 
+		std::cin >> ID;
+		if(ID == i+1) {
+			print_menu();
+		}
+		/*else {
+			int g;
+			for (g = 0; g < parser.database->dbms.size(); ++g) {
+				if (parser.database->dbms.at(g).get_name().compare(t.getname())==0) {
+						i = g;
+				}
+			}
+			Table* choice = t->get_items()[ID-1];
+			parser.database->dbms.at(g) = choice;
+		}*/
+	}
    else {
     cout << "The requested file " << str_input << " is not a relation.\n";
   }

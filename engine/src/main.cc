@@ -69,68 +69,69 @@ int main(int argc, char* argv[]) {
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
       }
     }
+  }
 
 #ifdef READLINE
-    // input and shell_prompt buffer
-    char* input, shell_prompt[4096];
+  // input and shell_prompt buffer
+  char* input, shell_prompt[4096];
 
-    // Configure readline to auto-complete paths when the tab key is hit.
-    rl_bind_key('\t', rl_complete);
+  // Configure readline to auto-complete paths when the tab key is hit.
+  rl_bind_key('\t', rl_complete);
 
-    for (;;) {
+  for (;;) {
 // Create prompt string from user name and current working directory.
 #ifdef DEBUG
-      snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBshell(DEBUG) > ",
-               getenv("USER"));
+    snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBshell(DEBUG) > ",
+             getenv("USER"));
 #else
-      snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBshell > ",
-               getenv("USER"));
+    snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBshell > ",
+             getenv("USER"));
 #endif
 
-      // Display prompt and read input (NB: input must be freed after use)...
-      input = readline(shell_prompt);
+    // Display prompt and read input (NB: input must be freed after use)...
+    input = readline(shell_prompt);
 
-      // Check for EOF.
-      if (!input) break;
+    // Check for EOF.
+    if (!input) break;
 
-      // Add input to history.
-      add_history(input);
+    // Add input to history.
+    add_history(input);
 
-      // parse input
-      // check if help
-      if (std::strcmp(input, "?") == 0) {
-        std::cout << "Want Help? Read the docs. They end in .h and .cc."
-                  << std::endl;
-      } else {
-        dbengine.execSQL(input);
-      }
-
-      // Free input.
-      free(input);
+    // parse input
+    // check if help
+    if (std::strcmp(input, "?") == 0) {
+      std::cout << "Want Help? Read the docs. They end in .h and .cc."
+                << std::endl;
+    } else {
+      dbengine.execSQL(input);
     }
+
+    // Free input.
+    free(input);
+  }
 #endif
 
 #ifndef READLINE
-    // run shell
-    errlog("Starting DBMS Shell.");
-    std::cout << "Group 15 DBMS Shell (^D to Finish)" << std::endl;
+  // run shell
+  errlog("Starting DBMS Shell.");
+  std::cout << "Group 15 DBMS Shell (^D to Finish)" << std::endl;
 
-    std::string input;
-    std::cout << "> ";
-    while (std::getline(std::cin, input)) {
-      // TODO check if valid here
-      if (input == "EXIT;") {
-        break;
-      }
-      if (dbengine.execSQL(input) != 0) {
-        std::cerr << "Parse Failed" << std::endl;
-      }
-      input = "";
-      std::cout << "> ";
+  std::string input;
+  std::cout << "> ";
+  while (std::getline(std::cin, input)) {
+    // TODO check if valid here
+    if (input == "EXIT;") {
+      break;
     }
+    if (dbengine.execSQL(input) != 0) {
+      std::cerr << "Parse Failed" << std::endl;
+    }
+    input = "";
+    std::cout << "> ";
+  }
 #endif
 
-    dbengine.execSQL("EXIT;");
+  dbengine.execSQL("EXIT;");
 
-    return 0;
-  }
+  return 0;
+}
