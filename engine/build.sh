@@ -270,7 +270,7 @@ then
         # build
         echo "Building Ncurses..."
         cd "$HOME/.tmp/build/`basename $NCURSESURL .tar.gz`"
-        CC="/opt/csw/bin/gcc-4.9" CXX="/opt/csw/bin/g++-4.9" \
+        CC="/opt/csw/bin/gcc" CXX="/opt/csw/bin/g++" \
           ./configure --prefix="$HOME/usr" #>> "$LOGFILE" 2>&1
         RESULT=$?
         if [ $RESULT -ne 0 ]
