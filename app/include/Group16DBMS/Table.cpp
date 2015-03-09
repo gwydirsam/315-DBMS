@@ -106,7 +106,6 @@ bool Table::update_item(vector <string> entry, int index)
 
   vector <string> updated = items.at(index);
 
-  cout << entry.size() << endl;
   for (int i = 0; i < entry.size(); ++i) {
     if(entry[i].compare("")!=0){
       updated[i] = entry[i];

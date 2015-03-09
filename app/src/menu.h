@@ -13,6 +13,7 @@ public:
 	int m_selection_input;
 	int s_selection_input;
 	int search_input;
+	bool works;
 	//Constructor:
 	Menu();
 	//Destructor:
