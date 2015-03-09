@@ -8,6 +8,11 @@
 #include <string>
 #include <cstring>
 
+#ifdef READLINE
+#include <readline/readline.h>
+#include <readline/history.h>
+#endif
+
 #include "../lib/engine.h"
 #include "../lib/column.h"
 #include "../lib/relation.h"
@@ -46,6 +51,45 @@ int main(int argc, char* argv[]) {
   // Start Engine
   Engine dbengine;
 
+#ifdef READLINE
+  // input and shell_prompt buffer
+  char* input, shell_prompt[4096];
+
+  // Configure readline to auto-complete paths when the tab key is hit.
+  rl_bind_key('\t', rl_complete);
+
+  for (;;) {
+// Create prompt string from user name and current working directory.
+#ifdef DEBUG
+    snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBshell(DEBUG) > ",
+             getenv("USER"));
+#else
+    snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBshell > ",
+             getenv("USER"));
+#endif
+
+    // Display prompt and read input (NB: input must be freed after use)...
+    input = readline(shell_prompt);
+
+    // Check for EOF.
+    if (!input) break;
+
+    // Add input to history.
+    add_history(input);
+
+    // parse input
+    // check if help
+    if (std::strcmp(input, "?") == 0) {
+      std::cout << "help" << std::endl;
+    } else {
+      dbengine.execSQL(input);
+    }
+
+    // Free input.
+    free(input);
+  }
+#endif
+
   if ((argc > 1) && (std::strcmp(argv[1], "--stdin") == 0)) {
     // if used with --stdin read stdinput
     std::vector<std::string> stdinprograms = ReadSTDIN();
@@ -68,6 +112,7 @@ int main(int argc, char* argv[]) {
     }
   }
 
+#ifndef READLINE
   // run shell
   errlog("Starting DBMS Shell.");
   std::cout << "Group 15 DBMS Shell (^D to Finish)" << std::endl;
@@ -85,6 +130,7 @@ int main(int argc, char* argv[]) {
     input = "";
     std::cout << "> ";
   }
+#endif
 
   dbengine.execSQL("EXIT;");
 

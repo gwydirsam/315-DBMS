@@ -270,7 +270,7 @@ then
         # build
         echo "Building Ncurses..."
         cd "$HOME/.tmp/build/`basename $NCURSESURL .tar.gz`"
-        CC="/opt/csw/bin/gcc" CXX="/opt/csw/bin/g++" LD_LIBRARY_PATH=""\
+        CC="/usr/bin/cc" LD_LIBRARY_PATH=""\
           ./configure --prefix="$HOME/usr" --host=sparc-sun-solaris2.10 #>> "$LOGFILE" 2>&1
         RESULT=$?
         if [ $RESULT -ne 0 ]
