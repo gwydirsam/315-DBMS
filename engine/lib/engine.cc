@@ -657,7 +657,7 @@ Relation Engine::select(std::vector<std::string> Conditions,
         std::string errstr = "Engine: Select: Ops Size: " + std::to_string( ops.size() );
         errlog(errstr);
         for (unsigned int k = (ops.size() - 1);
-             k > (ops.size() - literals.size()); --k) {
+             k >= (ops.size() - literals.size()); --k) {
           std::string errstr = "Engine: Select: Conditions Loop: i=" +
                                std::to_string(i) + " j=" + std::to_string(j) +
                                " k=" + std::to_string(k);
