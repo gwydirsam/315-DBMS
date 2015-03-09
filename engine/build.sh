@@ -30,8 +30,8 @@ GTESTSYMLINKS=( "$ENGINEDIR/include/gtest" "$APPDIR/include/gtest" )
 
 READLINEURL="http://git.savannah.gnu.org/cgit/readline.git/snapshot/readline-master.tar.gz"
 READLINETARFILENAME=`basename $READLINEURL`
-READLINEDIR="$PROJECTROOTDIR/include/`basename $BOOSTURL .tar.gz`"
-READLINESYMLINKS=( "$ENGINEDIR/include/readline" "$APPDIR/include/readline" )
+READLINEDIR="$PROJECTROOTDIR/include/`basename $READLINEURL .tar.gz`"
+READLINESYMLINKS=( "$ENGINEDIR/include/readline-master" "$APPDIR/include/readline-master" )
 
 LOGFILE="$ENGINEDIR/.buildshlog"
 
@@ -111,7 +111,6 @@ else
     echo "Done Installing Gtest 1.7.0!"
 fi
 
-# if on unix also check if you have boost and ccache
 if [ "$HOSTNAME" = "sun" ]
 then
     echo "Checking if you have readline"
@@ -126,7 +125,7 @@ then
                 echo "Creating $i -> $READLINEDIR"
                 cd `dirname $i`
                 echo "Creating symlink..."
-                ln -s "$READLINEDIR" readline
+                ln -s "$READLINEDIR" readline-master
             fi
         done
         echo "Done!"
