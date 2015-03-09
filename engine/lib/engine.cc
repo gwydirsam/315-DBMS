@@ -307,7 +307,11 @@ int Engine::deleteFrom(Relation& Table, std::vector<std::string> Conditions) {
       } else {
         column_names.push_back(Conditions[i]);
         // column names are followed by a literal
+        if ((i + 1) < Conditions.size()) {
+        std::string errstr = "Pushing back Literal: " + Conditions[i+1];
+        errlog(errstr);
         literals.push_back(Conditions[++i]);
+        }
       }
     }
     std::string errmsg = "Engine: Delete From Column Names : ";
