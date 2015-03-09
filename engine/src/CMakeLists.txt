@@ -41,8 +41,7 @@ set_target_properties(${RELEASE_BINARY} PROPERTIES OUTPUT_NAME "${RELEASE_BINARY
 
 if(CURSES_FOUND)
   target_link_libraries(${RELEASE_BINARY} ${ENGINE_LIBRARY} ${Boost_LIBRARIES}  ${Readline_LIBRARY} ${CURSES_LIBRARIES})
-endif()
-if(READLINE_FOUND)
+elseif(READLINE_FOUND)
   target_link_libraries(${RELEASE_BINARY} ${ENGINE_LIBRARY} ${Boost_LIBRARIES}  ${Readline_LIBRARY})
 else()
   target_link_libraries(${RELEASE_BINARY} ${ENGINE_LIBRARY} ${Boost_LIBRARIES})
