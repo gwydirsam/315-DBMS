@@ -33,6 +33,11 @@ READLINETARFILENAME=`basename $READLINEURL`
 READLINEDIR="$PROJECTROOTDIR/include/`basename $READLINEURL .tar.gz`"
 READLINESYMLINKS=( "$ENGINEDIR/include/readline-master" "$APPDIR/include/readline-master" )
 
+NCURSESURL="http://ftpmirror.gnu.org/ncurses/ncurses-5.9.tar.gz"
+NCURSESTARFILENAME=`basename $NCURSESURL`
+NCURSESDIR="$PROJECTROOTDIR/include/`basename $NCURSESURL .tar.gz`"
+NCURSESSYMLINKS=( "$ENGINEDIR/include/ncurses-5.9" "$APPDIR/include/ncurses-5.9" )
+
 LOGFILE="$ENGINEDIR/.buildshlog"
 
 echo "Checking if you're on unix.cse.tamu.edu..."
@@ -179,7 +184,7 @@ then
         RESULT=$?
         if [ $RESULT -ne 0 ]
         then
-            echo "CCache Build Failed"
+            echo "Readline Build Failed"
             exit 1
         fi
 
@@ -187,7 +192,7 @@ then
         RESULT=$?
         if [ $RESULT -ne 0 ]
         then
-            echo "CCache Build Failed"
+            echo "Readline Build Failed"
             exit 1
         fi
 
@@ -208,6 +213,105 @@ then
         rm -rf "$DLDIR"
 
         echo "Done Installing Readline!"
+    fi
+fi
+if [ "$HOSTNAME" = "sun" ]
+then
+    echo "Checking if you have ncurses"
+    if [ -d "$HOME/usr/include/ncurses" ]
+    then
+        echo "You have ncurses Checking symlinks..."
+        for i in "${NCURSESSYMLINKS[@]}"
+        do
+            if [ ! -h "$i" ]
+            then
+                echo "Symlink $i doesn't exist..."
+                echo "Creating $i -> $NCURSESDIR"
+                cd `dirname $i`
+                echo "Creating symlink..."
+                ln -s "$NCURSESDIR" ncurses
+            fi
+        done
+        echo "Done!"
+    else
+        # if you don't have ncurses
+        echo "You don't have ncurses"
+
+        # download if you don't have it
+        if [ ! -d "$DLDIR" ]
+        then
+            # if dldir doesn't exist create it
+            mkdir -p "$DLDIR"
+            # download ncurses
+            echo "Downloading ncurses..."
+            wget --no-check-certificate -P "$DLDIR" "$NCURSESURL" #>> "$LOGFILE" 2>&1
+        else
+            # dldir does exist
+            # check if ncurses zip is already there
+            if [ -f "$DLDIR/`basename $NCURSESURL`" ]
+            then
+                # it is there!
+                echo "Found $DLDIR/`basename $NCURSESURL`"
+            else
+                # it's not... download
+                echo "Downloading gest 1.7.0..."
+                wget --no-check-certificate -P "$DLDIR" "$NCURSESURL" #>> "$LOGFILE" 2>&1
+            fi
+        fi
+
+        #create build directory if doesn't exist
+        if [ ! -d "$HOME/.tmp/build" ]; then mkdir -p "$HOME/.tmp/build"; fi
+
+        # extract tar
+        echo "Extracting Ncurses..."
+        cd "$HOME/.tmp/build"
+        tar -zxvf "$DLDIR/`basename $NCURSESURL`" #>> "$LOGFILE" 2>&1
+
+        # build
+        echo "Building Ncurses..."
+        cd "$HOME/.tmp/build/`basename $NCURSESURL .tar.gz`"
+        CC="/opt/csw/bin/gcc-4.9" CXX="/opt/csw/bin/g++-4.9" \
+          ./configure --prefix="$HOME/usr" #>> "$LOGFILE" 2>&1
+        RESULT=$?
+        if [ $RESULT -ne 0 ]
+        then
+            echo "Ncurses Configure Failed"
+            exit 1
+        fi
+
+        make #>> "$LOGFILE" 2>&1
+        RESULT=$?
+        if [ $RESULT -ne 0 ]
+        then
+            echo "CCache Build Failed"
+            exit 1
+        fi
+
+        make install #>> "$LOGFILE" 2>&1
+        RESULT=$?
+        if [ $RESULT -ne 0 ]
+        then
+            echo "CCache Build Failed"
+            exit 1
+        fi
+
+        # create symlinks
+        echo "Creating Symlinks..."
+        for i in "${NCURSESSYMLINKS[@]}"
+        do
+            if [ ! -h "$i" ]
+            then
+                echo "Symlink $i -> $NCURSESDIR"
+                cd `dirname $i`
+                echo "Creating symlink..."
+                ln -s "$NCURSESDIR" ncurses
+            fi
+        done
+
+        # cleanup
+        rm -rf "$DLDIR"
+
+        echo "Done Installing Ncurses!"
     fi
 fi
 

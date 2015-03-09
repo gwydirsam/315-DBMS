@@ -90,11 +90,11 @@ int main(int argc, char* argv[]) {
 
     // parse input
     // check if help
-    if (std::strcmp(input,"?") == 0) {
-      std::cout << "help" << std::endl;
-    } else {
+    // if (std::strcmp(input,"?") == 0) {
+    //   std::cout << "help" << std::endl;
+    // } else {
       dbengine.execSQL(input);
-    }
+    // }
 
     // Free input.
     free(input);
