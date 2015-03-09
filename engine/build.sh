@@ -116,105 +116,105 @@ else
     echo "Done Installing Gtest 1.7.0!"
 fi
 
-if [ "$HOSTNAME" = "sun" ]
-then
-    echo "Checking if you have readline"
-    if [ -d "$HOME/usr/include/readline" ]
-    then
-        echo "You have readline Checking symlinks..."
-        for i in "${READLINESYMLINKS[@]}"
-        do
-            if [ ! -h "$i" ]
-            then
-                echo "Symlink $i doesn't exist..."
-                echo "Creating $i -> $READLINEDIR"
-                cd `dirname $i`
-                echo "Creating symlink..."
-                ln -s "$READLINEDIR" readline
-            fi
-        done
-        echo "Done!"
-    else
-        # if you don't have readline
-        echo "You don't have readline"
+# if [ "$HOSTNAME" = "sun" ]
+# then
+#     echo "Checking if you have readline"
+#     if [ -d "$HOME/usr/include/readline" ]
+#     then
+#         echo "You have readline Checking symlinks..."
+#         for i in "${READLINESYMLINKS[@]}"
+#         do
+#             if [ ! -h "$i" ]
+#             then
+#                 echo "Symlink $i doesn't exist..."
+#                 echo "Creating $i -> $READLINEDIR"
+#                 cd `dirname $i`
+#                 echo "Creating symlink..."
+#                 ln -s "$READLINEDIR" readline
+#             fi
+#         done
+#         echo "Done!"
+#     else
+#         # if you don't have readline
+#         echo "You don't have readline"
 
-        # download if you don't have it
-        if [ ! -d "$DLDIR" ]
-        then
-            # if dldir doesn't exist create it
-            mkdir -p "$DLDIR"
-            # download readline
-            echo "Downloading readline..."
-            wget --no-check-certificate -P "$DLDIR" "$READLINEURL" #>> "$LOGFILE" 2>&1
-        else
-            # dldir does exist
-            # check if readline zip is already there
-            if [ -f "$DLDIR/`basename $READLINEURL`" ]
-            then
-                # it is there!
-                echo "Found $DLDIR/`basename $READLINEURL`"
-            else
-                # it's not... download
-                echo "Downloading gest 1.7.0..."
-                wget --no-check-certificate -P "$DLDIR" "$READLINEURL" #>> "$LOGFILE" 2>&1
-            fi
-        fi
+#         # download if you don't have it
+#         if [ ! -d "$DLDIR" ]
+#         then
+#             # if dldir doesn't exist create it
+#             mkdir -p "$DLDIR"
+#             # download readline
+#             echo "Downloading readline..."
+#             wget --no-check-certificate -P "$DLDIR" "$READLINEURL" #>> "$LOGFILE" 2>&1
+#         else
+#             # dldir does exist
+#             # check if readline zip is already there
+#             if [ -f "$DLDIR/`basename $READLINEURL`" ]
+#             then
+#                 # it is there!
+#                 echo "Found $DLDIR/`basename $READLINEURL`"
+#             else
+#                 # it's not... download
+#                 echo "Downloading gest 1.7.0..."
+#                 wget --no-check-certificate -P "$DLDIR" "$READLINEURL" #>> "$LOGFILE" 2>&1
+#             fi
+#         fi
 
-        #create build directory if doesn't exist
-        if [ ! -d "$HOME/.tmp/build" ]; then mkdir -p "$HOME/.tmp/build"; fi
+#         #create build directory if doesn't exist
+#         if [ ! -d "$HOME/.tmp/build" ]; then mkdir -p "$HOME/.tmp/build"; fi
 
-        # extract tar
-        echo "Extracting Readline..."
-        cd "$HOME/.tmp/build"
-        tar -zxvf "$DLDIR/`basename $READLINEURL`" #>> "$LOGFILE" 2>&1
+#         # extract tar
+#         echo "Extracting Readline..."
+#         cd "$HOME/.tmp/build"
+#         tar -zxvf "$DLDIR/`basename $READLINEURL`" #>> "$LOGFILE" 2>&1
 
-        # build
-        echo "Building Readline..."
-        cd "$HOME/.tmp/build/`basename $READLINEURL .tar.gz`"
-        CC="/opt/csw/bin/gcc-4.9" CXX="/opt/csw/bin/g++-4.9" \
-          ./configure --prefix="$HOME/usr" #>> "$LOGFILE" 2>&1
-        RESULT=$?
-        if [ $RESULT -ne 0 ]
-        then
-            echo "Readline Configure Failed"
-            exit 1
-        fi
+#         # build
+#         echo "Building Readline..."
+#         cd "$HOME/.tmp/build/`basename $READLINEURL .tar.gz`"
+#         CC="/opt/csw/bin/gcc-4.9" CXX="/opt/csw/bin/g++-4.9" \
+#           ./configure --prefix="$HOME/usr" #>> "$LOGFILE" 2>&1
+#         RESULT=$?
+#         if [ $RESULT -ne 0 ]
+#         then
+#             echo "Readline Configure Failed"
+#             exit 1
+#         fi
 
-        make #>> "$LOGFILE" 2>&1
-        RESULT=$?
-        if [ $RESULT -ne 0 ]
-        then
-            echo "Readline Build Failed"
-            exit 1
-        fi
+#         make #>> "$LOGFILE" 2>&1
+#         RESULT=$?
+#         if [ $RESULT -ne 0 ]
+#         then
+#             echo "Readline Build Failed"
+#             exit 1
+#         fi
 
-        make install #>> "$LOGFILE" 2>&1
-        RESULT=$?
-        if [ $RESULT -ne 0 ]
-        then
-            echo "Readline Build Failed"
-            exit 1
-        fi
+#         make install #>> "$LOGFILE" 2>&1
+#         RESULT=$?
+#         if [ $RESULT -ne 0 ]
+#         then
+#             echo "Readline Build Failed"
+#             exit 1
+#         fi
 
-        # create symlinks
-        echo "Creating Symlinks..."
-        for i in "${READLINESYMLINKS[@]}"
-        do
-            if [ ! -h "$i" ]
-            then
-                echo "Symlink $i -> $READLINEDIR"
-                cd `dirname $i`
-                echo "Creating symlink..."
-                ln -s "$READLINEDIR" readline
-            fi
-        done
+#         # create symlinks
+#         echo "Creating Symlinks..."
+#         for i in "${READLINESYMLINKS[@]}"
+#         do
+#             if [ ! -h "$i" ]
+#             then
+#                 echo "Symlink $i -> $READLINEDIR"
+#                 cd `dirname $i`
+#                 echo "Creating symlink..."
+#                 ln -s "$READLINEDIR" readline
+#             fi
+#         done
 
-        # cleanup
-        rm -rf "$DLDIR"
+#         # cleanup
+#         rm -rf "$DLDIR"
 
-        echo "Done Installing Readline!"
-    fi
-fi
+#         echo "Done Installing Readline!"
+#     fi
+# fi
 # if [ "$HOSTNAME" = "sun" ]
 # then
 #     echo "Checking if you have ncurses"
