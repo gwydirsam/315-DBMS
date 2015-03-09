@@ -1,38 +1,27 @@
 CREATE TABLE plans (with_who VARCHAR(10), where VARCHAR(20), weekday VARCHAR(9), length_hrs INTEGER) PRIMARY KEY (with_who, weekday);
-
 INSERT INTO plans VALUES FROM ("Joe", "Park", "Friday", 4); 
-
 INSERT INTO plans VALUES FROM ("Abby", "Movie_Theater", "Saturday", 5); 
-
 INSERT INTO plans VALUES FROM ("Tomas", "BBQ_Place", "Monday", 3); 
-
 INSERT INTO plans VALUES FROM ("John", "A & M", "Tuesday", 1); 
-
 INSERT INTO plans VALUES FROM ("Terry", "Farm", "Tuesday", 2); 
-
 INSERT INTO plans VALUES FROM ("Kary", "Lab", "Thursday", 2); 
 SHOW plans; 
 Tues <- select (weekday == "Tuesday") plans; 
 long_plans <- select (length_hrs > 2) plans; 
-
 long_plans_not_on_tues <- long_plans - (select (weekday == "Tuesday") Tues); 
 SHOW long_plans_not_on_tues; 
-
 locale <- rename (locales, ID) (Tues * (project (where, length_hrs) plans));
 SHOW locale; 
 WRITE locale; 
 OPEN locale; 
 SHOW locale; 
-
 CREATE TABLE days (weekday VARCHAR(10)) PRIMARY KEY (weekday); 
-
 INSERT INTO days VALUES FROM RELATION project (weekday) plans; 
 DELETE FROM days WHERE weekday == "Tuesday"; 
 INSERT INTO days VALUES FROM ("Wednesday"); 
 SHOW locale; 
 SHOW days; 
 WRITE days; 
-
 DELETE FROM plans WHERE ( weekday == "Tuesday" ) && (with_who != "John"); 
 WRITE plans; 
 CLOSE plans; 
