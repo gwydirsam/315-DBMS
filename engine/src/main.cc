@@ -133,7 +133,7 @@ int main(int argc, char* argv[]) {
   }
 #endif
 
-  dbengine.execSQL("EXIT;");
+  // dbengine.execSQL("EXIT;");
 
   return 0;
 }
