@@ -56,7 +56,9 @@ int main(int argc, char* argv[]) {
       for (std::string prog : stdinprograms) {
         std::string errstr = "Main: Running: " + prog;
         errlog(errstr);
-        dbengine.execSQL(prog);
+        if (dbengine.execSQL(prog) != 0) {
+          std::cerr << "Parse Failed" << std::endl;
+        }
       }
       draw_line();
       std::cout << "Script Execution Finished." << std::endl;
@@ -77,7 +79,9 @@ int main(int argc, char* argv[]) {
     if (input == "EXIT;") {
       break;
     }
-    dbengine.execSQL(input);
+    if (dbengine.execSQL(input) != 0) {
+      std::cerr << "Parse Failed" << std::endl;
+    }
     input = "";
     std::cout << "> ";
   }

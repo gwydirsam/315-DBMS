@@ -67,6 +67,26 @@ class Grammar : public boost::spirit::qi::grammar<It, Program(), Skipper> {
 };
 
 template <typename C>
+bool parseable(const C& input) {
+
+  auto f(std::begin(input)), l(std::end(input));
+
+  Grammar<decltype(f), boost::spirit::qi::space_type> p;
+  Program program;
+
+  try {
+    using namespace boost::spirit::qi;
+    return phrase_parse(f, l, p, boost::spirit::qi::space, program);
+  } catch (const boost::spirit::qi::expectation_failure<decltype(f)>& e) {
+    std::string frag(e.first, e.last);
+    std::cerr << e.what() << "'" << frag << std::endl;
+    return false;
+  }
+
+  return false;
+}
+
+template <typename C>
 Program parse_string(const C& input) {
 
   auto f(std::begin(input)), l(std::end(input));
