@@ -600,7 +600,7 @@ Relation Engine::select(std::vector<std::string> Conditions,
         std::string errstr = "Pushing back Literal: " + Conditions[i+1];
         errlog(errstr);
         literals.push_back(Conditions[i + 1]);
-        if (i + 1 < Conditions.size()) ++i;
+        if ((i + 1) < Conditions.size()) ++i;
       }
     }
     std::string errmsg = "Engine: Select Column Names : ";
