@@ -41,12 +41,8 @@ NCURSESSYMLINKS=( "$ENGINEDIR/include/ncurses-5.9" "$APPDIR/include/ncurses-5.9"
 LOGFILE="$ENGINEDIR/.buildshlog"
 
 echo "Checking if you're on unix.cse.tamu.edu..."
-if [[ "$HOSTNAME" = "sun2.cs.tamu.edu" ]]
-then
- HOSTNAME="sun"
-fi
 # or my computer! tee hee
-if ! [[ "$HOSTNAME" = "sun" || "$HOSTNAME" = "Tron" ]]
+if ! [[ "$HOSTNAME" = "sun" || "$HOSTNAME" = "Tron" || "$HOSTNAME" = "sun2.cs.tamu.edu" ]]
 then
     echo "You're not on unix.cse.tamu.edu. This program should only be built on unix.cse.tamu.edu"
     exit 1
@@ -306,7 +302,7 @@ then
 fi
 
 # if on unix also check if you have boost and ccache
-if [ "$HOSTNAME" = "sun" ]
+if [ "$UNAME" = "SunOS" ]
 then
     echo "Checking if you have Boost 1.57.0"
     if [ -d "$BOOSTDIR" ]
@@ -528,7 +524,7 @@ then
             exit 1
         fi
     fi
-elif [ "$HOSTNAME" = "sun" ]
+elif [ "$UNAME" = "SunOS" ]
 then
     if [ -d "$ENGINEDIR/build/release" ]
     then
@@ -591,7 +587,7 @@ then
             exit 1
         fi
     fi
-elif [ "$HOSTNAME" = "sun" ]
+elif [ "$UNAME" = "SunOS" ]
 then
     if [ -d "$ENGINEDIR/build/debug" ]
     then
