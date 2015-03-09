@@ -2,8 +2,11 @@
 
 Menu::Menu() {
 	parser.lex("CREATE TABLE posts (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(1000000), date VARCHAR(20)) PRIMARY KEY (title, author);");
+	works = parser.program();
 	parser.lex("INSERT INTO posts VALUES FROM (\"Test\", \"Kade\", \"Does the app work? Does view work?\", \"testing, app, view\", \"OH BOY IT WORKS\", \"3/8/15\");");
+	works = parser.program();
 	parser.lex("INSERT INTO posts VALUES FROM (\"The app\", \"Admin\", \"Testing edit content and tags\", \"testing, content\", \"Hello???\", \"3/8/15\");");
+	works = parser.program();
 }
 void Menu::exit() {
 	
@@ -59,9 +62,7 @@ void Menu::search_menu() {
 	switch(selection_input) {
 			case 1: std::cout << "* Enter Author: "; 
 					std::cin >> str_input;
-					std::cout << "\n\n"<<str_input;
 					//std::getline(std::cin,str_input);
-					
 					post = search_by_author(str_input);
 					post_manage_system(post);
 					break;
@@ -137,7 +138,7 @@ void Menu::post_manage_system(std::string str_input) {
 	
 	switch(selection_input) {
 			case 1: view_post(str_input);
-					post_manage_system(str_input); break;
+					post_manage_system(str_input);
 			case 2: edit_menu(str_input); break;
 			case 3: //TODO!!! 
 					//Maybe just deletion the relation from their 
@@ -227,9 +228,13 @@ std::string Menu::make_post() {
 
 std::string Menu::search_by_author(std::string str_input) {
 	std::string author = str_input;
-	std::string query = "answer <- select ( author == \"" + str_input +"\") posts;";
+	std::string query = "answer <- select (author == \"" + author +"\") posts;";
 	parser.lex(query);
+	works = parser.program();
+	parser.lex("WRITE answer;");
+	works = parser.program();
 	parser.lex("SHOW answer;");
+	works = parser.program();
 	int ID;
 	std::cout << "[" << author << "'s Posts]\n";
 	//Search database for posts
