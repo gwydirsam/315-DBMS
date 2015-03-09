@@ -71,12 +71,15 @@ int main(int argc, char* argv[]) {
   std::cout << "Group 15 DBMS Shell (^D to Finish)" << std::endl;
 
   std::string input;
-  std::cerr << "> ";
+  std::cout << "> ";
   while (std::getline(std::cin, input)) {
-    std::cerr << "> ";
     // TODO check if valid here
+    if (input == "EXIT;") {
+      break;
+    }
     dbengine.execSQL(input);
     input = "";
+    std::cout << "> ";
   }
 
   dbengine.execSQL("EXIT;");
