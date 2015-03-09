@@ -215,105 +215,105 @@ then
         echo "Done Installing Readline!"
     fi
 fi
-if [ "$HOSTNAME" = "sun" ]
-then
-    echo "Checking if you have ncurses"
-    if [ -d "$HOME/usr/include/ncurses" ]
-    then
-        echo "You have ncurses Checking symlinks..."
-        for i in "${NCURSESSYMLINKS[@]}"
-        do
-            if [ ! -h "$i" ]
-            then
-                echo "Symlink $i doesn't exist..."
-                echo "Creating $i -> $NCURSESDIR"
-                cd `dirname $i`
-                echo "Creating symlink..."
-                ln -s "$NCURSESDIR" ncurses
-            fi
-        done
-        echo "Done!"
-    else
-        # if you don't have ncurses
-        echo "You don't have ncurses"
+# if [ "$HOSTNAME" = "sun" ]
+# then
+#     echo "Checking if you have ncurses"
+#     if [ -d "$HOME/usr/include/ncurses" ]
+#     then
+#         echo "You have ncurses Checking symlinks..."
+#         for i in "${NCURSESSYMLINKS[@]}"
+#         do
+#             if [ ! -h "$i" ]
+#             then
+#                 echo "Symlink $i doesn't exist..."
+#                 echo "Creating $i -> $NCURSESDIR"
+#                 cd `dirname $i`
+#                 echo "Creating symlink..."
+#                 ln -s "$NCURSESDIR" ncurses
+#             fi
+#         done
+#         echo "Done!"
+#     else
+#         # if you don't have ncurses
+#         echo "You don't have ncurses"
 
-        # download if you don't have it
-        if [ ! -d "$DLDIR" ]
-        then
-            # if dldir doesn't exist create it
-            mkdir -p "$DLDIR"
-            # download ncurses
-            echo "Downloading ncurses..."
-            wget --no-check-certificate -P "$DLDIR" "$NCURSESURL" #>> "$LOGFILE" 2>&1
-        else
-            # dldir does exist
-            # check if ncurses zip is already there
-            if [ -f "$DLDIR/`basename $NCURSESURL`" ]
-            then
-                # it is there!
-                echo "Found $DLDIR/`basename $NCURSESURL`"
-            else
-                # it's not... download
-                echo "Downloading gest 1.7.0..."
-                wget --no-check-certificate -P "$DLDIR" "$NCURSESURL" #>> "$LOGFILE" 2>&1
-            fi
-        fi
+#         # download if you don't have it
+#         if [ ! -d "$DLDIR" ]
+#         then
+#             # if dldir doesn't exist create it
+#             mkdir -p "$DLDIR"
+#             # download ncurses
+#             echo "Downloading ncurses..."
+#             wget --no-check-certificate -P "$DLDIR" "$NCURSESURL" #>> "$LOGFILE" 2>&1
+#         else
+#             # dldir does exist
+#             # check if ncurses zip is already there
+#             if [ -f "$DLDIR/`basename $NCURSESURL`" ]
+#             then
+#                 # it is there!
+#                 echo "Found $DLDIR/`basename $NCURSESURL`"
+#             else
+#                 # it's not... download
+#                 echo "Downloading gest 1.7.0..."
+#                 wget --no-check-certificate -P "$DLDIR" "$NCURSESURL" #>> "$LOGFILE" 2>&1
+#             fi
+#         fi
 
-        #create build directory if doesn't exist
-        if [ ! -d "$HOME/.tmp/build" ]; then mkdir -p "$HOME/.tmp/build"; fi
+#         #create build directory if doesn't exist
+#         if [ ! -d "$HOME/.tmp/build" ]; then mkdir -p "$HOME/.tmp/build"; fi
 
-        # extract tar
-        echo "Extracting Ncurses..."
-        cd "$HOME/.tmp/build"
-        tar -zxvf "$DLDIR/`basename $NCURSESURL`" #>> "$LOGFILE" 2>&1
+#         # extract tar
+#         echo "Extracting Ncurses..."
+#         cd "$HOME/.tmp/build"
+#         tar -zxvf "$DLDIR/`basename $NCURSESURL`" #>> "$LOGFILE" 2>&1
 
-        # build
-        echo "Building Ncurses..."
-        cd "$HOME/.tmp/build/`basename $NCURSESURL .tar.gz`"
-        CC="/opt/csw/bin/gcc" CXX="/opt/csw/bin/g++" \
-          ./configure --prefix="$HOME/usr" #>> "$LOGFILE" 2>&1
-        RESULT=$?
-        if [ $RESULT -ne 0 ]
-        then
-            echo "Ncurses Configure Failed"
-            exit 1
-        fi
+#         # build
+#         echo "Building Ncurses..."
+#         cd "$HOME/.tmp/build/`basename $NCURSESURL .tar.gz`"
+#         # CC="/opt/csw/bin/gcc" CXX="/opt/csw/bin/g++" \
+#           ./configure --prefix="$HOME/usr" #>> "$LOGFILE" 2>&1
+#         RESULT=$?
+#         if [ $RESULT -ne 0 ]
+#         then
+#             echo "Ncurses Configure Failed"
+#             exit 1
+#         fi
 
-        make #>> "$LOGFILE" 2>&1
-        RESULT=$?
-        if [ $RESULT -ne 0 ]
-        then
-            echo "CCache Build Failed"
-            exit 1
-        fi
+#         make #>> "$LOGFILE" 2>&1
+#         RESULT=$?
+#         if [ $RESULT -ne 0 ]
+#         then
+#             echo "CCache Build Failed"
+#             exit 1
+#         fi
 
-        make install #>> "$LOGFILE" 2>&1
-        RESULT=$?
-        if [ $RESULT -ne 0 ]
-        then
-            echo "CCache Build Failed"
-            exit 1
-        fi
+#         make install #>> "$LOGFILE" 2>&1
+#         RESULT=$?
+#         if [ $RESULT -ne 0 ]
+#         then
+#             echo "CCache Build Failed"
+#             exit 1
+#         fi
 
-        # create symlinks
-        echo "Creating Symlinks..."
-        for i in "${NCURSESSYMLINKS[@]}"
-        do
-            if [ ! -h "$i" ]
-            then
-                echo "Symlink $i -> $NCURSESDIR"
-                cd `dirname $i`
-                echo "Creating symlink..."
-                ln -s "$NCURSESDIR" ncurses
-            fi
-        done
+#         # create symlinks
+#         echo "Creating Symlinks..."
+#         for i in "${NCURSESSYMLINKS[@]}"
+#         do
+#             if [ ! -h "$i" ]
+#             then
+#                 echo "Symlink $i -> $NCURSESDIR"
+#                 cd `dirname $i`
+#                 echo "Creating symlink..."
+#                 ln -s "$NCURSESDIR" ncurses
+#             fi
+#         done
 
-        # cleanup
-        rm -rf "$DLDIR"
+#         # cleanup
+#         rm -rf "$DLDIR"
 
-        echo "Done Installing Ncurses!"
-    fi
-fi
+#         echo "Done Installing Ncurses!"
+#     fi
+# fi
 
 # if on unix also check if you have boost and ccache
 if [ "$HOSTNAME" = "sun" ]
