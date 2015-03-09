@@ -125,7 +125,7 @@ then
                 echo "Creating $i -> $READLINEDIR"
                 cd `dirname $i`
                 echo "Creating symlink..."
-                ln -s "$READLINEDIR" readline-master
+                ln -s "$READLINEDIR" readline
             fi
         done
         echo "Done!"
