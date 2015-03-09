@@ -53,3 +53,4 @@ app/build/*
 /app/include/gtest
 /engine/buildrelease/
 /include/gtest-1.7.0/
+/engine/include/gtest
