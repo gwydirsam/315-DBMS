@@ -279,7 +279,7 @@ then
             exit 1
         fi
 
-        make sources libs
+        make
         RESULT=$?
         if [ $RESULT -ne 0 ]
         then
