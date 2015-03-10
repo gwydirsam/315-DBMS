@@ -50,7 +50,7 @@ then
             exit 1
         fi
     fi
-elif [ "$HOSTNAME" = "sun" ]
+elif [ "$UNAME" = "SunOS" ]
 then
     if [ -d "$APPDIR/lib/group16dbms" ]
     then
@@ -122,7 +122,7 @@ then
             exit 1
         fi
     fi
-elif [ "$HOSTNAME" = "sun" ]
+elif [ "$UNAME" = "SunOS" ]
 then
     if [ -d "$APPDIR/build/release" ]
     then
@@ -185,7 +185,7 @@ then
             exit 1
         fi
     fi
-elif [ "$HOSTNAME" = "sun" ]
+elif [ "$UNAME" = "SunOS" ]
 then
     if [ -d "$APPDIR/build/debug" ]
     then
