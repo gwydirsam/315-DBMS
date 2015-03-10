@@ -196,6 +196,59 @@ int main(int argc, char* argv[]) {
     // Check for EOF.
     if (!input) {
       std::cout << std::endl;
+
+      errlog("Got EOF. Writing histories and exiting.")
+      // write histories
+      if (shellmode) {
+        // write shell history to file
+        errlog("Writing script history to .shellhist");
+        if (write_history((shell_hist_file).c_str()) == 0) {
+          errlog("Write Success");
+        } else {
+          errlog("Write Failure");
+        }
+        // clear history
+        clear_history();
+        // read app history
+        errlog("Reading app history from .apphist");
+        if (read_history((app_hist_file).c_str()) == 0) {
+          errlog("Read Success");
+        } else {
+          errlog("Read Failure");
+        }
+        // write app history
+        errlog("Writing app history to .apphist");
+        if (write_history((app_hist_file).c_str()) == 0) {
+          errlog("Write Success");
+        } else {
+          errlog("Write Failure");
+        }
+      } else {
+        // write app history
+        errlog("Writing app history to .apphist");
+        if (write_history((app_hist_file).c_str()) == 0) {
+          errlog("Write Success");
+        } else {
+          errlog("Write Failure");
+        }
+        // clear history
+        clear_history();
+        // read shell history
+        errlog("Reading shell history from .shellhist");
+        if (read_history((shell_hist_file).c_str()) == 0) {
+          errlog("Read Success");
+        } else {
+          errlog("Read Failure");
+        }
+        // write shell history to file
+        errlog("Writing script history to .shellhist");
+        if (write_history((shell_hist_file).c_str()) == 0) {
+          errlog("Write Success");
+        } else {
+          errlog("Write Failure");
+        }
+      }
+      errlog("Exiting.")
       break;
     }
 
