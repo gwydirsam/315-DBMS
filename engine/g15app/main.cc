@@ -1,4 +1,3 @@
-//#include "menu.h"
 #include <iostream>
 #include <memory>
 #include <fstream>
@@ -16,6 +15,8 @@
 #include "../lib/relation.h"
 #include "../lib/utility.h"
 #include "../lib/grammar.h"
+
+#include "menu.h"
 
 int main(int argc, char* argv[]) {
   // Start Engine

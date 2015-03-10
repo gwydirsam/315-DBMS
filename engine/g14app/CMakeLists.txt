@@ -1,6 +1,6 @@
 set(MAIN_SRC db_app.cpp)
 
-set(RELEASE_BINARY "G14APP")
+set(RELEASE_BINARY "g14app")
 set(ENGINE_LIBRARY "${PROJECT_NAME}")
 
 find_package(Boost 1.57.0 COMPONENTS filesystem system REQUIRED)
