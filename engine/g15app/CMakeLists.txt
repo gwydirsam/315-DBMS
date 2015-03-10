@@ -15,6 +15,7 @@ find_package(Boost 1.57.0)
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
 endif()
+
 if(APPLE)
 else()
   find_package(Curses)
@@ -31,6 +32,7 @@ endif()
 
 set(RELEASE_BINARY "g15app")
 set(UNITTEST_BINARY "${RELEASE_BINARY}test")
+set(ENGINE_LIBRARY "${PROJECT_NAME}")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
