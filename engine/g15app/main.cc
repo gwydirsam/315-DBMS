@@ -196,6 +196,8 @@ int main(int argc, char* argv[]) {
       std::cout << "Any Mode" << std::endl;
       draw_line();
       std::cout << "shell\tToggle shell mode" << std::endl;
+      std::cout << "Up Key\tPrevious Command in History" << std::endl;
+      std::cout << "Down Key\tNext Command in History" << std::endl;
       std::cout << "^D\tExit app" << std::endl;
       std::cout << std::endl;
 
