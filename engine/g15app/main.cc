@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <memory>
 #include <fstream>
 
@@ -187,29 +188,56 @@ int main(int argc, char* argv[]) {
     // check if help
     if ((std::strcmp(input, "?") == 0) || (std::strcmp(input, "h") == 0) ||
         (std::strcmp(input, "help") == 0)) {
+      std::cout << std::endl;
       std::cout << "Help" << std::endl;
       draw_line();
-      std::cout << "g15app arguments" << std::endl;
-      draw_line();
-      std::cout << "--file (file)\tRun script before starting app (example in engine/share)" << std::endl;
+      std::cout << "App CLI Arguments" << std::endl;
+      draw_line(20);
+      std::cout << std::left << std::setw(20) << std::setfill(' ')
+                << "--file (file)";
+      std::cout << std::left << std::setw(20) << std::setfill(' ')
+                << "Run script before starting app (example in engine/share)"
+                << std::endl;
       std::cout << std::endl;
+
       std::cout << "Any Mode" << std::endl;
-      draw_line();
-      std::cout << "shell\tToggle shell mode" << std::endl;
-      std::cout << "Up Key\tPrevious Command in History" << std::endl;
-      std::cout << "Down Key\tNext Command in History" << std::endl;
-      std::cout << "^D\tExit app" << std::endl;
+      draw_line(20);
+      std::cout << std::left << std::setw(20) << std::setfill(' ') << "Up Key";
+      std::cout << std::left << std::setw(20) << std::setfill(' ')
+                << "Previous Command in History" << std::endl;
+      std::cout << std::left << std::setw(20) << std::setfill(' ')
+                << "Down Key";
+      std::cout << std::left << std::setw(20) << std::setfill(' ')
+                << "Next Command in History" << std::endl;
+      std::cout << std::left << std::setw(20) << std::setfill(' ') << "^D";
+      std::cout << std::left << std::setw(20) << std::setfill(' ') << "Exit app"
+                << std::endl;
+      std::cout << std::endl;
+      std::cout << std::left << std::setw(20) << std::setfill(' ') << "shell";
+      std::cout << std::left << std::setw(20) << std::setfill(' ')
+                << "Toggle shell mode" << std::endl;
       std::cout << std::endl;
 
       std::cout << "App Mode" << std::endl;
-      draw_line();
+      draw_line(20);
       // app mode help lines here
+      std::cout << std::left << std::setw(20) << std::setfill(' ')
+                << "input";
+      std::cout << std::left << std::setw(20) << std::setfill(' ')
+                << "Open Menu or run command indicated"
+                << std::endl;
       std::cout << std::endl;
 
       std::cout << "Shell Mode" << std::endl;
-      draw_line();
+      draw_line(20);
       // shell mode help lines here
-      std::cout << "All valid DML programs" << std::endl;
+      std::cout << std::left << std::setw(20) << std::setfill(' ')
+                << "input";
+      std::cout << std::left << std::setw(20) << std::setfill(' ')
+                << "Any valid dml program"
+                << std::endl;
+      draw_line();
+      std::cout << std::endl;
       std::cout << std::endl;
     } else if (std::strcmp(input, "shell") == 0) {
       if (shellmode) {
