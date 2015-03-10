@@ -153,21 +153,21 @@ int main(int argc, char* argv[]) {
 // Create prompt string from user name
 #ifdef DEBUG
     if (shellmode) {
-    snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBengine(DEBUG) > ",
-             getenv("USER"));
+      snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBengine(DEBUG) > ",
+               getenv("USER"));
     } else {
       // app mode
-    snprintf(shell_prompt, sizeof(shell_prompt), "%s@blog(DEBUG) > ",
-             getenv("USER"));
+      snprintf(shell_prompt, sizeof(shell_prompt), "%s@blog(DEBUG) > ",
+               getenv("USER"));
     }
 #else
     if (shellmode) {
-    snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBengine > ",
-             getenv("USER"));
+      snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBengine > ",
+               getenv("USER"));
     } else {
       // app mode
-    snprintf(shell_prompt, sizeof(shell_prompt), "%s@blog > ",
-             getenv("USER"));
+      snprintf(shell_prompt, sizeof(shell_prompt), "%s@blog > ",
+               getenv("USER"));
     }
 #endif
 
@@ -185,16 +185,37 @@ int main(int argc, char* argv[]) {
 
     // parse input
     // check if help
-    if (std::strcmp(input, "?") == 0) {
-      // std::cout << "Want Help? Read the docs. They end in .h and .cc."
-      //           << std::endl;
+    if ((std::strcmp(input, "?") == 0) || (std::strcmp(input, "h") == 0) ||
+        (std::strcmp(input, "help") == 0)) {
+      std::cout << "Help" << std::endl;
+      draw_line();
+      std::cout << "g15app arguments" << std::endl;
+      draw_line();
+      std::cout << "--file (file)\tRun script before starting app (example in engine/share)" << std::endl;
+      std::cout << std::endl;
+      std::cout << "Any Mode" << std::endl;
+      draw_line();
+      std::cout << "shell\tToggle shell mode" << std::endl;
+      std::cout << "^D\tExit app" << std::endl;
+      std::cout << std::endl;
+
+      std::cout << "App Mode" << std::endl;
+      draw_line();
+      // app mode help lines here
+      std::cout << std::endl;
+
+      std::cout << "Shell Mode" << std::endl;
+      draw_line();
+      // shell mode help lines here
+      std::cout << "All valid DML programs" << std::endl;
+      std::cout << std::endl;
     } else if (std::strcmp(input, "shell") == 0) {
       if (shellmode) {
-        errlog("Switching to app mode.",true);
+        errlog("Switching to app mode.", true);
         shellmode = false;
       } else {
-        errlog(
-               "Switching to shell mode. Commands are sent directly to engine.",true);
+        errlog("Switching to shell mode. Commands are sent directly to engine.",
+               true);
         shellmode = true;
       }
     } else if (std::strcmp(input, "") == 0) {
