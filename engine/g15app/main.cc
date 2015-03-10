@@ -67,6 +67,10 @@ int main(int argc, char* argv[]) {
       }
     }
     std::cout << "Script Execution Finished." << std::endl;
+    // write history to shell mode history file
+    errlog("Writing script history to .shellhist");
+    char *shell_hist_file = ".shellhist";
+    write_history(shell_hist_file);
   }
 
   // Start Blog
@@ -135,11 +139,10 @@ int main(int argc, char* argv[]) {
 
   // print first menu
   std::cout << "[Main Menu]" << std::endl;
-  std::cout << std::endl;
+  draw_line(11);
   std::cout << "1) Post to Blog" << std::endl;
   std::cout << "2) Search" << std::endl;
   std::cout << "3) Exit" << std::endl;
-  draw_line();
 
   // Start prompt
   // input and shell_prompt buffer
@@ -192,16 +195,21 @@ int main(int argc, char* argv[]) {
       std::cout << "Help" << std::endl;
       draw_line();
       std::cout << "App CLI Arguments" << std::endl;
-      draw_line(20);
+      draw_line(76);
+      std::cout << std::left << std::setw(20) << std::setfill(' ')
+                << "< (file)";
+      std::cout << std::left << std::setw(20) << std::setfill(' ')
+                << "Run app script and quit (example in engine/share)"
+                << std::endl;
       std::cout << std::left << std::setw(20) << std::setfill(' ')
                 << "--file (file)";
       std::cout << std::left << std::setw(20) << std::setfill(' ')
-                << "Run script before starting app (example in engine/share)"
+                << "Run sql script before starting app (example in engine/share)"
                 << std::endl;
       std::cout << std::endl;
 
       std::cout << "Any Mode" << std::endl;
-      draw_line(20);
+      draw_line(76);
       std::cout << std::left << std::setw(20) << std::setfill(' ') << "Up Key";
       std::cout << std::left << std::setw(20) << std::setfill(' ')
                 << "Previous Command in History" << std::endl;
@@ -219,7 +227,7 @@ int main(int argc, char* argv[]) {
       std::cout << std::endl;
 
       std::cout << "App Mode" << std::endl;
-      draw_line(20);
+      draw_line(76);
       // app mode help lines here
       std::cout << std::left << std::setw(20) << std::setfill(' ')
                 << "input";
@@ -229,7 +237,7 @@ int main(int argc, char* argv[]) {
       std::cout << std::endl;
 
       std::cout << "Shell Mode" << std::endl;
-      draw_line(20);
+      draw_line(76);
       // shell mode help lines here
       std::cout << std::left << std::setw(20) << std::setfill(' ')
                 << "input";
