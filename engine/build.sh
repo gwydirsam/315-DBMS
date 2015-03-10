@@ -283,7 +283,7 @@ then
             CC="/usr/bin/cc" LD_LIBRARY_PATH=""\
               ./configure --prefix="$HOME/usr" --host=sparc-sun-solaris2.10 --with-shared --without-debug --enable-pc-files --enable-widec
         else
-            CC="/usr/bin/cc" LD_LIBRARY_PATH=""\
+            #CC="/usr/bin/cc" LD_LIBRARY_PATH=""\
               ./configure --prefix="$HOME/usr" --with-shared --without-debug --enable-pc-files --enable-widec
         fi
         RESULT=$?
