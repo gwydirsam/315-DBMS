@@ -9,6 +9,14 @@ else
     HOSTNAME=`hostname`
 fi
 
+if [ "$HOSTNAME" = "sun2.cs.tamu.edu" ]
+then
+    CORES=8
+else
+    CORES=4
+fi
+
+
 # get username
 USER=`whoami`
 
@@ -180,7 +188,7 @@ then
             exit 1
         fi
 
-        make -j4 #>> "$LOGFILE" 2>&1
+        make -j"$CORES" #>> "$LOGFILE" 2>&1
         RESULT=$?
         if [ $RESULT -ne 0 ]
         then
@@ -279,7 +287,7 @@ then
             exit 1
         fi
 
-        make -j4 -k; make install #>> "$LOGFILE" 2>&1
+        make -j"$CORES" -k; make install #>> "$LOGFILE" 2>&1
 
         # create symlinks
         echo "Creating Symlinks..."
@@ -325,7 +333,7 @@ then
             echo "Compiling and Installing Boost to ~/usr/"
             cd $BOOSTDIR
             ./bootstrap.sh --prefix="$HOME/usr"
-            CC="/opt/csw/bin/gcc-4.9" CXX="/opt/csw/bin/g++-4.9" ./b2 -j8 --with-filesystem --with-system install
+            CC="/opt/csw/bin/gcc-4.9" CXX="/opt/csw/bin/g++-4.9" ./b2 -j"$CORES" --with-filesystem --with-system install
             echo "Adding ~/usr/lib to LD_LIBRARY_PATH"
             echo 'export LD_LIBRARY_PATH=$HOME/usr/lib:$LD_LIBRARY_PATH' >> "$HOME/.bash_profile"
             echo "Done Compiling and Installing Boost 1.57.0!"
@@ -380,7 +388,7 @@ then
         echo "Compiling and Installing Boost to ~/usr/"
         cd $BOOSTDIR
         ./bootstrap.sh --prefix="$HOME/usr"
-            CC="/opt/csw/bin/gcc-4.9" CXX="/opt/csw/bin/g++-4.9" ./b2 -j8 --with-filesystem --with-system install
+        CC="/opt/csw/bin/gcc-4.9" CXX="/opt/csw/bin/g++-4.9" ./b2 -j"$CORES" --with-filesystem --with-system install
         echo "Done Compiling and Installing Boost 1.57.0!"
     fi
     # check for ccache
@@ -438,7 +446,7 @@ then
             exit 1
         fi
 
-        make -j4 #>> "$LOGFILE" 2>&1
+        make -j"$CORES" #>> "$LOGFILE" 2>&1
         RESULT=$?
         if [ $RESULT -ne 0 ]
         then 
@@ -499,7 +507,7 @@ then
         echo "Running Make Clean in build/release"
         cd "$ENGINEDIR/build/release"
         make clean
-        make -j4
+        make "$CORES"
         RESULT=$?
         if [ $RESULT -ne 0 ]
         then 
@@ -513,11 +521,11 @@ then
         cd "$ENGINEDIR/build/release"
         # CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto" \
         #   CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
-        #   cmake -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
-        #   # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
+        #   cmake -DCMAKE_BUILD_TYPE=Release ../.. && make "$CORES"
+        #   # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make "$CORES"
         CC="/usr/local/opt/ccache/libexec/clang-3.5.1" \
           CXX="/usr/local/opt/ccache/libexec/clang++-3.5.1" \
-          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
+          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make "$CORES"
 
         RESULT=$?
         if [ $RESULT -ne 0 ]
@@ -533,7 +541,7 @@ then
         echo "Running Make Clean in build/release"
         cd "$ENGINEDIR/build/release"
         make clean
-        make -j4
+        make "$CORES"
     else
         cd "$ENGINEDIR"
         echo "Creating build/release directory..."
@@ -549,7 +557,7 @@ then
         else
             CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
               CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
-              cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+              cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make "$CORES"
         fi
 
         RESULT=$?
@@ -568,7 +576,7 @@ then
         echo "Running make clean in build/debug"
         cd "$ENGINEDIR/build/debug"
         make clean
-        make -j4
+        make "$CORES"
 
         RESULT=$?
         if [ $RESULT -ne 0 ]
@@ -583,11 +591,11 @@ then
         cd "$ENGINEDIR/build/debug"
         # CC="/usr/local/opt/ccache/libexec/gcc-4.9 -fdiagnostics-color=auto" \
         #   CXX="/usr/local/opt/ccache/libexec/g++-4.9 -fdiagnostics-color=auto" \
-        #   cmake -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
-        #   # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+        #   cmake -DCMAKE_BUILD_TYPE=Debug ../.. && make "$CORES"
+        #   # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make "$CORES"
         CC="/usr/local/opt/ccache/libexec/clang-3.5.1" \
           CXX="/usr/local/opt/ccache/libexec/clang++-3.5.1" \
-          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make "$CORES"
 
         RESULT=$?
         if [ $RESULT -ne 0 ]
@@ -603,7 +611,7 @@ then
         echo "Running make clean in build/debug"
         cd "$ENGINEDIR/build/debug"
         make clean
-        make -j4
+        make "$CORES"
 
         RESULT=$?
         if [ $RESULT -ne 0 ]
@@ -626,7 +634,7 @@ then
         else
             CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
               CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
-              cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+              cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make "$CORES"
         fi
 
         RESULT=$?
