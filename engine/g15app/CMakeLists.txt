@@ -6,10 +6,10 @@ set(UNITTEST_SRCS
   test_main.cc
   )
 
-# rest of cc's
-set(SRCS
-  menu.cc
-  )
+# # rest of cc's
+# set(SRCS
+#   menu.cc
+#   )
 
 find_package(Boost 1.57.0)
 if(Boost_FOUND)

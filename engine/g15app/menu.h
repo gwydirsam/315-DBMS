@@ -3,12 +3,12 @@
 
 #include <iostream>
 #include <string>
-#include "../include/Group16DBMS/Parser.h"
+#include "../lib/engine.h"
 
 class Menu {
 public:
 	//Global:
-	Parser parser;
+	// Parser parser;
 	std::string str_input;
 	int m_selection_input;
 	int s_selection_input;
@@ -26,17 +26,17 @@ public:
 	void edit_menu(std::string str_input);
 	void post_manage_system(std::string str_input);
 	void comments_menu(std::string str_input);
-	
+
 	void comment_on_post(std::string str_input);
 	void comment_on_comment(std::string str_input);
 	void view_post(std::string str_input);
 	std::string make_post();
-	
+
 	std::string search_by_author(std::string str_input);
 	std::string search_by_title(std::string str_input);
 	std::string search_by_tags(std::string str_input);
 	std::string search_by_dates(std::string str_input);
-	
+
 	void edit_author(std::string str_input);
 	void edit_title(std::string str_input);
 	void edit_tags(std::string str_input);
