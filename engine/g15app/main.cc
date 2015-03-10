@@ -172,7 +172,7 @@ int main(int argc, char* argv[]) {
 // Create prompt string from user name
 #ifdef DEBUG
     if (shellmode) {
-      snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBengine(DEBUG) > ",
+      snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBengine(DEBUG) $ ",
                getenv("USER"));
     } else {
       // app mode
@@ -181,7 +181,7 @@ int main(int argc, char* argv[]) {
     }
 #else
     if (shellmode) {
-      snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBengine > ",
+      snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBengine $ ",
                getenv("USER"));
     } else {
       // app mode
