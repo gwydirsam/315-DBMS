@@ -60,10 +60,13 @@ int main(int argc, char* argv[]) {
         std::string errstr = "Main: Running: " + prog;
         errlog(errstr);
         if (prog.length() > 1) {
-          dbengine.execSQL(prog);
+          if (dbengine.execSQL(prog) != 0) {
+            std::string errmsg = "Shell: " + prog + " FAILED.";
+            errlog(errmsg);
+          }
 #ifdef READLINE
           add_history(prog.c_str());
-    #endif
+#endif
         }
 #ifdef DEBUG
         draw_line();
@@ -109,7 +112,11 @@ int main(int argc, char* argv[]) {
     } else if (std::strcmp(input, "") == 0) {
       // nothing
     } else {
-      dbengine.execSQL(input);
+      if (dbengine.execSQL(input) != 0) {
+        std::string errmsg = "Shell: " + std::string( input ) + " FAILED.";
+        errlog(errmsg);
+        std::cerr << "Invalid Statement: " << input << std::endl;
+      }
     }
 
     // Free input.
@@ -137,7 +144,7 @@ int main(int argc, char* argv[]) {
   }
 #endif
 
-  // dbengine.execSQL("EXIT;");
+  //dbengine.execSQL("EXIT;");
 
   return 0;
 }

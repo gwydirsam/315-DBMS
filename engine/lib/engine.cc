@@ -359,7 +359,8 @@ int Engine::deleteFrom(Relation& Table, std::vector<std::string> Conditions) {
                              std::to_string(Table.num_rows());
         errlog(errmsg);
         std::vector<std::string> current_row = Table.get_row(j);
-        std::string errstr = "Engine: Delete: Ops Size: " + std::to_string( ops.size() );
+        std::string errstr =
+            "Engine: Delete: Ops Size: " + std::to_string(ops.size());
         errlog(errstr);
         for (unsigned int k = (ops.size() - 1);
              k >= (ops.size() - literals.size()); --k) {
@@ -483,40 +484,65 @@ int Engine::dropTuple(std::string TableName, std::vector<std::string> tuple) {
   return r;
 }
 
-int Engine::execSQL(std::string input_string) {
+int Engine::execSQL(const std::string& input_string) {
   std::string errstr = "Engine execSQL: " + input_string;
   errlog(errstr);
 
-  Program program = parse_string(input_string);
+  // Program program = parse_string(input_string);
 
+  auto f(std::begin(input_string)), l(std::end(input_string));
+
+  Grammar<decltype(f), boost::spirit::qi::space_type> p;
+  Program program;
+
+  try {
+    using namespace boost::spirit::qi;
+    bool ok = phrase_parse(f, l, p, boost::spirit::qi::space, program);
+    if (ok) {
 #ifdef DEBUG
-  std::cout << program << std::endl;
-  std::cout << std::endl;
+      std::cout << program << std::endl;
+      std::cout << std::endl;
 #endif
 
-  // execute
-  execute_program(*this, program);
+      // execute
+      execute_program(*this, program);
 
 #ifdef DEBUG
-  errstr = "Engine: execSQL: Open Tables (" +
-           std::to_string(open_tables_.size()) + "): ";
-  errlog(errstr);
-  for (Relation table : open_tables_) {
-    std::cerr << table << std::endl;
-  }
-  errstr = "Engine: execSQL: Open Views (" +
-           std::to_string(open_views_.size()) + "): ";
-  errlog(errstr);
-  for (Relation table : open_views_) {
-    std::cerr << table << std::endl;
-  }
+      errstr = "Engine: execSQL: Open Tables (" +
+               std::to_string(open_tables_.size()) + "): ";
+      errlog(errstr);
+      for (Relation table : open_tables_) {
+        std::cerr << table << std::endl;
+      }
+      errstr = "Engine: execSQL: Open Views (" +
+               std::to_string(open_views_.size()) + "): ";
+      errlog(errstr);
+      for (Relation table : open_views_) {
+        std::cerr << table << std::endl;
+      }
 #endif
 
-  errstr = "Engine execSQL Finished: " + input_string;
-  errlog(errstr);
-  endlog();
+      errstr = "Engine execSQL Finished: " + input_string;
+      errlog(errstr);
+      endlog();
 
-  return 0;
+      return 0;
+    } else {
+      std::string errstr = "Grammar: parse failed: " + std::string(f, l);
+      errlog(errstr);
+      return -1;
+    }
+
+    if (f != l) {
+      std::string errstr =
+          "Grammar: parse failed: trailing unparsed: " + std::string(f, l);
+      errlog(errstr);
+      return -1;
+    }
+  } catch (const boost::spirit::qi::expectation_failure<decltype(f)>& e) {
+    std::string frag(e.first, e.last);
+    std::cerr << e.what() << "'" << frag << std::endl;
+  }
 }
 
 void Engine::writeTable(Relation relation) {
@@ -656,7 +682,8 @@ Relation Engine::select(std::vector<std::string> Conditions,
                              std::to_string(table.num_rows());
         errlog(errmsg);
         std::vector<std::string> current_row = table.get_row(j);
-        std::string errstr = "Engine: Select: Ops Size: " + std::to_string( ops.size() );
+        std::string errstr =
+            "Engine: Select: Ops Size: " + std::to_string(ops.size());
         errlog(errstr);
         for (unsigned int k = (ops.size() - 1);
              k >= (ops.size() - literals.size()); --k) {

@@ -87,7 +87,7 @@ class Engine {
 
   // Exec SQL
   // return 0 on success
-  int execSQL(std::string input_string);
+  int execSQL(const std::string& input_string);
 
   // Write table to filename TableName.db
   void writeTable(Relation relation);
@@ -99,9 +99,6 @@ class Engine {
   // Delete table from open_tables_ and Write table to filename TableName.db
   int closeTable(std::string TableName);
   int closeTable(Relation relation);
-
-  // Exit
-  void exitDatabase(){};
 
   // Queries
 
