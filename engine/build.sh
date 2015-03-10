@@ -116,7 +116,7 @@ else
     echo "Done Installing Gtest 1.7.0!"
 fi
 
-if [ "$HOSTNAME" = "sun" ]
+if [ "$UNAME" = "SunOS" ]
 then
     echo "Checking if you have readline"
     if [ -d "$HOME/usr/include/readline" ]
@@ -155,7 +155,7 @@ then
                 echo "Found $DLDIR/`basename $READLINEURL`"
             else
                 # it's not... download
-                echo "Downloading gest 1.7.0..."
+                echo "Downloading readline..."
                 wget --no-check-certificate -P "$DLDIR" "$READLINEURL" #>> "$LOGFILE" 2>&1
             fi
         fi
@@ -215,7 +215,7 @@ then
         echo "Done Installing Readline!"
     fi
 fi
-if [ "$HOSTNAME" = "sun" ]
+if [ "$UNAME" = "SunOS" ]
 then
     echo "Checking if you have ncurses"
     if [ -d "$HOME/usr/include/ncursesw" ]
