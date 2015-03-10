@@ -180,7 +180,7 @@ then
             exit 1
         fi
 
-        make #>> "$LOGFILE" 2>&1
+        make -j4 #>> "$LOGFILE" 2>&1
         RESULT=$?
         if [ $RESULT -ne 0 ]
         then
@@ -438,7 +438,7 @@ then
             exit 1
         fi
 
-        make #>> "$LOGFILE" 2>&1
+        make -j4 #>> "$LOGFILE" 2>&1
         RESULT=$?
         if [ $RESULT -ne 0 ]
         then 
