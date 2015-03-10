@@ -459,6 +459,8 @@ then
         # setup symlinks
         ln -s ccache gcc
         ln -s ccache g++
+        ln -s ccache gcc-4.9
+        ln -s ccache g++-4.9
         ln -s ccache cc
         ln -s ccache c++
         ln -s ccache sparc-sun-solaris2.10-gcc-4.9
