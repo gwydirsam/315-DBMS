@@ -18,12 +18,12 @@
 #include "../lib/grammar.h"
 
 int main(int argc, char* argv[]) {
-  // std::cout << "welcome to group 15's app" << std::endl;
-  // //Menu app;
-  // //app.print_menu();
-
   // Start Engine
   Engine dbengine;
+
+  std::cout << "Group 15 Blog" << std::endl;
+  // //Menu app;
+  // //app.print_menu();
 
   if ((argc > 2) && (std::strcmp(argv[1], "--file") == 0)) {
     errlog("Reading SQL Programs from file");
@@ -84,10 +84,10 @@ int main(int argc, char* argv[]) {
   for (;;) {
 // Create prompt string from user name and current working directory.
 #ifdef DEBUG
-    snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBshell(DEBUG) > ",
+    snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBapp(DEBUG) > ",
              getenv("USER"));
 #else
-    snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBshell > ",
+    snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBapp > ",
              getenv("USER"));
 #endif
 
