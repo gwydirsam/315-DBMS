@@ -537,7 +537,7 @@ then
         #   # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make "$CORES"
         CC="/usr/local/opt/ccache/libexec/clang-3.5.1" \
           CXX="/usr/local/opt/ccache/libexec/clang++-3.5.1" \
-          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j"$CORES"
+          cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Release ../.. && make -j"$CORES"
 
         RESULT=$?
         if [ $RESULT -ne 0 ]
@@ -609,7 +609,7 @@ then
         #   # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make "$CORES"
         CC="/usr/local/opt/ccache/libexec/clang-3.5.1" \
           CXX="/usr/local/opt/ccache/libexec/clang++-3.5.1" \
-          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j"$CORES"
+          cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j"$CORES"
 
         RESULT=$?
         if [ $RESULT -ne 0 ]

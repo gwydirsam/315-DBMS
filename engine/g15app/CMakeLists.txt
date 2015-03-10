@@ -60,7 +60,7 @@ if (test)
 	add_executable(${UNITTEST_BINARY} ${UNITTEST_SRCS})
 
   # Standard linking to gtest stuff.
-	target_link_libraries(${UNITTEST_BINARY} ${ENGINE_LIBRARY} gtest gtest_main)
+	target_link_libraries(${UNITTEST_BINARY} ${ENGINE_LIBRARY} ${Boost_LIBRARIES} gtest gtest_main)
 
   # This is so you can do 'make test' to see all your tests run, instead of
   # manually running the executable runUnitTests to see those specific tests.
