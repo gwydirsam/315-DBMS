@@ -26,6 +26,16 @@ const std::string currentDateTime() {
   return buf;
 }
 
+void errlog(std::string message, bool show) {
+  // if show is true and we're not in debug mode, show user the error
+  if (show) {
+#ifndef DEBUG
+    std::cerr << setcolor(color::RED, message) << std::endl;
+#endif
+  }
+  errlog(message);
+}
+
 // TODO: extend for more aguments
 // ifdef DEBUG output message and log to file. Otherwise just log.
 void errlog(std::string message) {
