@@ -48,12 +48,18 @@ NCURSESSYMLINKS=( "$ENGINEDIR/include/ncurses-5.9" "$APPDIR/include/ncurses-5.9"
 
 LOGFILE="$ENGINEDIR/.buildshlog"
 
-echo "Checking if you're on unix.cse.tamu.edu..."
+echo "Checking if you're on sun-new.cse.tamu.edu..."
 # or my computer! tee hee
-if ! [[ "$HOSTNAME" = "sun" || "$HOSTNAME" = "Tron" || "$HOSTNAME" = "sun2.cs.tamu.edu" ]]
+if ! [[ "$HOSTNAME" = "sun2.cs.tamu.edu" || "$HOSTNAME" = "Tron" ]]
 then
-    echo "You're not on unix.cse.tamu.edu. This program should only be built on unix.cse.tamu.edu"
-    exit 1
+    echo "You're not on sun-new.cse.tamu.edu. You should really use sun-new."
+    echo "Are you sure you want to continue building on this machine?"
+    select yn in "Yes" "No"; do
+        case $yn in
+            Yes ) break;;
+            No ) exit 1;;
+        esac
+    done
 else
     echo "You are! Well done."
 fi
@@ -284,7 +290,7 @@ then
               ./configure --prefix="$HOME/usr" --host=sparc-sun-solaris2.10 --with-shared --without-debug --enable-pc-files --enable-widec
         else
             #CC="/usr/bin/cc" LD_LIBRARY_PATH=""\
-              ./configure --prefix="$HOME/usr" --with-shared --without-debug --enable-pc-files --enable-widec
+            ./configure --prefix="$HOME/usr" --with-shared --without-debug --enable-pc-files --enable-widec
         fi
         RESULT=$?
         if [ $RESULT -ne 0 ]
@@ -555,16 +561,16 @@ then
         cd "$ENGINEDIR/build/release"
         if [ "$HOSTNAME" = "sun2.cs.tamu.edu" ]
         then
-        CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
-          CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
-            # CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
-            #   CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
+            CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
+              CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
+              # CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
+              #   CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
               cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j8
         else
-        CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
-          CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
-            # CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
-            #   CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
+            CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
+              CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
+              # CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
+              #   CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
               cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j"$CORES"
         fi
 
@@ -634,16 +640,16 @@ then
         cd "$ENGINEDIR/build/debug"
         if [ "$HOSTNAME" = "sun2.cs.tamu.edu" ]
         then
-        CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
-          CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
-            # CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
-            #   CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
+            CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
+              CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
+              # CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
+              #   CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
               cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j8
         else
-        CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
-          CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
-            # CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
-            #   CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
+            CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
+              CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
+              # CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
+              #   CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
               cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j"$CORES"
         fi
 
