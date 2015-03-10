@@ -68,9 +68,6 @@ int main(int argc, char* argv[]) {
     }
     std::cout << "Script Execution Finished." << std::endl;
     // write history to shell mode history file
-    errlog("Writing script history to .shellhist");
-    char *shell_hist_file = ".shellhist";
-    write_history(shell_hist_file);
   }
 
   // Start Blog
@@ -147,8 +144,26 @@ int main(int argc, char* argv[]) {
   // Start prompt
   // input and shell_prompt buffer
   char* input, shell_prompt[4096];
+  std::string shell_hist_file = ".shellhist";
+  std::string app_hist_file = ".apphist";
   std::string menuinput;
   bool shellmode = false;
+  // write script history to file
+  errlog("Writing script history to .shellhist");
+  if (write_history((shell_hist_file).c_str()) == 0) {
+    errlog("Write Success");
+  } else {
+    errlog("Write Failure");
+  }
+  // clear history
+  clear_history();
+  // read app history
+  errlog("Reading app history from .apphist");
+  if (read_history((app_hist_file).c_str()) == 0) {
+    errlog("Read Success");
+  } else {
+    errlog("Read Failure");
+  }
 
   // Configure readline to auto-complete paths when the tab key is hit.
   rl_bind_key('\t', rl_complete);
@@ -203,9 +218,10 @@ int main(int argc, char* argv[]) {
                 << std::endl;
       std::cout << std::left << std::setw(20) << std::setfill(' ')
                 << "--file (file)";
-      std::cout << std::left << std::setw(20) << std::setfill(' ')
-                << "Run sql script before starting app (example in engine/share)"
-                << std::endl;
+      std::cout
+          << std::left << std::setw(20) << std::setfill(' ')
+          << "Run sql script before starting app (example in engine/share)"
+          << std::endl;
       std::cout << std::endl;
 
       std::cout << "Any Mode" << std::endl;
@@ -229,21 +245,17 @@ int main(int argc, char* argv[]) {
       std::cout << "App Mode" << std::endl;
       draw_line(76);
       // app mode help lines here
+      std::cout << std::left << std::setw(20) << std::setfill(' ') << "input";
       std::cout << std::left << std::setw(20) << std::setfill(' ')
-                << "input";
-      std::cout << std::left << std::setw(20) << std::setfill(' ')
-                << "Open Menu or run command indicated"
-                << std::endl;
+                << "Open Menu or run command indicated" << std::endl;
       std::cout << std::endl;
 
       std::cout << "Shell Mode" << std::endl;
       draw_line(76);
       // shell mode help lines here
+      std::cout << std::left << std::setw(20) << std::setfill(' ') << "input";
       std::cout << std::left << std::setw(20) << std::setfill(' ')
-                << "input";
-      std::cout << std::left << std::setw(20) << std::setfill(' ')
-                << "Any valid dml program"
-                << std::endl;
+                << "Any valid dml program" << std::endl;
       draw_line();
       std::cout << std::endl;
       std::cout << std::endl;
@@ -251,10 +263,42 @@ int main(int argc, char* argv[]) {
       if (shellmode) {
         errlog("Switching to app mode.", true);
         shellmode = false;
+        // write shell history to file
+        errlog("Writing script history to .shellhist");
+        if (write_history((shell_hist_file).c_str()) == 0) {
+          errlog("Write Success");
+        } else {
+          errlog("Write Failure");
+        }
+        // clear history
+        clear_history();
+        // read app history
+        errlog("Reading app history from .apphist");
+        if (read_history((app_hist_file).c_str()) == 0) {
+          errlog("Read Success");
+        } else {
+          errlog("Read Failure");
+        }
       } else {
         errlog("Switching to shell mode. Commands are sent directly to engine.",
                true);
         shellmode = true;
+        // write app history
+        errlog("Writing app history to .apphist");
+        if (write_history((app_hist_file).c_str()) == 0) {
+          errlog("Write Success");
+        } else {
+          errlog("Write Failure");
+        }
+        // clear history
+        clear_history();
+        // read shell history
+        errlog("Reading shell history from .shellhist");
+        if (read_history((shell_hist_file).c_str()) == 0) {
+          errlog("Read Success");
+        } else {
+          errlog("Read Failure");
+        }
       }
     } else if (std::strcmp(input, "") == 0) {
       // nothing
