@@ -537,8 +537,8 @@ then
         echo "Creating build/release directory..."
         mkdir -p "build/release";
         cd "$ENGINEDIR/build/release"
-        CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto" \
-          CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
+        CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
+          CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
           cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
         # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
     fi
@@ -607,8 +607,8 @@ then
         echo "Creating build/debug directory..."
         mkdir -p "build/debug";
         cd "$ENGINEDIR/build/debug"
-        CC="$HOME/usr/bin/ccache/gcc -fdiagnostics-color=auto" \
-          CXX="$HOME/usr/bin/ccache/g++ -fdiagnostics-color=auto" \
+        CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
+          CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
           cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
         # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
 
