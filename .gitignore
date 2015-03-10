@@ -54,3 +54,5 @@ app/build/*
 /engine/buildrelease/
 /include/gtest-1.7.0/
 /engine/include/gtest
+/engine/g15app/menu.cc.old
+/engine/g15app/menu.h.old

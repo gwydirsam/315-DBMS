@@ -21,6 +21,14 @@ int main(int argc, char* argv[]) {
   // Start Engine
   Engine dbengine;
 
+  // read shell hist
+  errlog("Reading shell history from .shellhist");
+  if (read_history(".shellhist") == 0) {
+    errlog("Read Success");
+  } else {
+    errlog("Read Failure");
+  }
+
   // if provided script and --file
   if ((argc > 2) && (std::strcmp(argv[1], "--file") == 0)) {
     errlog("Reading SQL Programs from file");
@@ -134,12 +142,14 @@ int main(int argc, char* argv[]) {
     }
   }
 
+  Menu menu;
   // print first menu
-  std::cout << "[Main Menu]" << std::endl;
-  draw_line(11);
-  std::cout << "1) Post to Blog" << std::endl;
-  std::cout << "2) Search" << std::endl;
-  std::cout << "3) Exit" << std::endl;
+  menu.main_menu();
+  // std::cout << "[Main Menu]" << std::endl;
+  // draw_line(11);
+  // std::cout << "1) Post to Blog" << std::endl;
+  // std::cout << "2) Search" << std::endl;
+  // std::cout << "3) Exit" << std::endl;
 
   // Start prompt
   // input and shell_prompt buffer
@@ -147,7 +157,9 @@ int main(int argc, char* argv[]) {
   std::string shell_hist_file = ".shellhist";
   std::string app_hist_file = ".apphist";
   std::string menuinput;
+  // default to app mode
   bool shellmode = false;
+
   // write script history to file
   errlog("Writing script history to .shellhist");
   if (write_history((shell_hist_file).c_str()) == 0) {
@@ -201,7 +213,7 @@ int main(int argc, char* argv[]) {
       // write histories
       if (shellmode) {
         // write shell history to file
-        errlog("Writing script history to .shellhist");
+        errlog("Writing shell history to .shellhist");
         if (write_history((shell_hist_file).c_str()) == 0) {
           errlog("Write Success");
         } else {
@@ -241,7 +253,7 @@ int main(int argc, char* argv[]) {
           errlog("Read Failure");
         }
         // write shell history to file
-        errlog("Writing script history to .shellhist");
+        errlog("Writing shell history to .shellhist");
         if (write_history((shell_hist_file).c_str()) == 0) {
           errlog("Write Success");
         } else {
@@ -317,7 +329,7 @@ int main(int argc, char* argv[]) {
         errlog("Switching to app mode.", true);
         shellmode = false;
         // write shell history to file
-        errlog("Writing script history to .shellhist");
+        errlog("Writing shell history to .shellhist");
         if (write_history((shell_hist_file).c_str()) == 0) {
           errlog("Write Success");
         } else {
@@ -367,6 +379,7 @@ int main(int argc, char* argv[]) {
         menuinput = std::string(input);
         std::string errstr = "App: Menu input: " + menuinput;
         errlog(errstr);
+        menu.main_menu(menuinput);
       }
     }
 
