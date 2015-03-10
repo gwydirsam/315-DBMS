@@ -4,12 +4,16 @@
 #include <fstream>
 #include <ctime>
 
-void draw_line() {
-  // Draw 80 line characters
-  for (int i = 0; i < 80; ++i) {
+void draw_line(int n) {
+  for (int i = 0; i < n; ++i) {
     std::cout << "─";
   }
   std::cout << std::endl;
+}
+
+void draw_line() {
+  // Draw 80 line characters
+  draw_line(80);
 }
 
 // color must be a valid color from utility.h

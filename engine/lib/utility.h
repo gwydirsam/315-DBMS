@@ -4,6 +4,7 @@
 
 #include <string>
 
+void draw_line(int n);
 void draw_line();
 
 namespace color {
