@@ -20,56 +20,7 @@ int main(int argc, char* argv[]) {
   // Start Engine
   Engine dbengine;
 
-  std::cout << "Group 15 Blog" << std::endl;
-  errlog("App: Opening Tables.");
-  std::vector<std::string> app_tables {"posts", "tags", "tagmap", "comments"};
-  std::vector<std::string> need_tables;
-  for (std::string title : app_tables) {
-    if (dbengine.openTable(title) != -1) {
-      std::string errstr = "App: Opened Table: " + title;
-      errlog(errstr);
-    } else {
-      std::string errstr = "App: Failed to open Table: " + title;
-      errlog(errstr);
-      // push back table on to need_tables
-      // we will create those tables if they can't be found.
-      need_tables.push_back(title);
-    }
-  }
-  // log needed tables.
-  errlog("Creating Tables...",true);
-  std::string errstr = "App: Creating Tables: ";
-  for (std::string title : need_tables) {
-    errstr += title + " ";
-  }
-  errlog(errstr);
-
-  // create needed tables
-  for (std::string title : need_tables) {
-    if (title == "posts") {
-      std::string sqlprog = "CREATE TABLE posts (id INTEGER, title VARCHAR(1024), author VARCHAR(1024), date VARCHAR(1024), content VARCHAR(32768), if_comment INTEGER) PRIMARY KEY (id);";
-      // add command to readline history
-      add_history(sqlprog.c_str());
-      dbengine.execSQL(sqlprog);
-    } else if (title == "tags") {
-      std::string sqlprog = "CREATE TABLE tags (id INTEGER, tagname VARCHAR(1024)) PRIMARY KEY (id);";
-      // add command to readline history
-      add_history(sqlprog.c_str());
-      dbengine.execSQL(sqlprog);
-    } else if (title == "tagmap") {
-      std::string sqlprog = "CREATE TABLE tagmap (id INTEGER, tagid INTEGER, postid INTEGER) PRIMARY KEY (id);";
-      // add command to readline history
-      add_history(sqlprog.c_str());
-      dbengine.execSQL(sqlprog);
-    } else if (title == "comments") {
-      // inrefto is the id of the parent comment, -1 for top level comment
-      std::string sqlprog = "CREATE TABLE comments (id INTEGER, postid INTEGER, author VARCHAR(1024), date VARCHAR(1024), content VARCHAR(4096), inrefto INTEGER) PRIMARY KEY (id);";
-      // add command to readline history
-      add_history(sqlprog.c_str());
-      dbengine.execSQL(sqlprog);
-    }
-  }
-
+  // if provided script and --file
   if ((argc > 2) && (std::strcmp(argv[1], "--file") == 0)) {
     errlog("Reading SQL Programs from file");
 
@@ -117,20 +68,107 @@ int main(int argc, char* argv[]) {
     std::cout << "Script Execution Finished." << std::endl;
   }
 
+  // Start Blog
+  std::cout << "Group 15 Blog" << std::endl;
+  draw_line();
+  errlog("App: Opening Tables.");
+  std::vector<std::string> app_tables{"posts", "tags", "tagmap", "comments"};
+  std::vector<std::string> need_tables;
+  for (std::string title : app_tables) {
+    if (dbengine.openTable(title) != -1) {
+      std::string errstr = "App: Opened Table: " + title;
+      errlog(errstr);
+    } else {
+      std::string errstr = "App: Failed to open Table: " + title;
+      errlog(errstr);
+      // push back table on to need_tables
+      // we will create those tables if they can't be found.
+      need_tables.push_back(title);
+    }
+  }
+  if (need_tables.size() > 0) {
+    // log needed tables.
+    errlog("Creating Tables...", true);
+    std::string errstr = "App: Creating Tables: ";
+    for (std::string title : need_tables) {
+      errstr += title + " ";
+    }
+    errlog(errstr);
+  }
+
+  // create needed tables
+  for (std::string title : need_tables) {
+    if (title == "posts") {
+      std::string sqlprog =
+          "CREATE TABLE posts (id INTEGER, title VARCHAR(1024), author "
+          "VARCHAR(1024), date VARCHAR(1024), content VARCHAR(32768), "
+          "if_comment INTEGER) PRIMARY KEY (id);";
+      // add command to readline history
+      add_history(sqlprog.c_str());
+      dbengine.execSQL(sqlprog);
+    } else if (title == "tags") {
+      std::string sqlprog =
+          "CREATE TABLE tags (id INTEGER, tagname VARCHAR(1024)) PRIMARY KEY "
+          "(id);";
+      // add command to readline history
+      add_history(sqlprog.c_str());
+      dbengine.execSQL(sqlprog);
+    } else if (title == "tagmap") {
+      std::string sqlprog =
+          "CREATE TABLE tagmap (id INTEGER, tagid INTEGER, postid INTEGER) "
+          "PRIMARY KEY (id);";
+      // add command to readline history
+      add_history(sqlprog.c_str());
+      dbengine.execSQL(sqlprog);
+    } else if (title == "comments") {
+      // inrefto is the id of the parent comment, -1 for top level comment
+      std::string sqlprog =
+          "CREATE TABLE comments (id INTEGER, postid INTEGER, author "
+          "VARCHAR(1024), date VARCHAR(1024), content VARCHAR(4096), inrefto "
+          "INTEGER) PRIMARY KEY (id);";
+      // add command to readline history
+      add_history(sqlprog.c_str());
+      dbengine.execSQL(sqlprog);
+    }
+  }
+
+  // print first menu
+  std::cout << "[Main Menu]" << std::endl;
+  std::cout << std::endl;
+  std::cout << "1) Post to Blog" << std::endl;
+  std::cout << "2) Search" << std::endl;
+  std::cout << "3) Exit" << std::endl;
+  draw_line();
+
+  // Start prompt
   // input and shell_prompt buffer
   char* input, shell_prompt[4096];
+  std::string menuinput;
+  bool shellmode = false;
 
   // Configure readline to auto-complete paths when the tab key is hit.
   rl_bind_key('\t', rl_complete);
 
   for (;;) {
-// Create prompt string from user name and current working directory.
+// Create prompt string from user name
 #ifdef DEBUG
-    snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBapp(DEBUG) > ",
+    if (shellmode) {
+    snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBengine(DEBUG) > ",
              getenv("USER"));
+    } else {
+      // app mode
+    snprintf(shell_prompt, sizeof(shell_prompt), "%s@blog(DEBUG) > ",
+             getenv("USER"));
+    }
 #else
-    snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBapp > ",
+    if (shellmode) {
+    snprintf(shell_prompt, sizeof(shell_prompt), "%s@DBengine > ",
              getenv("USER"));
+    } else {
+      // app mode
+    snprintf(shell_prompt, sizeof(shell_prompt), "%s@blog > ",
+             getenv("USER"));
+    }
 #endif
 
     // Display prompt and read input (NB: input must be freed after use)...
@@ -138,6 +176,7 @@ int main(int argc, char* argv[]) {
 
     // Check for EOF.
     if (!input) {
+      std::cout << std::endl;
       break;
     }
 
@@ -147,15 +186,31 @@ int main(int argc, char* argv[]) {
     // parse input
     // check if help
     if (std::strcmp(input, "?") == 0) {
-      std::cout << "Want Help? Read the docs. They end in .h and .cc."
-                << std::endl;
+      // std::cout << "Want Help? Read the docs. They end in .h and .cc."
+      //           << std::endl;
+    } else if (std::strcmp(input, "shell") == 0) {
+      if (shellmode) {
+        errlog("Switching to app mode.",true);
+        shellmode = false;
+      } else {
+        errlog(
+               "Switching to shell mode. Commands are sent directly to engine.",true);
+        shellmode = true;
+      }
     } else if (std::strcmp(input, "") == 0) {
       // nothing
     } else {
-      if (dbengine.execSQL(input) != 0) {
-        std::string errmsg = "Shell: " + std::string( input ) + " FAILED.";
-        errlog(errmsg);
-        std::cerr << "Invalid Statement: " << input << std::endl;
+      if (shellmode) {
+        if (dbengine.execSQL(input) != 0) {
+          std::string errmsg = "Shell: " + std::string(input) + " FAILED.";
+          errlog(errmsg);
+          std::cerr << "Invalid Statement: " << input << std::endl;
+        }
+      } else {
+        // app mode
+        menuinput = std::string(input);
+        std::string errstr = "App: Menu input: " + menuinput;
+        errlog(errstr);
       }
     }
 
@@ -163,7 +218,7 @@ int main(int argc, char* argv[]) {
     free(input);
   }
 
-  //dbengine.execSQL("EXIT;");
+  // dbengine.execSQL("EXIT;");
 
   return 0;
 }
