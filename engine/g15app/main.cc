@@ -5,4 +5,6 @@ int main(int argc, char* argv[]) {
   std::cout << "welcome to group 15's app" << std::endl;
   //Menu app;
   //app.print_menu();
+
+  return 0;
 }
