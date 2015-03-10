@@ -278,13 +278,14 @@ then
         # build
         echo "Building Ncurses..."
         cd "$HOME/.tmp/build/`basename $NCURSESURL .tar.gz`"
-        CC="/usr/bin/cc" LD_LIBRARY_PATH=""\
-          if [ "$HOSTNAME" = "sun" ]
+        if [ "$HOSTNAME" = "sun" ]
         then
-          ./configure --prefix="$HOME/usr" --host=sparc-sun-solaris2.10 --with-shared --without-debug --enable-pc-files --enable-widec
-          else
-          ./configure --prefix="$HOME/usr" --with-shared --without-debug --enable-pc-files --enable-widec
-          fi
+            CC="/usr/bin/cc" LD_LIBRARY_PATH=""\
+              ./configure --prefix="$HOME/usr" --host=sparc-sun-solaris2.10 --with-shared --without-debug --enable-pc-files --enable-widec
+        else
+            CC="/usr/bin/cc" LD_LIBRARY_PATH=""\
+              ./configure --prefix="$HOME/usr" --with-shared --without-debug --enable-pc-files --enable-widec
+        fi
         RESULT=$?
         if [ $RESULT -ne 0 ]
         then
