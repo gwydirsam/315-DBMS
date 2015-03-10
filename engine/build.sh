@@ -271,7 +271,7 @@ then
         echo "Building Ncurses..."
         cd "$HOME/.tmp/build/`basename $NCURSESURL .tar.gz`"
         CC="/usr/bin/cc" LD_LIBRARY_PATH=""\
-        ./configure --prefix="$HOME/usr" --host=sparc-sun-solaris2.10 --with-shared --without-debug --enable-pc-files --enable-widec CC=cc
+          ./configure --prefix="$HOME/usr" --host=sparc-sun-solaris2.10 --with-shared --without-debug --enable-pc-files --enable-widec CC=cc
         RESULT=$?
         if [ $RESULT -ne 0 ]
         then
@@ -468,7 +468,7 @@ then
 
         echo "Adding CCache to Path"
         #add ~/usr/bin and ~/usr/bin/ccache to path
-        echo 'export PATH=$HOME/usr/bin/ccache:$HOME/usr/bin:$PATH' >> "$HOME/.bash_profile"
+        #echo 'export PATH=$HOME/usr/bin/ccache:$HOME/usr/bin:$PATH' >> "$HOME/.bash_profile"
         #add ~/usr/share/man to manpath
         echo 'export MANPATH=$HOME/usr/share/man:$MANPATH' >> "$HOME/.bash_profile"
         #add stuff for gcc
@@ -539,20 +539,27 @@ then
         echo "Creating build/release directory..."
         mkdir -p "build/release";
         cd "$ENGINEDIR/build/release"
-        CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
-          CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
-          cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
-        # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j4
-    fi
+        # CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
+        #   CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
+        if [ "$HOSTNAME" = "sun2.cs.tamu.edu" ]
+        then
+            CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
+              CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
+              cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j8
+        else
+            CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
+              CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
+              cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+        fi
 
-    RESULT=$?
-    if [ $RESULT -ne 0 ]
-    then 
-        echo "Release Tests Build Failed"
-        exit 1
+        RESULT=$?
+        if [ $RESULT -ne 0 ]
+        then 
+            echo "Release Tests Build Failed"
+            exit 1
+        fi
     fi
 fi
-
 echo "Running cmake for Debug with Tests"
 if [ "$HOSTNAME" = "Tron" ]
 then
@@ -609,10 +616,18 @@ then
         echo "Creating build/debug directory..."
         mkdir -p "build/debug";
         cd "$ENGINEDIR/build/debug"
-        CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
-          CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
-          cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
-        # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+        # CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
+        #   CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
+        if [ "$HOSTNAME" = "sun2.cs.tamu.edu" ]
+        then
+            CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
+              CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
+              cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j8
+        else
+            CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
+              CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
+              cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j4
+        fi
 
         RESULT=$?
         if [ $RESULT -ne 0 ]
