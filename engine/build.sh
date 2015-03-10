@@ -513,7 +513,7 @@ then
         echo "Running Make Clean in build/release"
         cd "$ENGINEDIR/build/release"
         make clean
-        make "$CORES"
+        make -j"$CORES"
         RESULT=$?
         if [ $RESULT -ne 0 ]
         then 
@@ -531,7 +531,7 @@ then
         #   # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make "$CORES"
         CC="/usr/local/opt/ccache/libexec/clang-3.5.1" \
           CXX="/usr/local/opt/ccache/libexec/clang++-3.5.1" \
-          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make "$CORES"
+          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Release ../.. && make -j"$CORES"
 
         RESULT=$?
         if [ $RESULT -ne 0 ]
@@ -547,7 +547,7 @@ then
         echo "Running Make Clean in build/release"
         cd "$ENGINEDIR/build/release"
         make clean
-        make "$CORES"
+        make -j"$CORES"
     else
         cd "$ENGINEDIR"
         echo "Creating build/release directory..."
@@ -565,7 +565,7 @@ then
           CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
             # CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
             #   CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
-              cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make "$CORES"
+              cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j"$CORES"
         fi
 
         RESULT=$?
@@ -584,7 +584,7 @@ then
         echo "Running make clean in build/debug"
         cd "$ENGINEDIR/build/debug"
         make clean
-        make "$CORES"
+        make -j"$CORES"
 
         RESULT=$?
         if [ $RESULT -ne 0 ]
@@ -603,7 +603,7 @@ then
         #   # cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make "$CORES"
         CC="/usr/local/opt/ccache/libexec/clang-3.5.1" \
           CXX="/usr/local/opt/ccache/libexec/clang++-3.5.1" \
-          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make "$CORES"
+          cmake -Dtest=ON -DCMAKE_BUILD_TYPE=Debug ../.. && make -j"$CORES"
 
         RESULT=$?
         if [ $RESULT -ne 0 ]
@@ -619,7 +619,7 @@ then
         echo "Running make clean in build/debug"
         cd "$ENGINEDIR/build/debug"
         make clean
-        make "$CORES"
+        make -j"$CORES"
 
         RESULT=$?
         if [ $RESULT -ne 0 ]
@@ -644,7 +644,7 @@ then
           CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
             # CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
             #   CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
-              cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make "$CORES"
+              cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j"$CORES"
         fi
 
         RESULT=$?
