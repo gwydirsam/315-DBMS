@@ -325,7 +325,7 @@ then
             echo "Compiling and Installing Boost to ~/usr/"
             cd $BOOSTDIR
             ./bootstrap.sh --prefix="$HOME/usr"
-            CC="/opt/csw/bin/gcc-4.9" CXX="/opt/csw/bin/g++-4.9" ./b2 --with-filesystem --with-system install
+            CC="/opt/csw/bin/gcc-4.9" CXX="/opt/csw/bin/g++-4.9" ./b2 -j8 --with-filesystem --with-system install
             echo "Adding ~/usr/lib to LD_LIBRARY_PATH"
             echo 'export LD_LIBRARY_PATH=$HOME/usr/lib:$LD_LIBRARY_PATH' >> "$HOME/.bash_profile"
             echo "Done Compiling and Installing Boost 1.57.0!"
@@ -380,7 +380,7 @@ then
         echo "Compiling and Installing Boost to ~/usr/"
         cd $BOOSTDIR
         ./bootstrap.sh --prefix="$HOME/usr"
-            CC="/opt/csw/bin/gcc-4.9" CXX="/opt/csw/bin/g++-4.9" ./b2 --with-filesystem --with-system install
+            CC="/opt/csw/bin/gcc-4.9" CXX="/opt/csw/bin/g++-4.9" ./b2 -j8 --with-filesystem --with-system install
         echo "Done Compiling and Installing Boost 1.57.0!"
     fi
     # check for ccache
