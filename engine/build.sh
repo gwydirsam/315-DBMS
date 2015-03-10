@@ -553,16 +553,18 @@ then
         echo "Creating build/release directory..."
         mkdir -p "build/release";
         cd "$ENGINEDIR/build/release"
-        # CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
-        #   CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
         if [ "$HOSTNAME" = "sun2.cs.tamu.edu" ]
         then
-            CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
-              CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
+        CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
+          CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
+            # CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
+            #   CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
               cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j8
         else
-            CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
-              CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
+        CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
+          CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
+            # CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
+            #   CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
               cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make "$CORES"
         fi
 
@@ -630,16 +632,18 @@ then
         echo "Creating build/debug directory..."
         mkdir -p "build/debug";
         cd "$ENGINEDIR/build/debug"
-        # CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
-        #   CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
         if [ "$HOSTNAME" = "sun2.cs.tamu.edu" ]
         then
-            CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
-              CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
+        CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
+          CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
+            # CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
+            #   CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
               cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j8
         else
-            CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
-              CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
+        CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
+          CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
+            # CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
+            #   CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
               cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make "$CORES"
         fi
 
