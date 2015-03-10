@@ -197,7 +197,7 @@ int main(int argc, char* argv[]) {
     if (!input) {
       std::cout << std::endl;
 
-      errlog("Got EOF. Writing histories and exiting.")
+      errlog("Got EOF. Writing histories and exiting.");
       // write histories
       if (shellmode) {
         // write shell history to file
@@ -248,7 +248,7 @@ int main(int argc, char* argv[]) {
           errlog("Write Failure");
         }
       }
-      errlog("Exiting.")
+      errlog("Exiting.");
       break;
     }
 
