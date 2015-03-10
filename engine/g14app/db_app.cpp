@@ -202,7 +202,7 @@ void find_title() {
   // "select * from 'tablename?' where title = '" + title + "';";
 
   string query =
-      string("") + "ttl <- select (Title == \"" + Title + "\") Poststable; ";
+      string("") + "ttl <- select (title == \"" + title + "\") Poststable; ";
 
   // works on query
   dbengine.execSQL(query);
@@ -233,10 +233,10 @@ void find_tags() {  // TODO: Use JOIN table w/ SQL!
   string query =
       string("") + "tag <- select (tags == \"" + tags + "\") Tagstable; ";
   // Create command
-  string query = string("") +  // TODO: Get from tags table!
-                 "SELECT Poststable.PostId, Poststable.Title, tag.tags " +
-                 "FROM Poststable " + "INNER JOIN Tagstable " +
-                 "ON Poststable.PostId=Tagstable.post_id;";
+  query = string("") +  // TODO: Get from tags table!
+          "SELECT Poststable.PostId, Poststable.Title, tag.tags " +
+          "FROM Poststable " + "INNER JOIN Tagstable " +
+          "ON Poststable.PostId=Tagstable.post_id;";
 
   // db.execute(query);
   dbengine.execSQL(query);
@@ -244,7 +244,10 @@ void find_tags() {  // TODO: Use JOIN table w/ SQL!
 
   // db.post something
 
-  cout << "Enter the Post ID or 0 for main menu: ";
+  int post_input;
+  std::vector<std::string> titles;
+
+          std::cout << "Enter the Post ID or 0 for main menu: ";
   cin >> post_input;
   // checking for valid input
 
@@ -369,7 +372,7 @@ void view_post(string post_title) {
 
   // cout<< string("") + post_title + "\n";
 
-  post_options(string post_title);
+  post_options(post_title);
 }
 
 void edit_post(string post_title) {
@@ -378,7 +381,7 @@ void edit_post(string post_title) {
                  post_title + "\";";
 
   dbengine.execSQL(query);
-  post_options(string post_title);
+  post_options(post_title);
 }
 
 // TODO: Rework SQL and delete post ids appropriately
@@ -436,10 +439,11 @@ void comment_post(string post_title) {
       dbengine.find_relation("comm").find_column_index("CommentsAllowed");
   vector<std::string> comAllowed =
       dbengine.find_relation("comm").get_column(column_index).entries();
-  if (comAllowed[0]) {
-    cout << "Sorry comments are not allowed on this post.\n" post_options(
-        post_title);
-  }
+  // Sam Gwydir: I'm not sure how you meant to do this
+  // if (comAllowed[0] == ) {
+  //   cout << "Sorry comments are not allowed on this post.\n";
+  //   post_options(post_title);
+  // }
 
   // need to take input for id, name, comment
   cout << "[Commenting on " << post_title << "]\n";
@@ -552,7 +556,7 @@ void send_post() {
 // Removes commas and puts tags into vector no_comma_tags
 void tag_scrubber() {
   cout << p.tags << endl;  // Testing
-  int lc = 0;  // Location of last comma
+  int lc = 0;              // Location of last comma
 
   for (int i = 0; i < p.tags.length(); ++i) {
     if (p.tags.at(i) == ',') {
@@ -572,7 +576,7 @@ void tag_scrubber() {
 }
 
 void post_id_processing() {
-  string line;  // Holds input from file
+  string line;           // Holds input from file
   vector<int> post_ids;  // Holds int versions of all post ids
 
   fstream myfile("post_id_list.txt");
@@ -614,7 +618,7 @@ void post_id_processing() {
 }
 
 void post_id_deletion() {
-  string line;  // Holds input from file
+  string line;           // Holds input from file
   vector<int> post_ids;  // Holds int versions of all post ids
 
   fstream myfile("post_id_list.txt");
