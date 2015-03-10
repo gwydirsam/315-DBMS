@@ -53,7 +53,7 @@ echo "Checking if you're on sun-new.cse.tamu.edu..."
 if ! [[ "$HOSTNAME" = "sun2.cs.tamu.edu" || "$HOSTNAME" = "Tron" ]]
 then
     echo "You're not on sun-new.cse.tamu.edu. You should really use sun-new."
-    echo "Are you sure you want to continue building on this machine?"
+    echo "Are you sure you want to continue building on this machine? (1 for yes, 2 for no)"
     select yn in "Yes" "No"; do
         case $yn in
             Yes ) break;;
