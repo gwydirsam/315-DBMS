@@ -28,6 +28,7 @@ option(test "Build ${PROJECT_NAME}'s tests" OFF)
 
 # set some locations
 set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/shell")
+set(APP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/g15app")
 set(GFOURTEEN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/g14app")
 set(INCLUDES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
@@ -52,7 +53,9 @@ endif()
 
 # add directory for project source files and libraries
 add_subdirectory(${SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME})
+add_subdirectory(${LIB_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/lib)
+
+add_subdirectory(${APP_DIR} ${CMAKE_CURRENT_BINARY_DIR}/App)
 add_subdirectory(${GFOURTEEN_DIR} ${CMAKE_CURRENT_BINARY_DIR}/G14)
 #add_subdirectory(${SOURCE_DIR})
-add_subdirectory(${LIB_DIR} ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/lib)
 #add_subdirectory(${LIB_DIR})

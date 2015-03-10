@@ -36,6 +36,14 @@ if (test)
   include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 endif()
 
+if(APPLE)
+  # do nothing
+elseif(UNIX)
+  set(BOOST_ROOT ~/usr/)
+set(Readline_ROOT_DIR ~/usr/)
+include_directories(~/usr/include)
+endif()
+
 set(GROUP16_LIBRARY "group16dbms")
 #include_directories("${INCLUDES_DIR}/Group16DBMS")
 add_subdirectory("${INCLUDES_DIR}/Group16DBMS")
