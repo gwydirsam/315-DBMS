@@ -22,5 +22,4 @@ INSERT INTO days VALUES FROM ("Wednesday");
 SHOW locale; 
 SHOW days; 
 WRITE days; 
-DELETE FROM plans WHERE ( weekday == "Tuesday" ) && (with_who != "John"); 
 WRITE plans; 

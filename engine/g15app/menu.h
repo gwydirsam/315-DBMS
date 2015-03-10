@@ -5,10 +5,8 @@
 #include <string>
 #include "../lib/engine.h"
 
-class Menu {
+class menu {
 public:
-  // //Global:
-	// // Parser parser;
 	// std::string str_input;
 	// int m_selection_input;
 	// int s_selection_input;

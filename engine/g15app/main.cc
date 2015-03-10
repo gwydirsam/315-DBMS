@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
 #ifdef DEBUG
     errlog("Read Programs:");
     for (std::string prog : programs) {
-      std::cout << prog << std::endl;
+      errlog(prog);
     }
 #endif
 
@@ -123,29 +123,7 @@ int main(int argc, char* argv[]) {
   }
 #endif
 
-#ifndef READLINE
-  // run shell
-  errlog("Starting DBMS Shell.");
-  std::cout << "Group 15 DBMS Shell (^D to Finish)" << std::endl;
-
-  std::string input;
-  std::cout << "> ";
-  while (std::getline(std::cin, input)) {
-    // TODO check if valid here
-    if (input == "EXIT;") {
-      break;
-    }
-    if (dbengine.execSQL(input) != 0) {
-      std::cerr << "Parse Failed" << std::endl;
-    }
-    input = "";
-    std::cout << "> ";
-  }
-#endif
-
   //dbengine.execSQL("EXIT;");
-
-  return 0;
 
   return 0;
 }
