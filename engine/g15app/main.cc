@@ -111,7 +111,7 @@ int main(int argc, char* argv[]) {
     if (title == "posts") {
       std::string sqlprog =
           "CREATE TABLE posts (id INTEGER, title VARCHAR(1024), author "
-          "VARCHAR(1024), date VARCHAR(1024), content VARCHAR(32768), "
+          "VARCHAR(1024), date INTEGER, content VARCHAR(32768), "
           "if_comment INTEGER) PRIMARY KEY (id);";
       // add command to readline history
       add_history(sqlprog.c_str());
@@ -134,7 +134,7 @@ int main(int argc, char* argv[]) {
       // inrefto is the id of the parent comment, -1 for top level comment
       std::string sqlprog =
           "CREATE TABLE comments (id INTEGER, postid INTEGER, author "
-          "VARCHAR(1024), date VARCHAR(1024), content VARCHAR(4096), inrefto "
+          "VARCHAR(1024), date INTEGER, content VARCHAR(4096), inrefto "
           "INTEGER) PRIMARY KEY (id);";
       // add command to readline history
       add_history(sqlprog.c_str());
@@ -142,14 +142,8 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  Menu menu;
-  // print first menu
-  menu.main_menu();
-  // std::cout << "[Main Menu]" << std::endl;
-  // draw_line(11);
-  // std::cout << "1) Post to Blog" << std::endl;
-  // std::cout << "2) Search" << std::endl;
-  // std::cout << "3) Exit" << std::endl;
+  // Create menu
+  Menu menu(dbengine);
 
   // Start prompt
   // input and shell_prompt buffer
@@ -181,6 +175,11 @@ int main(int argc, char* argv[]) {
   rl_bind_key('\t', rl_complete);
 
   for (;;) {
+    if (!shellmode) {
+      // print menu
+      menu.menu_print();
+    }
+
 // Create prompt string from user name
 #ifdef DEBUG
     if (shellmode) {
@@ -379,7 +378,9 @@ int main(int argc, char* argv[]) {
         menuinput = std::string(input);
         std::string errstr = "App: Menu input: " + menuinput;
         errlog(errstr);
-        menu.main_menu(menuinput);
+        if (menu.menu_exec(menuinput) == -1) {
+          break;
+        }
       }
     }
 

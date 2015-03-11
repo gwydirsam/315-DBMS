@@ -4,43 +4,30 @@
 #include <iostream>
 #include <string>
 
-#include <boost/lexical_cast.hpp>
-
-#include "../lib/utility.h"
 #include "../lib/engine.h"
 
 class Menu {
  public:
-  void main_menu(void) {
-    // print first menu
-    std::cout << "[Main Menu]" << std::endl;
-    draw_line(11);
-    std::cout << "1) Post to Blog" << std::endl;
-    std::cout << "2) Search" << std::endl;
-    std::cout << "3) Exit" << std::endl;
-  }
-  void main_menu(std::string string_input) {
-    try {
-      int input = boost::lexical_cast<int>(string_input);
-      switch (input) {
-        case 1:
-          errlog("Main Menu: Got 1");
-          break;
-        case 2:
-          errlog("Main Menu: Got 2");
-          break;
-        case 3:
-          errlog("Main Menu: Got 3");
-          break;
-        default:
-          errlog("Main Menu: Got bad input");
-          break;
-      }
-    } catch (const boost::bad_lexical_cast &) {
-      errlog("Main Menu: Bad Lexical Cast");
-      errlog("Could not interpret input as an integer.", true);
-    }
-  }
+  Menu(Engine& db)
+      : engine(db), current_menu_(&Menu::main_menu), current_menu_exec_(NULL) {}
+
+  void menu_print();
+  int menu_exec(std::string string_input);
+
+  void main_menu();
+  // if int is -1 quit program.
+  int main_menu_exec(std::string string_input);
+
+  void search_menu();
+  int search_menu_exec(std::string string_input);
+
+  void search_author_menu();
+  int search_author_exec(std::string string_input);
+
+ private:
+  Engine& engine;
+  void (Menu::*current_menu_)();
+  int (Menu::*current_menu_exec_)(std::string string_input);
 };
 
 #endif  // MENU_H_
