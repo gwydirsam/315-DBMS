@@ -8,7 +8,9 @@
 #include <string>
 #include <iomanip>
 #include <functional>
+#include <fstream>
 
+#include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <readline/readline.h>
@@ -395,12 +397,34 @@ int Menu::edit_current_item() {
 
   char *temp_file = "/tmp/g15tempfile";
 
-  char *my_args[5];
+  boost::filesystem::path temppath(boost::filesystem::absolute(temp_file));
+  if (boost::filesystem::remove(temppath)) {
+    errlog("Edit: Old Temp File Deleted");
+  } else {
+    errlog("Edit: Creating New Temp File");
+    std::fstream tfile(temp_file, std::ios::out);
+    tfile << current_rel_->get_row(
+                 current_item_)[current_rel_->find_column_index("title")]
+          << std::endl;
+    tfile << current_rel_->get_row(
+                 current_item_)[current_rel_->find_column_index("author")]
+          << std::endl;
+    tfile << current_rel_->get_row(
+                 current_item_)[current_rel_->find_column_index("date")]
+          << std::endl;
+    tfile << source_rel_->get_row(current_rel_->find_column_index(
+                 "id"))[source_rel_->find_column_index("content")] << std::endl;
+    tfile << std::endl;
+    tfile.close();
+  }
+
+  char *my_args[4];
   pid_t pid;
 
-  my_args[0] = pEditor;
-  my_args[1] = temp_file;
-  my_args[2] = NULL;
+  my_args[0] = "vim";
+  my_args[1] = "-f";
+  my_args[2] = temp_file;
+  my_args[3] = NULL;
 
   errlog("Edit: Forking off editor");
 
@@ -411,7 +435,7 @@ int Menu::edit_current_item() {
       break;
     case 0:
       /* This is processed by the child */
-      execv(pEditor, my_args);
+      execvp("vim", my_args);
       errlog("If this prints, execv() must have failed");
       exit(EXIT_FAILURE);
       break;
@@ -421,35 +445,8 @@ int Menu::edit_current_item() {
       break;
   }
 
+  // read in edit
+
   errlog("End of parent program");
   return 0;
-  // std::cout << "App CLI Arguments" << std::endl;
-  // draw_line(76);
-  // std::cout << std::left << std::setw(20) << std::setfill(' ') << "< (file)";
-  // std::cout << std::left << std::setw(20) << std::setfill(' ')
-  //           << "Run app script and quit (example in engine/share)" <<
-  //           std::endl;
-  // std::cout << std::endl;
-  // std::cout << std::string("")
-  //           << current_rel_->get_row(
-  //                  current_item_)[current_rel_->find_column_index("title")]
-  //           << std::endl;
-  // std::cout << std::string("")
-  //           << current_rel_->get_row(
-  //                  current_item_)[current_rel_->find_column_index("author")]
-  //           << std::endl;
-  // std::cout << std::string("")
-  //           << current_rel_->get_row(
-  //                  current_item_)[current_rel_->find_column_index("date")]
-  //           << std::endl;
-  // // TODO: Tags
-  // draw_line();
-  // std::cout << std::endl;
-  // std::cout << std::string("")
-  //           << source_rel_->get_row(current_rel_->find_column_index(
-  //                  "id"))[source_rel_->find_column_index("content")]
-  //           << std::endl;
-  // std::cout << std::endl;
-  // draw_line();
-  // std::cout << std::endl;
 }
