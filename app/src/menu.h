@@ -14,6 +14,7 @@ public:
 	int s_selection_input;
 	int search_input;
 	bool works;
+	bool post_delete;
 	//Constructor:
 	Menu();
 	//Destructor:
@@ -42,6 +43,12 @@ public:
 	void edit_tags(std::string str_input);
 	void edit_content(std::string str_input);
 	void edit_comments(std::string str_input);
-	void search_options(std::string str_input);
+	std::vector<std::string> search_options(std::string str_input);
+	void delete_searching_tables();
+	int get_table_index(std::string name);
+	void remove_row(std::string name);
+	std::vector<std::string> get_entries(std::string name);
+	std::string get_rest_of_string(int from, std::string str_input);
 };
-#endif  // MENU_H_
+
+#endif
