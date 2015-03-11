@@ -418,35 +418,21 @@ int Menu::edit_current_item() {
   tfile << std::endl;
   tfile.close();
 
-  char *my_args[4];
-  pid_t pid;
+  // char *my_args[4];
+  // pid_t pid;
 
-  my_args[0] = "vim";
-  my_args[1] = "-f";
-  my_args[2] = temp_file;
-  my_args[3] = NULL;
+  // my_args[0] = "vim";
+  // my_args[1] = "-f";
+  // my_args[2] = temp_file;
+  // my_args[3] = NULL;
 
   errlog("Edit: Forking off editor");
-
-  switch ((pid = fork())) {
-    case -1:
-      /* Fork() has failed */
-      perror("fork");
-      break;
-    case 0:
-      /* This is processed by the child */
-      execvp("vim", my_args);
-      errlog("If this prints, execv() must have failed");
-      exit(EXIT_FAILURE);
-      break;
-    default:
-      /* This is processed by the parent */
-      errlog("This is a message from the parent");
-      break;
-  }
+  // spawnlp(P_WAIT, "vim", "vim", "-f", temp_file, NULL);
+  std::string editorstring = std::string("vim -f ") + "/tmp/g15tempfile";
+  system(editorstring.c_str());
 
   // read in edit
 
-  errlog("End of parent program");
+  errlog("End of editor program");
   return 0;
 }
