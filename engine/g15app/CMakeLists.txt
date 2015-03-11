@@ -11,7 +11,7 @@ set(SRCS
   menu.cc
   )
 
-find_package(Boost 1.57.0)
+find_package(Boost 1.57.0 COMPONENTS filesystem system)
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
 endif()

@@ -39,8 +39,8 @@ if(APPLE)
   # do nothing
 elseif(UNIX)
   set(BOOST_ROOT ~/usr/)
-set(Readline_ROOT_DIR ~/usr/)
-include_directories(~/usr/include)
+  set(Readline_ROOT_DIR ~/usr/)
+  include_directories(~/usr/include)
 endif()
 
 # include directories
