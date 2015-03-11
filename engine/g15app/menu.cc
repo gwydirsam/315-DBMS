@@ -11,6 +11,8 @@
 #include <fstream>
 
 #include <boost/filesystem.hpp>
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/operations.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <readline/readline.h>
