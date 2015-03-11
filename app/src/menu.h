@@ -45,6 +45,8 @@ public:
 	std::vector<std::string> search_options(std::string str_input);
 	void delete_searching_tables();
 	int get_table_index(std::string name);
+	void remove_row(std::string name);
+	std::vector<std::string> get_entries(std::string name);
 	std::string get_rest_of_string(int from, std::string str_input);
 };
 

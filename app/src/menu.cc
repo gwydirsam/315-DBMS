@@ -145,8 +145,11 @@ void Menu::edit_menu(std::string str_input) {
 void Menu::post_manage_system(std::string str_input) {
 	int selection_input;
 	// Post's Management System Dialogue
-	//TODO std::cout << "["<< relation.title() <<"]\n\n"; 
-	std::cout << "[]\n\n";
+	std::string tablename = str_input;
+	tablename += ".db";
+	std::vector<std::string> row = get_entries(tablename);
+	// Title of post.
+	std::cout << "["+ row[0] +"]\n\n";
 	std::cout << "1. View\n"; 
 	std::cout << "2. Edit\n"; 
 	std::cout << "3. Delete\n";
@@ -235,14 +238,24 @@ void Menu::comment_on_comment(std::string str_input) {
 }
 
 void Menu::view_post(std::string str_input) {
-	//TODO
+	std::vector<std::string> row = get_entries(str_input+".db");
+	std::string author = row[1].erase(row[1].size()-1);
+	author = author.erase(0,1);
+	std::string content = row[2].erase(row[2].size()-1);
+	content = content.erase(0,1);
+	std::string tags = row[3].erase(row[3].size()-1);
+	tags = tags.erase(0,1);
+	std::string comment = row[4].erase(row[4].size()-1);
+	comment = comment.erase(0,1);
+	std::string date = row[5].erase(row[5].size()-1);
+	date = date.erase(0,1);
 	std::cout << "--------------------------------------------------------------------------------";
-	parser.lex("");
-	std::cout << "By: " << std::endl;
-	std::cout << "Date: " << std::endl;
-	std::cout << "Content: " << std::endl;
-	std::cout << "Tags: " << std::endl;
-	std::cout << "Comment: " << std::endl;
+	std::cout << "By: " << author << std::endl;
+	std::cout << "Date: " << date << std::endl;
+	std::cout << "Content: " << content << std::endl;
+	std::cout << "Tags: " << tags << std::endl;
+	//Probably should make a vector with tablename and store comments.
+	std::cout << "Comment: " << comment << std::endl;
 	std::cout << "--------------------------------------------------------------------------------";
 }
 
@@ -273,9 +286,11 @@ std::string Menu::search_by_author(std::string str_input) {
 	works = parser.program();
 	parser.lex("INSERT INTO holdpost VALUES FROM RELATION project (title, author, content, tags, comments, date) result;");
 	works = parser.program();
+	parser.lex("WRITE holdpost;");
+	works = parser.program();
 	delete_searching_tables();
 	
-	return "answer";
+	return "holdpost";
 }
 
 std::string Menu::search_by_title(std::string str_input) {
@@ -300,9 +315,11 @@ std::string Menu::search_by_title(std::string str_input) {
 	works = parser.program();
 	parser.lex("INSERT INTO holdpost VALUES FROM RELATION project (title, author, content, tags, comments, date) result;");
 	works = parser.program();
+	parser.lex("WRITE holdpost;");
+	works = parser.program();
 	delete_searching_tables();
 	
-	return str_input;
+	return "holdpost";
 }
 
 
@@ -329,10 +346,12 @@ std::string Menu::search_by_tags(std::string str_input) {
 	works = parser.program();
 	parser.lex("INSERT INTO holdpost VALUES FROM RELATION project (title, author, content, tags, comments, date) result;");
 	works = parser.program();
+	parser.lex("WRITE holdpost;");
+	works = parser.program();
 	delete_searching_tables();
 	
 	
-	return str_input;
+	return "holdpost";
 }
 
 
@@ -359,10 +378,12 @@ std::string Menu::search_by_dates(std::string str_input) {
 	works = parser.program();
 	parser.lex("INSERT INTO holdpost VALUES FROM RELATION project (title, author, content, tags, comments, date) result;");
 	works = parser.program();
+	parser.lex("WRITE holdpost;");
+	works = parser.program();
 	delete_searching_tables();
 	
 	
-	return str_input;
+	return "holdpost";
 }
 
 void Menu::edit_author(std::string str_input) {	
@@ -495,12 +516,32 @@ void Menu::delete_searching_tables() {
 }
 
 int Menu::get_table_index(std::string name) {
-	for (int i = 0; i < parser.database->dbms.size(); ++i) {
+	for (int i = 0; i < parser.database->dbms.size(); i++) {
 		if (parser.database->dbms.at(i).get_name().compare(name)==0) {
 			return i;
 		}
 	}
 }
+
+void Menu::remove_row(std::string name) {
+
+	//create a new table
+	//add unedited rows
+	//try to insert edit row into same spot as old row
+	//if can not place at end
+	//remove posts from dbms
+	//add new table to dbms
+
+}
+
+//Used on tables with only one row
+std::vector<std::string> Menu::get_entries(std::string name) {
+	Table* t = parser.database->get_table(name);
+	std::vector<std::string> entry = t->get_items()[0];
+	return entry;
+}
+
+
 
 std::string Menu::get_rest_of_string(int from, std::string str_input) {
 	std::string post = "";
