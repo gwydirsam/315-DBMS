@@ -565,13 +565,13 @@ then
               CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
               # CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
               #   CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
-              cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j8
+              cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Release ../.. && make -j8
         else
             CC="$HOME/usr/bin/ccache/gcc-4.9 -fdiagnostics-color=auto" \
               CXX="$HOME/usr/bin/ccache/g++-4.9 -fdiagnostics-color=auto" \
               # CC="/opt/csw/bin/gcc-4.9 -fdiagnostics-color=auto" \
               #   CXX="/opt/csw/bin/g++-4.9 -fdiagnostics-color=auto" \
-              cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Debug ../.. && make -j"$CORES"
+              cmake -Dtest=OFF -DCMAKE_BUILD_TYPE=Release ../.. && make -j"$CORES"
         fi
 
         RESULT=$?
