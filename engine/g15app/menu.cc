@@ -402,7 +402,7 @@ int Menu::operate_item_exec(std::string string_input) {
         errlog("Menu: Setting menu to delete_menu");
         if (delete_current_item() == 0) {
           errlog("Delete: Succeeded");
-          if (engine.find_view(current_rel_->title() != -1)) {
+          if (engine.find_view_index(current_rel_->title() != -1)) {
             engine.dropView(current_rel_->title());
             current_rel_ = NULL;
             current_item_ = 0;
