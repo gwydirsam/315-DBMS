@@ -142,14 +142,8 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  Menu menu;
-  // print first menu
-  menu.main_menu();
-  // std::cout << "[Main Menu]" << std::endl;
-  // draw_line(11);
-  // std::cout << "1) Post to Blog" << std::endl;
-  // std::cout << "2) Search" << std::endl;
-  // std::cout << "3) Exit" << std::endl;
+  // Create menu
+  Menu menu(dbengine);
 
   // Start prompt
   // input and shell_prompt buffer
@@ -181,6 +175,11 @@ int main(int argc, char* argv[]) {
   rl_bind_key('\t', rl_complete);
 
   for (;;) {
+    if (!shellmode) {
+      // print menu
+      menu.menu_print();
+    }
+
 // Create prompt string from user name
 #ifdef DEBUG
     if (shellmode) {
@@ -379,7 +378,9 @@ int main(int argc, char* argv[]) {
         menuinput = std::string(input);
         std::string errstr = "App: Menu input: " + menuinput;
         errlog(errstr);
-        menu.main_menu(menuinput);
+        if (menu.menu_exec(menuinput) == -1) {
+          break;
+        }
       }
     }
 
