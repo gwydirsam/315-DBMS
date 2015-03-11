@@ -1,11 +1,13 @@
-2
-1
 shell
-INSERT INTO posts VALUES FROM ( 0, "my title", "sam gwydir", 20150310, "blahdidi blah", 0);
-INSERT INTO posts VALUES FROM ( 1, "my second title", "bubba gwydir", 20150205, "blahdidi blah", 0);
+INSERT INTO posts VALUES FROM ( 0, "my title", "sam gwydir", 20150310, "blahdidi blahasdfas", 0);
+INSERT INTO posts VALUES FROM ( 1, "my second title", "bubba gwydir", 20150205, "blahdidi blahasdfas", 0);
+INSERT INTO tags VALUES FROM ( 0, "cool");
+INSERT INTO tags VALUES FROM ( 1, "neat");
+INSERT INTO tags VALUES FROM ( 2, "informative");
+INSERT INTO tagmap VALUES FROM ( 0, "cool", 0);
+INSERT INTO tagmap VALUES FROM ( 1, "neat", 0);
+INSERT INTO tagmap VALUES FROM ( 1, "neat", 1);
+INSERT INTO tagmap VALUES FROM ( 1, "informative", 1);
+INSERT INTO comments VALUES FROM ( 0, 0, "Some dude", 20150311, "first", 0);
+INSERT INTO comments VALUES FROM ( 1, 1, "Some other dude", 20150311, "this", 1);
 shell
-sam gwydir
--1
-2
-2
-my title

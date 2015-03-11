@@ -37,8 +37,8 @@ class Menu {
   void search_title_menu();
   int search_title_exec(std::string string_input);
 
-  // void search_tags_menu();
-  // int search_tags_exec(std::string string_input);
+  void search_tags_menu();
+  int search_tags_exec(std::string string_input);
 
   void search_date_menu();
   int search_date_exec(std::string string_input);
@@ -49,8 +49,15 @@ class Menu {
   void operate_item_menu();
   int operate_item_exec(std::string string_input);
 
+  void comment_item_menu();
+  int comment_item_exec(std::string string_input);
+
   void print_current_item();
   int edit_current_item();
+  int delete_current_item();
+  int comment_current_item();
+
+  int new_post();
 
  private:
   Engine& engine;

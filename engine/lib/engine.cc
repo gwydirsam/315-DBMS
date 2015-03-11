@@ -281,6 +281,21 @@ int Engine::dropTable(Relation Table) {
   }
 }
 
+int Engine::dropView(std::string TableName) {
+  return dropView(find_view(TableName));
+}
+
+int Engine::dropView(Relation Table) {
+  if ((find_view_index(Table.title())) == -1) {
+    // Couldn't find Table
+    return -1;
+  } else {
+    // Found Table
+    open_views_.erase(find_view_table(Table.title()));
+    return 0;
+  }
+}
+
 int Engine::deleteFrom(Relation& Table, std::vector<std::string> Conditions) {
 #ifdef DEBUG
   std::cerr << Table << std::endl;

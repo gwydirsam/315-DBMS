@@ -145,6 +145,7 @@ void Relation::drop_row(int i) {
 
 std::ostream &operator<<(std::ostream &os, const Relation &relation) {
   const char separator = ' ';
+  int maxwidth = (int)((80.0) / ((float)relation.num_cols())) + 1;
   int width = 0;
 
   for (const std::string &title : relation.get_column_titles()) {
@@ -153,7 +154,13 @@ std::ostream &operator<<(std::ostream &os, const Relation &relation) {
 
   for (int i = 0; i < relation.num_rows(); ++i) {
     for (const std::string &entry : relation.get_row(i)) {
-      width = std::max(width, ((int)entry.length()) + 1);
+      int entrywidth = ((int)entry.length() + 1);
+      if (entrywidth > 15) {
+        entrywidth = 18;
+        width = std::min(maxwidth, entrywidth);
+      } else {
+        width = std::max(width, entrywidth);
+      }
     }
   }
 
@@ -171,8 +178,19 @@ std::ostream &operator<<(std::ostream &os, const Relation &relation) {
 
   // Line 3: Column Names
   for (const std::string &title : relation.get_column_titles()) {
-    (std::basic_ostream<char> &)os << std::left << std::setw(width)
-                                   << std::setfill(separator) << title;
+    if (title.length() > width) {
+      std::string trunctitle;
+      for (int j = 0; j < (width - 5); ++j) {
+        trunctitle += title[j];
+      }
+      trunctitle += "...";
+      (std::basic_ostream<char> &)os << std::left << std::setw(width)
+                                     << std::setfill(separator) << trunctitle;
+
+    } else {
+      (std::basic_ostream<char> &)os << std::left << std::setw(width)
+                                     << std::setfill(separator) << title;
+    }
   }
   os << "┊" << std::endl;
 
@@ -185,8 +203,19 @@ std::ostream &operator<<(std::ostream &os, const Relation &relation) {
   // Line 4-infinity: entries
   for (int i = 0; i < relation.num_rows(); ++i) {
     for (const std::string &entry : relation.get_row(i)) {
-      (std::basic_ostream<char> &)os << std::left << std::setw(width)
-                                     << std::setfill(separator) << entry;
+      if (entry.length() > width) {
+        std::string truncentry;
+        for (int j = 0; j < (width - 5); ++j) {
+          truncentry += entry[j];
+        }
+        truncentry += "...";
+        (std::basic_ostream<char> &)os << std::left << std::setw(width)
+                                       << std::setfill(separator) << truncentry;
+
+      } else {
+        (std::basic_ostream<char> &)os << std::left << std::setw(width)
+                                       << std::setfill(separator) << entry;
+      }
     }
     os << "┊" << std::endl;
   }

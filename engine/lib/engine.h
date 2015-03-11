@@ -78,6 +78,10 @@ class Engine {
   int dropTable(std::string TableName);
   int dropTable(Relation Table);
 
+  // Drop View
+  int dropView(std::string TableName);
+  int dropView(Relation Table);
+
   // Delete From
   int deleteFrom(Relation& Table, std::vector<std::string> Conditions);
   int deleteFrom(std::string TableName, std::vector<std::string> Conditions);
