@@ -14,6 +14,7 @@ public:
 	int s_selection_input;
 	int search_input;
 	bool works;
+	bool post_delete;
 	//Constructor:
 	Menu();
 	//Destructor:

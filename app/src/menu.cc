@@ -1,20 +1,34 @@
 #include "menu.h"
+#include <stdlib.h>
 
 Menu::Menu() {
-	parser.lex("CREATE TABLE posts (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(1000000), date VARCHAR(20)) PRIMARY KEY (title, author);");
+	parser.lex("CREATE TABLE posts (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(10), date VARCHAR(20)) PRIMARY KEY (title, author);");
 	works = parser.program();
-	parser.lex("INSERT INTO posts VALUES FROM (\"Test1\", \"Kade\", \"Does the app work? Does view work?\", \"testing, app, view\", \"OH BOY IT WORKS\", \"(3/8/15)\");");
+	parser.lex("INSERT INTO posts VALUES FROM (\"Test1\", \"Kade\", \"Does the app work? Does view work?\", \"testing, app, view\", \"yes\", \"(3/8/15)\");");
 	works = parser.program();
-	parser.lex("INSERT INTO posts VALUES FROM (\"The app\", \"Admin\", \"Testing edit content and tags\", \"testing, content\", \"Hello???\", \"(3/8/15)\");");
+	parser.lex("INSERT INTO posts VALUES FROM (\"The app\", \"Admin\", \"Testing edit content and tags\", \"testing, content\", \"no\", \"(3/8/15)\");");
 	works = parser.program();
-	parser.lex("INSERT INTO posts VALUES FROM (\"Test2\", \"Kade\", \"renaming test\", \"testing, app, rename\", \"OH BOY IT WORKS\", \"(3/8/15)\");");
+	parser.lex("INSERT INTO posts VALUES FROM (\"Test2\", \"Kade\", \"renaming test\", \"testing, app, rename\", \"yes\", \"(3/8/15)\");");
 	works = parser.program();
 	parser.lex("WRITE posts;");
 	works = parser.program();
-	parser.lex("CREATE TABLE editpost (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(1000000), date VARCHAR(20)) PRIMARY KEY (title, author);");
+	parser.lex("CREATE TABLE editpost (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(10), date VARCHAR(20)) PRIMARY KEY (title, author);");
 	works = parser.program();
-	parser.lex("CREATE TABLE holdpost (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(1000000), date VARCHAR(20)) PRIMARY KEY (title, author);");
+	parser.lex("CREATE TABLE holdpost (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(10), date VARCHAR(20)) PRIMARY KEY (title, author);");
 	works = parser.program();
+
+	
+	parser.lex("CREATE TABLE testone (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(10), date VARCHAR(20)) PRIMARY KEY (title, author);");
+	works = parser.program();
+	parser.lex("CREATE TABLE testtwo (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(10), date VARCHAR(20)) PRIMARY KEY (title, author);");
+	works = parser.program();
+	parser.lex("CREATE TABLE testthree (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(10), date VARCHAR(20)) PRIMARY KEY (title, author);");
+	works = parser.program();
+	parser.lex("CREATE TABLE testfour (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(10), date VARCHAR(20)) PRIMARY KEY (title, author);");
+	works = parser.program();
+	parser.lex("CREATE TABLE testfive (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(10), date VARCHAR(20)) PRIMARY KEY (title, author);");
+	works = parser.program();
+	
 	parser.lex("CREATE TABLE authorresult (title VARCHAR(50), date VARCHAR(20)) PRIMARY KEY (title, date);");
 	works = parser.program();
 	parser.lex("CREATE TABLE titleresult (author VARCHAR(20), date VARCHAR(20)) PRIMARY KEY (author, date);");
@@ -31,6 +45,7 @@ void Menu::exit() {
 	parser.lex("EXIT;");
 	works = parser.program();
 	std::cout << "Goodbye.";
+	std::exit(EXIT_SUCCESS);
 	
 	//exit main menu
 }
@@ -62,8 +77,7 @@ void Menu::print_menu() {
 
 //search menu
 void Menu::search_menu() {
-	std::string str_input;
-	std::string holder;
+	std::string str_input = "" ;
 	std::string post;
 	int selection_input = 0;
 	//Search Menu Dialogue
@@ -163,9 +177,8 @@ void Menu::post_manage_system(std::string str_input) {
 			case 1: view_post(str_input);
 					post_manage_system(str_input);
 			case 2: edit_menu(str_input); break;
-			case 3: //TODO!!! 
-					//Maybe just deletion the relation from their 
-					//version of open tables and its file
+			case 3: remove_row(str_input);
+					print_menu();
 					break;
 			case 4: comments_menu(str_input);
 					break;
@@ -272,7 +285,6 @@ std::string Menu::search_by_author(std::string str_input) {
 	works = parser.program();
 	parser.lex("WRITE answer;");
 	works = parser.program();
-	std::cout << "\n";
 	parser.lex("INSERT INTO authorresult VALUES FROM RELATION project (title, date) answer;");
 	works = parser.program();
 	parser.lex("WRITE authorresult;");
@@ -294,14 +306,11 @@ std::string Menu::search_by_author(std::string str_input) {
 }
 
 std::string Menu::search_by_title(std::string str_input) {
-	std::string query = "answer <- select ( title == \"" + str_input +"\") posts;";
+	std::string query = "answer <- select (title == \"" + str_input +"\") posts;";
 	parser.lex(query);
 	works = parser.program();
 	parser.lex("WRITE answer;");
 	works = parser.program();
-	parser.lex("SHOW answer;");
-	works = parser.program();
-	std::cout << "\n";
 	parser.lex("INSERT INTO titleresult VALUES FROM RELATION project (author, date) answer;");
 	works = parser.program();
 	parser.lex("WRITE titleresult;");
@@ -330,9 +339,6 @@ std::string Menu::search_by_tags(std::string str_input) {
 	works = parser.program();
 	parser.lex("WRITE answer;");
 	works = parser.program();
-	parser.lex("SHOW answer;");
-	works = parser.program();
-	std::cout << "\n";
 	parser.lex("INSERT INTO tagsresult VALUES FROM RELATION project (title, author) answer;");
 	works = parser.program();
 	parser.lex("WRITE tagsresult;");
@@ -362,9 +368,6 @@ std::string Menu::search_by_dates(std::string str_input) {
 	works = parser.program();
 	parser.lex("WRITE answer;");
 	works = parser.program();
-	parser.lex("SHOW answer;");
-	works = parser.program();
-	std::cout << "\n";
 	parser.lex("INSERT INTO dateresult VALUES FROM RELATION project (title, author) answer;");
 	works = parser.program();
 	parser.lex("WRITE dateresult;");
@@ -387,21 +390,32 @@ std::string Menu::search_by_dates(std::string str_input) {
 }
 
 void Menu::edit_author(std::string str_input) {	
-	std::string author;
-	//TODO std::cout << "[Editing"<< relation.title() <<"'s Author]\n\n";
-	//TODO std::cout << "Current Author: "<< relation.author() <<"\n\n";
+	
+	parser.lex("INSERT INTO editpost VALUES FROM RELATION project (title, author, content, tags, comments, date) "+str_input+";");
+	works = parser.program();
+	std::vector<std::string> row = get_entries(str_input+".db");
+	std::string title = row[0].erase(row[0].size()-1);
+	title = title.erase(0,1);
+	std::string author = row[1].erase(row[1].size()-1);
+	author = author.erase(0,1);
+	std::string new_author;
+	
+	std::cout << "[Editing "<< title <<"'s Author]\n\n";
+	std::cout << "Current Author: "<< author <<"\n\n";
 	std::cout << "* Enter new Author: ";
-	std::getline(std::cin >> ws, author);
+	std::getline(std::cin >> ws, new_author);
 	std::cout << "\n";
-	std::string query = "UPDATE posts SET author == \"" + author + "\" WHERE (author == \"Kade\");";
-	/*std::string query = "UPDATE posts SET author == \"" + author + "\" WHERE (author == author " + 
-	str_input + " && title == title " + str_input + " %% tags == tags " +
-	str_input + " && date == date" + str_input + ");";*/
+	std::string query = "UPDATE editpost SET author == \"" + new_author + "\" WHERE (author == \""+author+"\");";
 	parser.lex(query);
 	works = parser.program();
-	parser.lex("SHOW posts;");
+	parser.lex("WRITE editpost;");
 	works = parser.program();
-	//TODO store new author
+	parser.lex("WRITE holdpost;");
+	works = parser.program();
+	parser.lex("WRITE posts;");
+	works = parser.program();
+	remove_row("holdpost");
+	
 }
 
 void Menu::edit_title(std::string str_input) {	
@@ -481,6 +495,21 @@ Table* t = parser.database->get_table(str_input);
 
 void Menu::delete_searching_tables() {
 	
+	parser.database->dbms.erase( parser.database->dbms.begin() + get_table_index("answer.db") );
+	if (std::ifstream("answer.db"))
+	{	
+		
+		std::remove( "answer.db" );
+
+	}
+	
+	if (std::ifstream("result.db"))
+	{	
+		parser.database->dbms.erase( parser.database->dbms.begin() + get_table_index("result.db") );
+		std::remove( "result.db" );
+
+	}
+	
 	if (std::ifstream("dateresult.db"))
 	{	
 		parser.database->dbms.erase( parser.database->dbms.begin() + get_table_index("dateresult.db") );
@@ -526,11 +555,118 @@ int Menu::get_table_index(std::string name) {
 void Menu::remove_row(std::string name) {
 
 	//create a new table
+	std::string query;
+	parser.lex("CREATE TABLE poststwo (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(10), date VARCHAR(20)) PRIMARY KEY (title, author);");
+	works = parser.program();
 	//add unedited rows
-	//try to insert edit row into same spot as old row
-	//if can not place at end
-	//remove posts from dbms
-	//add new table to dbms
+	std::vector<std::string> row = get_entries(name+".db");
+	
+	query = "resulttwo <- select (author == " + row[1] + ") posts;";
+	parser.lex(query);
+	works = parser.program();
+	parser.lex("WRITE resulttwo;");
+	works = parser.program();
+	parser.lex("INSERT INTO testtwo VALUES FROM RELATION project (title, author, content, tags, comments, date) resulttwo;");
+	works = parser.program();
+	parser.lex("WRITE testtwo;");
+	works = parser.program();
+	
+	query = "resultone <- select (author != " + row[1] + ") posts;";
+	parser.lex(query);
+	works = parser.program();
+	parser.lex("WRITE resultone;");
+	works = parser.program();
+	parser.lex("INSERT INTO testone VALUES FROM RELATION project (title, author, content, tags, comments, date) resultone;");
+	works = parser.program();
+	parser.lex("WRITE testone;");
+	works = parser.program();
+	
+	query = "resultthree <- select (title == " + row[0] + " && date == "+ row[5] +") testtwo;";
+	parser.lex(query);
+	works = parser.program();
+	parser.lex("WRITE resultthree;");
+	works = parser.program();
+	parser.lex("INSERT INTO testthree VALUES FROM RELATION project (title, author, content, tags, comments, date) resultthree;");
+	works = parser.program();
+	parser.lex("WRITE testthree;");
+	works = parser.program();
+	
+	query = "resultfour <- select (title != " + row[0] + " && date == "+ row[5] +") testtwo;";
+	parser.lex(query);
+	works = parser.program();
+	parser.lex("WRITE resultfour;");
+	works = parser.program();
+	parser.lex("INSERT INTO testfour VALUES FROM RELATION project (title, author, content, tags, comments, date) resultfour;");
+	works = parser.program();
+	
+	query = "resultfive <- select (title == " + row[0] + " && date != "+ row[5] +") testtwo;";
+	parser.lex(query);
+	works = parser.program();
+	parser.lex("WRITE resultfive;");
+	works = parser.program();
+	parser.lex("INSERT INTO testfive VALUES FROM RELATION project (title, author, content, tags, comments, date) resultfive;");
+	works = parser.program();
+	
+	parser.lex("WRITE testone;");
+	works = parser.program();
+	parser.lex("WRITE testthree;");
+	works = parser.program();
+	parser.lex("WRITE testfour;");
+	works = parser.program();
+	
+	
+	parser.lex("INSERT INTO poststwo VALUES FROM RELATION project (title, author, content, tags, comments, date) resultone;");
+	works = parser.program();
+	parser.lex("INSERT INTO poststwo VALUES FROM RELATION project (title, author, content, tags, comments, date) resultfour;");
+	works = parser.program();
+	parser.lex("INSERT INTO poststwo VALUES FROM RELATION project (title, author, content, tags, comments, date) resultfive;");
+	works = parser.program();
+	
+	
+	if(!post_delete)
+	{
+		parser.lex("INSERT INTO poststwo VALUES FROM RELATION project (title, author, content, tags, comments, date) editpost;");
+		works = parser.program();
+	}
+	
+	parser.lex("WRITE poststwo;");
+	works = parser.program();
+	// creates holdpost table and stores editpost into it
+	if (std::ifstream("holdpost.db"))
+	{	
+		parser.database->dbms.erase( parser.database->dbms.begin() + get_table_index("holdpost.db") );
+		std::remove( "holdpost.db" );
+		parser.lex("CREATE TABLE holdpost (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(10), date VARCHAR(20)) PRIMARY KEY (title, author);");
+		works = parser.program();
+		parser.lex("INSERT INTO holdpost VALUES FROM RELATION project (title, author, content, tags, comments, date) editpost;");
+		works = parser.program();
+	}
+	// creates editpost table
+	if (std::ifstream("editpost.db"))
+	{	
+		parser.database->dbms.erase( parser.database->dbms.begin() + get_table_index("editpost.db") );
+		std::remove( "editpost.db" );
+		parser.lex("CREATE TABLE editpost (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(10), date VARCHAR(20)) PRIMARY KEY (title, author);");
+		works = parser.program();
+	}
+	
+	//remove posts from dbms and add the the new table to dbms
+	if (std::ifstream("posts.db"))
+	{	
+		parser.database->dbms.erase( parser.database->dbms.begin() + get_table_index("posts.db") );
+		std::remove( "posts.db" );
+		parser.lex("CREATE TABLE posts (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(10), date VARCHAR(20)) PRIMARY KEY (title, author);");
+		works = parser.program();
+		parser.lex("INSERT INTO posts VALUES FROM RELATION project (title, author, content, tags, comments, date) poststwo;");
+		works = parser.program();
+	}
+	
+	// remove holder for new table from dbms
+	if (std::ifstream("poststwo.db"))
+	{	
+		parser.database->dbms.erase( parser.database->dbms.begin() + get_table_index("poststwo.db") );
+		std::remove( "poststwo.db" );
+	}
 
 }
 
