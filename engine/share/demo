@@ -1,0 +1,28 @@
+rm -rf tables
+#run init from appscript
+./build/release/app/g15app < share/appscriptexample
+./build/release/app/g15app
+# create new post
+MY COOL TITLE
+MARIO
+20150311
+0
+I AM CONTENT
+LOOK AT ME
+# search for new post title
+# open post
+# edit it
+# lower case title
+# add line to content
+# view
+# search for tag neat
+# edit post
+# change date to 3015
+# comment on it
+ME
+20150311
+I am skeptical of your date, sir.
+# done
+
+show off history
+show off shell mode
