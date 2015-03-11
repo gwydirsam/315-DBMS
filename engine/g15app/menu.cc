@@ -354,15 +354,15 @@ int Menu::select_item_exec(std::string string_input) {
 }
 
 void Menu::operate_item_menu() {
-  if (source_rel_->title() != "comments") {
-  std::cout << "["
-            << current_rel_->get_row(
-                   current_item_)[current_rel_->find_column_index("title")]
-            << "]" << std::endl;
-  draw_line(
-      (current_rel_->get_row(
-           current_item_)[current_rel_->find_column_index("title")]).size() +
-      2);
+  if (current_rel_->title() != "comments") {
+    std::cout << "["
+              << current_rel_->get_row(
+                     current_item_)[current_rel_->find_column_index("title")]
+              << "]" << std::endl;
+    draw_line(
+        (current_rel_->get_row(
+             current_item_)[current_rel_->find_column_index("title")]).size() +
+        2);
   } else {
     std::cout << "[Comment]" << std::endl;
     draw_line(9);
@@ -402,9 +402,11 @@ int Menu::operate_item_exec(std::string string_input) {
         errlog("Menu: Setting menu to delete_menu");
         if (delete_current_item() == 0) {
           errlog("Delete: Succeeded");
-          engine.dropView(current_rel_->title());
-          current_rel_ = NULL;
-          current_item_ = 0;
+          if (engine.find_view(current_rel_->title() != -1)) {
+            engine.dropView(current_rel_->title());
+            current_rel_ = NULL;
+            current_item_ = 0;
+          }
         }
         current_menu_ = &Menu::main_menu;
         break;
@@ -470,6 +472,7 @@ int Menu::comment_item_exec(std::string string_input) {
         source_rel_ = &engine.find_relation_or_view("posts");
         if (comment_current_item() == 0) {
           errlog("Comment: Succeeded");
+          source_rel_ = &engine.find_relation_or_view("posts");
         }
         current_menu_ = &Menu::operate_item_menu;
         break;
@@ -512,10 +515,12 @@ void Menu::print_current_item() {
   //           << "Run app script and quit (example in engine/share)" <<
   //           std::endl;
   std::cout << std::endl;
-  std::cout << std::string("")
-            << current_rel_->get_row(
-                   current_item_)[current_rel_->find_column_index("title")]
-            << std::endl;
+  if (current_rel_->title() != "comments") {
+    std::cout << std::string("")
+              << current_rel_->get_row(
+                     current_item_)[current_rel_->find_column_index("title")]
+              << std::endl;
+  }
   std::cout << std::string("")
             << current_rel_->get_row(
                    current_item_)[current_rel_->find_column_index("author")]
@@ -795,7 +800,9 @@ int Menu::comment_current_item() {
   tfilein.close();
 
   int new_id = (current_rel_->num_rows());
-  std::vector<std::string> editsourcerow{std::to_string(new_id), source_rel_->get_row(current_item_)[0], author, date, content, source_rel_->get_row(current_item_)[0]};
+  std::vector<std::string> editsourcerow{
+      std::to_string(new_id), source_rel_->get_row(current_item_)[0], author,
+      date, content, source_rel_->get_row(current_item_)[0]};
 
   current_rel_->append_row(editsourcerow);
 
