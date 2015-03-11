@@ -395,7 +395,7 @@ int Menu::edit_current_item() {
   std::string errstr = "Edit: Editor varible: " + std::string(pEditor);
   errlog(errstr);
 
-  char *temp_file = "/tmp/g15tempfile";
+  std::string temp_file = "/tmp/g15tempfile";
 
   boost::filesystem::path temppath(boost::filesystem::absolute(temp_file));
   if (boost::filesystem::remove(temppath)) {
@@ -428,7 +428,12 @@ int Menu::edit_current_item() {
 
   errlog("Edit: Forking off editor");
   // spawnlp(P_WAIT, "vim", "vim", "-f", temp_file, NULL);
-  std::string editorstring = std::string("vim -f ") + "/tmp/g15tempfile";
+  std::string editorstring;
+  if (std::strcmp(pEditor,"vim") == 0) {
+    editorstring = std::string(pEditor) + " -f " + temp_file;
+  } else {
+    editorstring = std::string(pEditor) + temp_file;
+  }
   system(editorstring.c_str());
 
   // read in edit
