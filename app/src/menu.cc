@@ -11,7 +11,17 @@ Menu::Menu() {
 	works = parser.program();
 	parser.lex("WRITE posts;");
 	works = parser.program();
-	parser.lex("CREATE TABLE result (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(1000000), date VARCHAR(20)) PRIMARY KEY (title, author);");
+	parser.lex("CREATE TABLE editpost (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(1000000), date VARCHAR(20)) PRIMARY KEY (title, author);");
+	works = parser.program();
+	parser.lex("CREATE TABLE holdpost (title VARCHAR(50), author VARCHAR(20), content VARCHAR(1000000), tags VARCHAR(100), comments  VARCHAR(1000000), date VARCHAR(20)) PRIMARY KEY (title, author);");
+	works = parser.program();
+	parser.lex("CREATE TABLE authorresult (title VARCHAR(50), date VARCHAR(20)) PRIMARY KEY (title, date);");
+	works = parser.program();
+	parser.lex("CREATE TABLE titleresult (author VARCHAR(20), date VARCHAR(20)) PRIMARY KEY (author, date);");
+	works = parser.program();
+	parser.lex("CREATE TABLE tagsresult (title VARCHAR(50), author VARCHAR(20)) PRIMARY KEY (title, author);");
+	works = parser.program();
+	parser.lex("CREATE TABLE dateresult (title VARCHAR(50), author VARCHAR(20)) PRIMARY KEY (title, author);");
 	works = parser.program();
 	}
 void Menu::exit() {
@@ -46,13 +56,14 @@ void Menu::print_menu() {
 				break;
 		default: 
 			 std::cout <<"Incorrect input restarting this step.\nPlease try to enter 1-3.\n"; 
-			 print_menu(); break;
+			 print_menu();
 	}
 }
 
 //search menu
 void Menu::search_menu() {
 	std::string str_input;
+	std::string holder;
 	std::string post;
 	int selection_input = 0;
 	//Search Menu Dialogue
@@ -68,32 +79,33 @@ void Menu::search_menu() {
 	std::cout << "\n";
 	
 	switch(selection_input) {
-			case 1: std::cout << "* Enter Author: "; 
-					std::cin >> str_input;
-					//std::getline(std::cin,str_input);
+			case 1: 
+					std::cout << "* Enter Author: ";
+					std::getline(std::cin >> ws,str_input);
 					post = search_by_author(str_input);
 					post_manage_system(post);
 					break;
 			case 2: std::cout << "* Enter Title: "; 
-					std::getline(std::cin,str_input);
+					std::getline(std::cin >> ws,str_input);
 					post = search_by_title(str_input);
 					post_manage_system(post);
 					break;
 			case 3: std::cout << "* Enter Tag(s): "; 
-					std::getline(std::cin,str_input);
+					std::getline(std::cin >> ws,str_input);
 					post = search_by_tags(str_input);
 					post_manage_system(post);
 					break;
 			case 4: std::cout << "* Enter Date: "; 
-					std::cin >> str_input;
-					std::getline(std::cin,str_input);
+					std::getline(std::cin >> ws,str_input);
+					post = search_by_dates(str_input);
+					post_manage_system(post);
 					break;
 			case 5: print_menu();
 					break;
 			default: 
 					std::cout <<
 					"Incorrect input restarting this step.\nPlease try to enter 1-5.\n"; 
-					search_menu(); break;
+					search_menu();
 	}
 }
 
@@ -124,7 +136,7 @@ void Menu::edit_menu(std::string str_input) {
 			default: 
 					std::cout <<
 					"Incorrect input restarting this step.\nPlease try to enter 1-6.\n"; 
-					edit_menu(str_input); break;
+					edit_menu(str_input);
 	}
 }
 
@@ -159,7 +171,7 @@ void Menu::post_manage_system(std::string str_input) {
 			default: 
 					std::cout <<
 					"Incorrect input restarting this step.\nPlease try to enter 1-5.\n"; 
-					post_manage_system(str_input); break;
+					post_manage_system(str_input);
 					
 	}
 }
@@ -194,9 +206,10 @@ void Menu::comment_on_post(std::string str_input) {
 	std::string name;
 	std::string comment;
 	std::cout << "* Enter name: ";
-	std::getline(std::cin,name);
-	std::cout << "\n* Enter comment: ";
-	std::getline(std::cin,comment);
+	std::getline(std::cin >> ws,name);
+	cout << "\n";
+	std::cout << "* Enter comment: ";
+	std::getline(std::cin >> ws,comment);
 	//TODO do command on relation
 	std::cout << "\nComment added.";
 	post_manage_system(str_input);
@@ -209,10 +222,12 @@ void Menu::comment_on_comment(std::string str_input) {
 	std::string comment;
 	std::cout << "* Enter ID: ";
 	std::cin >> ID;
+	std::cout << "\n";
 	std::cout << "* Enter name: ";
-	std::getline(std::cin,name);
-	std::cout << "\n* Enter comment: ";
-	std::getline(std::cin,comment);
+	std::getline(std::cin >> ws,name);
+	cout << "\n";
+	std::cout << "* Enter comment: ";
+	std::getline(std::cin >> ws,comment);
 	// USE ID to select the correct comment to comment on.
 	//TODO do command on relation
 	std::cout << "\nComment added.";
@@ -234,13 +249,37 @@ void Menu::view_post(std::string str_input) {
 std::string Menu::make_post() {
 	std::string post;
 	std::cout << "New post: " << std::endl;
-	std::getline(std::cin, post);
+	std::getline(std::cin >> ws, post);
 	return post;
 }
 
 std::string Menu::search_by_author(std::string str_input) {
-	std::string author = str_input;
-	std::string query = "answer <- select (author == \"" + author +"\") posts;";
+	std::string query = "answer <- select (author == \"" + str_input +"\") posts;";
+	parser.lex(query);
+	works = parser.program();
+	parser.lex("WRITE answer;");
+	works = parser.program();
+	std::cout << "\n";
+	parser.lex("INSERT INTO authorresult VALUES FROM RELATION project (title, date) answer;");
+	works = parser.program();
+	parser.lex("WRITE authorresult;");
+	works = parser.program();
+	std::cout << "[" << str_input << "'s Posts]\n";
+	std::vector<std::string> result = search_options("authorresult.db");
+	query = "result <- select (title == " + result[0] + " && date == "+ result[1] +") answer;";
+	parser.lex(query);
+	works = parser.program();
+	parser.lex("WRITE result;");
+	works = parser.program();
+	parser.lex("INSERT INTO holdpost VALUES FROM RELATION project (title, author, content, tags, comments, date) result;");
+	works = parser.program();
+	delete_searching_tables();
+	
+	return "answer";
+}
+
+std::string Menu::search_by_title(std::string str_input) {
+	std::string query = "answer <- select ( title == \"" + str_input +"\") posts;";
 	parser.lex(query);
 	works = parser.program();
 	parser.lex("WRITE answer;");
@@ -248,39 +287,81 @@ std::string Menu::search_by_author(std::string str_input) {
 	parser.lex("SHOW answer;");
 	works = parser.program();
 	std::cout << "\n";
-	parser.lex("INSERT INTO result VALUES FROM RELATION project (title, author, content, tags, comments, date) answer;");
+	parser.lex("INSERT INTO titleresult VALUES FROM RELATION project (author, date) answer;");
+	works = parser.program();
+	parser.lex("WRITE titleresult;");
+	works = parser.program();
+	std::cout << "[Posts by Title: " << str_input << "]\n";	
+	std::vector<std::string> result = search_options("titleresult.db");
+	query = "result <- select (author == " + result[0] + " && date == "+ result[1] +") answer;";
+	parser.lex(query);
 	works = parser.program();
 	parser.lex("WRITE result;");
 	works = parser.program();
-	std::cout << "[" << author << "'s Posts]\n";
-	search_options("result.db");
+	parser.lex("INSERT INTO holdpost VALUES FROM RELATION project (title, author, content, tags, comments, date) result;");
+	works = parser.program();
+	delete_searching_tables();
 	
-	//Search database for posts
-	//Store posts in a vector;
-	//Select a post by ID, which is vector loc = ID - 1;
-	//Then last on to be return to main menu
-
-	// if(ID == vector post.size()) GOTO print_menu()
-	//return post_mangage_system(vector post.at(ID-1));
-	return "answer";
-}
-
-std::string Menu::search_by_title(std::string str_input) {
-	std::string query = "answer <- select ( title == \"" + str_input +"\") posts;";
-	std::cout << "" << std::endl;
 	return str_input;
 }
+
 
 std::string Menu::search_by_tags(std::string str_input) {
-	std::string table = "CREATE TABLE tags (tags VARCHAR(50), postid VARCHAR(50)) PRIMARY KEY (tags);";
+	delete_searching_tables();
 	std::string query = "answer <- select ( tag == \"" + str_input +"\") posts;";
-	std::cout << "" << std::endl;
+	parser.lex(query);
+	works = parser.program();
+	parser.lex("WRITE answer;");
+	works = parser.program();
+	parser.lex("SHOW answer;");
+	works = parser.program();
+	std::cout << "\n";
+	parser.lex("INSERT INTO tagsresult VALUES FROM RELATION project (title, author) answer;");
+	works = parser.program();
+	parser.lex("WRITE tagsresult;");
+	works = parser.program();
+	std::cout << "[Posts with Tags: " << str_input << "]\n";
+	std::vector<std::string> result = search_options("tagsresult.db");
+	query = "result <- select (title == " + result[0] + " && author == "+ result[1] +") answer;";
+	parser.lex(query);
+	works = parser.program();
+	parser.lex("WRITE result;");
+	works = parser.program();
+	parser.lex("INSERT INTO holdpost VALUES FROM RELATION project (title, author, content, tags, comments, date) result;");
+	works = parser.program();
+	delete_searching_tables();
+	
+	
 	return str_input;
 }
 
+
 std::string Menu::search_by_dates(std::string str_input) {
+	delete_searching_tables();
 	std::string query = "answer <- select ( date == \"" + str_input +"\") posts;";
-	std::cout << "" << std::endl;
+	parser.lex(query);
+	works = parser.program();
+	parser.lex("WRITE answer;");
+	works = parser.program();
+	parser.lex("SHOW answer;");
+	works = parser.program();
+	std::cout << "\n";
+	parser.lex("INSERT INTO dateresult VALUES FROM RELATION project (title, author) answer;");
+	works = parser.program();
+	parser.lex("WRITE dateresult;");
+	works = parser.program();
+	std::cout << "[Posts on: " << str_input << "]\n";
+	std::vector<std::string> result = search_options("dateresult.db");
+	query = "result <- select (title == " + result[0] + " && author == "+ result[1] +") answer;";
+	parser.lex(query);
+	works = parser.program();
+	parser.lex("WRITE result;");
+	works = parser.program();
+	parser.lex("INSERT INTO holdpost VALUES FROM RELATION project (title, author, content, tags, comments, date) result;");
+	works = parser.program();
+	delete_searching_tables();
+	
+	
 	return str_input;
 }
 
@@ -289,8 +370,8 @@ void Menu::edit_author(std::string str_input) {
 	//TODO std::cout << "[Editing"<< relation.title() <<"'s Author]\n\n";
 	//TODO std::cout << "Current Author: "<< relation.author() <<"\n\n";
 	std::cout << "* Enter new Author: ";
-	//std::getline(std::cin, author);
-	std::cin >> author;
+	std::getline(std::cin >> ws, author);
+	std::cout << "\n";
 	std::string query = "UPDATE posts SET author == \"" + author + "\" WHERE (author == \"Kade\");";
 	/*std::string query = "UPDATE posts SET author == \"" + author + "\" WHERE (author == author " + 
 	str_input + " && title == title " + str_input + " %% tags == tags " +
@@ -307,7 +388,8 @@ void Menu::edit_title(std::string str_input) {
 	//TODO std::cout << "[Editing"<< relation.title() <<"'s Title]\n\n";
 	//TODO std::cout << "Current Title: " << relation.title() << "\n\n";
 	std::cout << "* Enter new Title: ";
-	std::getline(std::cin, title);
+	std::getline(std::cin >> ws, title);
+	std::cout << "\n";
 	std::string query = "posts <- rename ("+title+") (select ( title == \"" + str_input +"\") posts;";
 	parser.lex(query);
 	works = parser.program();
@@ -327,7 +409,8 @@ void Menu::edit_content(std::string str_input) {
 	//TODO std::cout << "[Editing"<< relation.title() <<"'s Content]\n\n";
 	//TODO std::cout << "Current Content: "<< relation.content() <<"\n\n";
 	std::cout << "* Enter new Content: ";
-	std::getline(std::cin, content);
+	std::getline(std::cin >> ws, content);
+	std::cout << "\n";
 	std::string query = "posts <- rename ("+content+") (select ( content == \"" + str_input +"\") posts;";
 	//TODO store new content
 }
@@ -338,44 +421,95 @@ void Menu::edit_comments(std::string str_input) {
 	//TODO std::cout << "Current Comments: "<< relation.comments() <<"\n\n";
 	//TODO print out comments
 	std::cout << "* Enter new Comment: ";
-	std::getline(std::cin, comment);
+	std::getline(std::cin >> ws, comment);
+	std::cout << "\n";
 	std::string query = "posts <- rename ("+comment+") (select ( comment == \"" + str_input +"\") posts;";
 	// TODO store new comment
 }
 
-void Menu::search_options(std::string str_input) {
+std::vector<std::string> Menu::search_options(std::string str_input) {
 
 Table* t = parser.database->get_table(str_input);
 
   if (t != NULL) {
 	  int i;
 	  for (i = 0; i < t->get_items().size(); ++i) {
-		vector <string> entry = t->get_items()[i];
-		std::cout << i+1 << ". " << entry[0] << " " << entry[5] << std::endl;
+		std::vector<std::string> entry = t->get_items()[i];
+		std::cout << i+1 << ". " << entry[0] << " " << entry[1] << std::endl;
 		}
 		std::cout << i+1 << ". Return to Main Menu\n";
 		
 		int ID;
 		std::cout << "* Enter ID: "; 
 		std::cin >> ID;
+		std::cout << "\n";
 		if(ID == i+1) {
+			delete_searching_tables();
 			print_menu();
 		}
-		/*else {
-			int g;
-			for (g = 0; g < parser.database->dbms.size(); ++g) {
-				if (parser.database->dbms.at(g).get_name().compare(t.getname())==0) {
-						i = g;
-				}
-			}
-			Table* choice = t->get_items()[ID-1];
-			parser.database->dbms.at(g) = choice;
-		}*/
+		else {
+			std::vector<std::string> entry = t->get_items()[ID-1];
+			return entry;
+		}
 	}
    else {
     cout << "The requested file " << str_input << " is not a relation.\n";
   }
 
+}
+
+void Menu::delete_searching_tables() {
+	
+	if (std::ifstream("dateresult.db"))
+	{	
+		parser.database->dbms.erase( parser.database->dbms.begin() + get_table_index("dateresult.db") );
+		std::remove( "dateresult.db" );
+		parser.lex("CREATE TABLE dateresult (title VARCHAR(50), author VARCHAR(20)) PRIMARY KEY (title, author);");
+		works = parser.program();
+	}
+	
+	if (std::ifstream("tagsresult.db"))
+	{
+		parser.database->dbms.erase( parser.database->dbms.begin() + get_table_index("tagsresult.db") );
+		std::remove( "tagsresult.db" );
+		parser.lex("CREATE TABLE tagsresult (title VARCHAR(50), author VARCHAR(20)) PRIMARY KEY (title, author);");
+		works = parser.program();
+	}
+	
+	if (std::ifstream("titleresult.db"))
+	{
+		parser.database->dbms.erase( parser.database->dbms.begin() + get_table_index("titleresult.db") );
+		std::remove( "titleresult.db" );
+		parser.lex("CREATE TABLE titleresult (author VARCHAR(20), date VARCHAR(20)) PRIMARY KEY (author, date);");
+		works = parser.program();
+	}
+	
+	if (std::ifstream("authorresult.db"))
+	{
+		parser.database->dbms.erase( parser.database->dbms.begin() + get_table_index("authorresult.db") );
+		std::remove( "authorresult.db" );
+		parser.lex("CREATE TABLE authorresult (title VARCHAR(50), date VARCHAR(20)) PRIMARY KEY (title, date);");
+		works = parser.program();
+	}
+	
+}
+
+int Menu::get_table_index(std::string name) {
+	for (int i = 0; i < parser.database->dbms.size(); ++i) {
+		if (parser.database->dbms.at(i).get_name().compare(name)==0) {
+			return i;
+		}
+	}
+}
+
+std::string Menu::get_rest_of_string(int from, std::string str_input) {
+	std::string post = "";
+	for(int i = from; i < str_input.size(); i++)
+	{
+		post += str_input.at(i);
+	}
+	
+	return post;
 }
 
 
