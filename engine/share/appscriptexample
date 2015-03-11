@@ -2,6 +2,10 @@
 1
 shell
 INSERT INTO posts VALUES FROM ( 0, "my title", "sam gwydir", 20150310, "blahdidi blah", 0);
-INSERT INTO posts VALUES FROM ( 0, "my title", "bubba gwydir", 20150205, "blahdidi blah", 0);
+INSERT INTO posts VALUES FROM ( 1, "my second title", "bubba gwydir", 20150205, "blahdidi blah", 0);
 shell
 sam gwydir
+-1
+2
+2
+my title
