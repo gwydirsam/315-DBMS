@@ -137,7 +137,7 @@ int Menu::search_author_exec(std::string string_input) {
   std::string errstr = "Search Author Menu: Input:" + string_input;
   errlog(errstr);
   std::string sqlquery = "search-author <- ";
-  std::string sqlproj = "PROJECT (date, author, title, id) ";
+  std::string sqlproj = "PROJECT (id, title, author, date) ";
   std::string sqlsel = "( SELECT ( author == \"" + string_input + "\" ) posts)";
   std::string sqlprog = sqlquery + sqlproj + sqlsel + ";";
   if (engine.execSQL(sqlprog) != -1) {

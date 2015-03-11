@@ -111,7 +111,7 @@ int main(int argc, char* argv[]) {
     if (title == "posts") {
       std::string sqlprog =
           "CREATE TABLE posts (id INTEGER, title VARCHAR(1024), author "
-          "VARCHAR(1024), date VARCHAR(1024), content VARCHAR(32768), "
+          "VARCHAR(1024), date INTEGER, content VARCHAR(32768), "
           "if_comment INTEGER) PRIMARY KEY (id);";
       // add command to readline history
       add_history(sqlprog.c_str());
@@ -134,7 +134,7 @@ int main(int argc, char* argv[]) {
       // inrefto is the id of the parent comment, -1 for top level comment
       std::string sqlprog =
           "CREATE TABLE comments (id INTEGER, postid INTEGER, author "
-          "VARCHAR(1024), date VARCHAR(1024), content VARCHAR(4096), inrefto "
+          "VARCHAR(1024), date INTEGER, content VARCHAR(4096), inrefto "
           "INTEGER) PRIMARY KEY (id);";
       // add command to readline history
       add_history(sqlprog.c_str());
