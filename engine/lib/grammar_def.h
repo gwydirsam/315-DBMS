@@ -134,8 +134,8 @@ Grammar<It, Skipper>::Grammar()
          no_case[string("integer")];
 
   // identifier := alpha { ( alpha | digit ) }
-  identifier = lexeme[as_string[!lit('"') >> *(char_("a-zA-Z_")) >>
-                                *(char_("0-9a-zA-Z_"))]];
+  identifier = lexeme[as_string[!lit('"') >> *(char_("a-zA-Z_-")) >>
+                                *(char_("0-9a-zA-Z_-"))]];
 
   // relation-name := identifier
   relation_name = identifier.alias();
