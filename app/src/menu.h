@@ -31,7 +31,11 @@ public:
 	void comment_on_post(std::string str_input);
 	void comment_on_comment(std::string str_input);
 	void view_post(std::string str_input);
+<<<<<<< HEAD
 	std::string make_post();
+=======
+	void make_post();
+>>>>>>> 2a6cc466fcd67230fc8da01d2ca33864c4643b40
 	
 	std::string search_by_author(std::string str_input);
 	std::string search_by_title(std::string str_input);
