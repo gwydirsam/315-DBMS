@@ -402,21 +402,21 @@ int Menu::edit_current_item() {
     errlog("Edit: Old Temp File Deleted");
   } else {
     errlog("Edit: Creating New Temp File");
-    std::fstream tfile(temp_file, std::ios::out);
-    tfile << current_rel_->get_row(
-                 current_item_)[current_rel_->find_column_index("title")]
-          << std::endl;
-    tfile << current_rel_->get_row(
-                 current_item_)[current_rel_->find_column_index("author")]
-          << std::endl;
-    tfile << current_rel_->get_row(
-                 current_item_)[current_rel_->find_column_index("date")]
-          << std::endl;
-    tfile << source_rel_->get_row(current_rel_->find_column_index(
-                 "id"))[source_rel_->find_column_index("content")] << std::endl;
-    tfile << std::endl;
-    tfile.close();
   }
+  std::fstream tfile(temp_file, std::ios::out);
+  tfile << current_rel_->get_row(
+               current_item_)[current_rel_->find_column_index("title")]
+        << std::endl;
+  tfile << current_rel_->get_row(
+               current_item_)[current_rel_->find_column_index("author")]
+        << std::endl;
+  tfile << current_rel_->get_row(
+               current_item_)[current_rel_->find_column_index("date")]
+        << std::endl;
+  tfile << source_rel_->get_row(current_rel_->find_column_index(
+               "id"))[source_rel_->find_column_index("content")] << std::endl;
+  tfile << std::endl;
+  tfile.close();
 
   char *my_args[4];
   pid_t pid;
