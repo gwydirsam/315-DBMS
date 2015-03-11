@@ -31,7 +31,7 @@ public:
 	void comment_on_post(std::string str_input);
 	void comment_on_comment(std::string str_input);
 	void view_post(std::string str_input);
-	std::string make_post();
+	void make_post();
 	
 	std::string search_by_author(std::string str_input);
 	std::string search_by_title(std::string str_input);

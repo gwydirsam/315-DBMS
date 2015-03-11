@@ -1,5 +1,6 @@
 #include "menu.h"
 #include <stdlib.h>
+#include <ctime>
 
 Menu::Menu() {
 	parser.lex("CREATE TABLE posts (title VARCHAR(50), author VARCHAR(50), content VARCHAR(1000000), tags VARCHAR(100), commenting  VARCHAR(10), date VARCHAR(20)) PRIMARY KEY (title, author);");
@@ -81,7 +82,7 @@ void Menu::search_menu() {
 	std::string post;
 	int selection_input = 0;
 	//Search Menu Dialogue
-	std::cout << "[Search Menu]\n\n";
+	std::cout << "\n[Search Menu]\n\n";
 	std::cout << "Search by:\n";
 	std::cout << "1. Author\n"; 
 	std::cout << "2. Title\n"; 
@@ -127,8 +128,11 @@ void Menu::search_menu() {
 //probably this will be passed the equivalent of a relation on group 16s DMS
 void Menu::edit_menu(std::string str_input) {
 	int selection_input = 0;
-	//Edit Menu Dialogue
-	//TODO std::cout << "["<< relation.title() <<"'s Edit Menu]\n\n"; 
+	std::vector<std::string> row = get_entries(str_input+".db");
+	std::string title = row[0].erase(row[0].size()-1);
+	title = title.erase(0,1);
+	//Edit Menu Dialogue	
+	std::cout << "["<< title <<"'s Edit Menu]\n\n"; 
 	std::cout << "[Edit Menu]\n\n";
 	std::cout << "1. Author\n"; 
 	std::cout << "2. Title\n"; 
@@ -159,12 +163,11 @@ void Menu::edit_menu(std::string str_input) {
 //probably this will be passed the equivalent of a relation on group 16s DMS
 void Menu::post_manage_system(std::string str_input) {
 	int selection_input;
+	std::vector<std::string> row = get_entries(str_input+".db");
+	std::string title = row[0].erase(row[0].size()-1);
+	title = title.erase(0,1);
 	// Post's Management System Dialogue
-	std::string tablename = str_input;
-	tablename += ".db";
-	std::vector<std::string> row = get_entries(tablename);
-	// Title of post.
-	std::cout << "["+ row[0] +"]\n\n";
+	std::cout << "["+ title +"]\n\n";
 	std::cout << "1. View\n"; 
 	std::cout << "2. Edit\n"; 
 	std::cout << "3. Delete\n";
@@ -197,9 +200,11 @@ void Menu::post_manage_system(std::string str_input) {
 void Menu::comments_menu(std::string str_input) {
 
 	int selection_input;
+	std::vector<std::string> row = get_entries(str_input+".db");
+	std::string title = row[0].erase(row[0].size()-1);
+	title = title.erase(0,1);
 	//Comment System Dialogue
-	//TODO std::cout << "[Commenting on "<< relation.title() <<"]\n\n";
-	std::cout << "[]\n\n";
+	std::cout << "[Commenting on "<< title <<"]\n\n";
 	std::cout << "1. Comment on post\n";
 	std::cout << "2. Comment on comment\n\n";
 	std::cout << "* Enter command: ";
@@ -207,9 +212,9 @@ void Menu::comments_menu(std::string str_input) {
 	std::cout << "\n";
 	
 	switch(selection_input) {
-		case 1: comment_on_post(str_input); //relation
+		case 1: comment_on_post(str_input);
 				break;
-		case 2: comment_on_comment(str_input); //relation
+		case 2: comment_on_comment(str_input);
 				break;
 		default: 
 			 std::cout <<"Incorrect input restarting this step.\nPlease try to enter 1-2."; 
@@ -218,7 +223,6 @@ void Menu::comments_menu(std::string str_input) {
 
 }
 
-//probably this will be passed the equivalent of a relation on group 16s DMS
 void Menu::comment_on_post(std::string str_input) {
 	std::string name;
 	std::string comment;
@@ -232,7 +236,6 @@ void Menu::comment_on_post(std::string str_input) {
 	post_manage_system(str_input);
 }
 
-//probably this will be passed the equivalent of a relation on group 16s DMS
 void Menu::comment_on_comment(std::string str_input) {
 	int ID;
 	std::string name;
@@ -273,11 +276,57 @@ void Menu::view_post(std::string str_input) {
 	std::cout << "--------------------------------------------------------------------------------";
 }
 
-std::string Menu::make_post() {
-	std::string post;
-	std::cout << "New post: " << std::endl;
-	std::getline(std::cin >> ws, post);
-	return post;
+void Menu::make_post() {
+	std::string author;
+	std::string content;
+	std::string tags;
+	std::string title;
+	std::string commenting;
+	int selection_input;
+	time_t currentTime;
+	struct tm *localTime;
+	time( &currentTime );
+	localTime = localtime( &currentTime );
+	int day    = localTime->tm_mday;
+	int month  = localTime->tm_mon + 1;
+	int year   = localTime->tm_year + 1900;
+	std::string date = "("+std::to_string(month)+"/"+std::to_string(day)+"/"+std::to_string(year)+")";
+	
+	std::cout << "\n[New post]\n" << std::endl;
+	std::cout << "* Title: ";
+	std::getline(std::cin >> ws,title);
+	std::cout << "\n";
+	std::cout << "* Author: ";
+	std::getline(std::cin >> ws,author);
+	std::cout << "\n";
+	std::cout << "* Content: ";
+	std::getline(std::cin >> ws,content);
+	std::cout << "\n";
+	std::cout << "* Tags: ";
+	std::getline(std::cin >> ws,tags);
+	std::cout << "\n";
+	std::cout << "[Allow Commenting?]\n\n";
+	std::cout << "1. Yes\n";
+	std::cout << "2. No\n\n";
+	std::cout << "* Enter command: ";
+	std::cin >> selection_input;
+	std::cout << "\n";
+	
+	switch(selection_input) {
+		case 1: commenting = "yes";
+				break;
+		case 2: commenting = "no"; 
+				break;
+		default: 
+			 std::cout <<"Defaulting to no.\n"; 
+			 commenting = "no";
+	}
+	
+	parser.lex("INSERT INTO posts VALUES FROM (\""+title+"\", \""+ author +"\", \""+ content +"\", \""+ tags +"\", \""+ commenting +"\", \""+date+"\");");
+	parser.program(); 
+	parser.lex("WRITE posts;");
+	parser.program(); 
+	print_menu();
 }
 
 std::string Menu::search_by_author(std::string str_input) {
